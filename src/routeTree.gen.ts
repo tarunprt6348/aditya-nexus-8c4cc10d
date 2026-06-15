@@ -11,8 +11,19 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MarketingRouteImport } from './routes/_marketing'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing.index'
+import { Route as MarketingTestimonialsRouteImport } from './routes/_marketing.testimonials'
 import { Route as MarketingServicesRouteImport } from './routes/_marketing.services'
+import { Route as MarketingQuoteRouteImport } from './routes/_marketing.quote'
+import { Route as MarketingProjectsRouteImport } from './routes/_marketing.projects'
+import { Route as MarketingContactRouteImport } from './routes/_marketing.contact'
+import { Route as MarketingCareersRouteImport } from './routes/_marketing.careers'
+import { Route as MarketingBlogRouteImport } from './routes/_marketing.blog'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing.about'
+import { Route as MarketingServicesSolarRouteImport } from './routes/_marketing.services.solar'
+import { Route as MarketingServicesRealEstateRouteImport } from './routes/_marketing.services.real-estate'
+import { Route as MarketingServicesInteriorsRouteImport } from './routes/_marketing.services.interiors'
+import { Route as MarketingServicesHvacRouteImport } from './routes/_marketing.services.hvac'
+import { Route as MarketingServicesConstructionRouteImport } from './routes/_marketing.services.construction'
 
 const MarketingRoute = MarketingRouteImport.update({
   id: '/_marketing',
@@ -23,9 +34,39 @@ const MarketingIndexRoute = MarketingIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MarketingRoute,
 } as any)
+const MarketingTestimonialsRoute = MarketingTestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => MarketingRoute,
+} as any)
 const MarketingServicesRoute = MarketingServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const MarketingQuoteRoute = MarketingQuoteRouteImport.update({
+  id: '/quote',
+  path: '/quote',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const MarketingProjectsRoute = MarketingProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const MarketingContactRoute = MarketingContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const MarketingCareersRoute = MarketingCareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const MarketingBlogRoute = MarketingBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => MarketingRoute,
 } as any)
 const MarketingAboutRoute = MarketingAboutRouteImport.update({
@@ -33,35 +74,135 @@ const MarketingAboutRoute = MarketingAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => MarketingRoute,
 } as any)
+const MarketingServicesSolarRoute = MarketingServicesSolarRouteImport.update({
+  id: '/solar',
+  path: '/solar',
+  getParentRoute: () => MarketingServicesRoute,
+} as any)
+const MarketingServicesRealEstateRoute =
+  MarketingServicesRealEstateRouteImport.update({
+    id: '/real-estate',
+    path: '/real-estate',
+    getParentRoute: () => MarketingServicesRoute,
+  } as any)
+const MarketingServicesInteriorsRoute =
+  MarketingServicesInteriorsRouteImport.update({
+    id: '/interiors',
+    path: '/interiors',
+    getParentRoute: () => MarketingServicesRoute,
+  } as any)
+const MarketingServicesHvacRoute = MarketingServicesHvacRouteImport.update({
+  id: '/hvac',
+  path: '/hvac',
+  getParentRoute: () => MarketingServicesRoute,
+} as any)
+const MarketingServicesConstructionRoute =
+  MarketingServicesConstructionRouteImport.update({
+    id: '/construction',
+    path: '/construction',
+    getParentRoute: () => MarketingServicesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
   '/about': typeof MarketingAboutRoute
-  '/services': typeof MarketingServicesRoute
+  '/blog': typeof MarketingBlogRoute
+  '/careers': typeof MarketingCareersRoute
+  '/contact': typeof MarketingContactRoute
+  '/projects': typeof MarketingProjectsRoute
+  '/quote': typeof MarketingQuoteRoute
+  '/services': typeof MarketingServicesRouteWithChildren
+  '/testimonials': typeof MarketingTestimonialsRoute
+  '/services/construction': typeof MarketingServicesConstructionRoute
+  '/services/hvac': typeof MarketingServicesHvacRoute
+  '/services/interiors': typeof MarketingServicesInteriorsRoute
+  '/services/real-estate': typeof MarketingServicesRealEstateRoute
+  '/services/solar': typeof MarketingServicesSolarRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof MarketingAboutRoute
-  '/services': typeof MarketingServicesRoute
+  '/blog': typeof MarketingBlogRoute
+  '/careers': typeof MarketingCareersRoute
+  '/contact': typeof MarketingContactRoute
+  '/projects': typeof MarketingProjectsRoute
+  '/quote': typeof MarketingQuoteRoute
+  '/services': typeof MarketingServicesRouteWithChildren
+  '/testimonials': typeof MarketingTestimonialsRoute
   '/': typeof MarketingIndexRoute
+  '/services/construction': typeof MarketingServicesConstructionRoute
+  '/services/hvac': typeof MarketingServicesHvacRoute
+  '/services/interiors': typeof MarketingServicesInteriorsRoute
+  '/services/real-estate': typeof MarketingServicesRealEstateRoute
+  '/services/solar': typeof MarketingServicesSolarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_marketing': typeof MarketingRouteWithChildren
   '/_marketing/about': typeof MarketingAboutRoute
-  '/_marketing/services': typeof MarketingServicesRoute
+  '/_marketing/blog': typeof MarketingBlogRoute
+  '/_marketing/careers': typeof MarketingCareersRoute
+  '/_marketing/contact': typeof MarketingContactRoute
+  '/_marketing/projects': typeof MarketingProjectsRoute
+  '/_marketing/quote': typeof MarketingQuoteRoute
+  '/_marketing/services': typeof MarketingServicesRouteWithChildren
+  '/_marketing/testimonials': typeof MarketingTestimonialsRoute
   '/_marketing/': typeof MarketingIndexRoute
+  '/_marketing/services/construction': typeof MarketingServicesConstructionRoute
+  '/_marketing/services/hvac': typeof MarketingServicesHvacRoute
+  '/_marketing/services/interiors': typeof MarketingServicesInteriorsRoute
+  '/_marketing/services/real-estate': typeof MarketingServicesRealEstateRoute
+  '/_marketing/services/solar': typeof MarketingServicesSolarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/services'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/careers'
+    | '/contact'
+    | '/projects'
+    | '/quote'
+    | '/services'
+    | '/testimonials'
+    | '/services/construction'
+    | '/services/hvac'
+    | '/services/interiors'
+    | '/services/real-estate'
+    | '/services/solar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/services' | '/'
+  to:
+    | '/about'
+    | '/blog'
+    | '/careers'
+    | '/contact'
+    | '/projects'
+    | '/quote'
+    | '/services'
+    | '/testimonials'
+    | '/'
+    | '/services/construction'
+    | '/services/hvac'
+    | '/services/interiors'
+    | '/services/real-estate'
+    | '/services/solar'
   id:
     | '__root__'
     | '/_marketing'
     | '/_marketing/about'
+    | '/_marketing/blog'
+    | '/_marketing/careers'
+    | '/_marketing/contact'
+    | '/_marketing/projects'
+    | '/_marketing/quote'
     | '/_marketing/services'
+    | '/_marketing/testimonials'
     | '/_marketing/'
+    | '/_marketing/services/construction'
+    | '/_marketing/services/hvac'
+    | '/_marketing/services/interiors'
+    | '/_marketing/services/real-estate'
+    | '/_marketing/services/solar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,11 +225,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingIndexRouteImport
       parentRoute: typeof MarketingRoute
     }
+    '/_marketing/testimonials': {
+      id: '/_marketing/testimonials'
+      path: '/testimonials'
+      fullPath: '/testimonials'
+      preLoaderRoute: typeof MarketingTestimonialsRouteImport
+      parentRoute: typeof MarketingRoute
+    }
     '/_marketing/services': {
       id: '/_marketing/services'
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof MarketingServicesRouteImport
+      parentRoute: typeof MarketingRoute
+    }
+    '/_marketing/quote': {
+      id: '/_marketing/quote'
+      path: '/quote'
+      fullPath: '/quote'
+      preLoaderRoute: typeof MarketingQuoteRouteImport
+      parentRoute: typeof MarketingRoute
+    }
+    '/_marketing/projects': {
+      id: '/_marketing/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof MarketingProjectsRouteImport
+      parentRoute: typeof MarketingRoute
+    }
+    '/_marketing/contact': {
+      id: '/_marketing/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof MarketingContactRouteImport
+      parentRoute: typeof MarketingRoute
+    }
+    '/_marketing/careers': {
+      id: '/_marketing/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof MarketingCareersRouteImport
+      parentRoute: typeof MarketingRoute
+    }
+    '/_marketing/blog': {
+      id: '/_marketing/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof MarketingBlogRouteImport
       parentRoute: typeof MarketingRoute
     }
     '/_marketing/about': {
@@ -98,18 +281,84 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingAboutRouteImport
       parentRoute: typeof MarketingRoute
     }
+    '/_marketing/services/solar': {
+      id: '/_marketing/services/solar'
+      path: '/solar'
+      fullPath: '/services/solar'
+      preLoaderRoute: typeof MarketingServicesSolarRouteImport
+      parentRoute: typeof MarketingServicesRoute
+    }
+    '/_marketing/services/real-estate': {
+      id: '/_marketing/services/real-estate'
+      path: '/real-estate'
+      fullPath: '/services/real-estate'
+      preLoaderRoute: typeof MarketingServicesRealEstateRouteImport
+      parentRoute: typeof MarketingServicesRoute
+    }
+    '/_marketing/services/interiors': {
+      id: '/_marketing/services/interiors'
+      path: '/interiors'
+      fullPath: '/services/interiors'
+      preLoaderRoute: typeof MarketingServicesInteriorsRouteImport
+      parentRoute: typeof MarketingServicesRoute
+    }
+    '/_marketing/services/hvac': {
+      id: '/_marketing/services/hvac'
+      path: '/hvac'
+      fullPath: '/services/hvac'
+      preLoaderRoute: typeof MarketingServicesHvacRouteImport
+      parentRoute: typeof MarketingServicesRoute
+    }
+    '/_marketing/services/construction': {
+      id: '/_marketing/services/construction'
+      path: '/construction'
+      fullPath: '/services/construction'
+      preLoaderRoute: typeof MarketingServicesConstructionRouteImport
+      parentRoute: typeof MarketingServicesRoute
+    }
   }
 }
 
+interface MarketingServicesRouteChildren {
+  MarketingServicesConstructionRoute: typeof MarketingServicesConstructionRoute
+  MarketingServicesHvacRoute: typeof MarketingServicesHvacRoute
+  MarketingServicesInteriorsRoute: typeof MarketingServicesInteriorsRoute
+  MarketingServicesRealEstateRoute: typeof MarketingServicesRealEstateRoute
+  MarketingServicesSolarRoute: typeof MarketingServicesSolarRoute
+}
+
+const MarketingServicesRouteChildren: MarketingServicesRouteChildren = {
+  MarketingServicesConstructionRoute: MarketingServicesConstructionRoute,
+  MarketingServicesHvacRoute: MarketingServicesHvacRoute,
+  MarketingServicesInteriorsRoute: MarketingServicesInteriorsRoute,
+  MarketingServicesRealEstateRoute: MarketingServicesRealEstateRoute,
+  MarketingServicesSolarRoute: MarketingServicesSolarRoute,
+}
+
+const MarketingServicesRouteWithChildren =
+  MarketingServicesRoute._addFileChildren(MarketingServicesRouteChildren)
+
 interface MarketingRouteChildren {
   MarketingAboutRoute: typeof MarketingAboutRoute
-  MarketingServicesRoute: typeof MarketingServicesRoute
+  MarketingBlogRoute: typeof MarketingBlogRoute
+  MarketingCareersRoute: typeof MarketingCareersRoute
+  MarketingContactRoute: typeof MarketingContactRoute
+  MarketingProjectsRoute: typeof MarketingProjectsRoute
+  MarketingQuoteRoute: typeof MarketingQuoteRoute
+  MarketingServicesRoute: typeof MarketingServicesRouteWithChildren
+  MarketingTestimonialsRoute: typeof MarketingTestimonialsRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
 }
 
 const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingAboutRoute: MarketingAboutRoute,
-  MarketingServicesRoute: MarketingServicesRoute,
+  MarketingBlogRoute: MarketingBlogRoute,
+  MarketingCareersRoute: MarketingCareersRoute,
+  MarketingContactRoute: MarketingContactRoute,
+  MarketingProjectsRoute: MarketingProjectsRoute,
+  MarketingQuoteRoute: MarketingQuoteRoute,
+  MarketingServicesRoute: MarketingServicesRouteWithChildren,
+  MarketingTestimonialsRoute: MarketingTestimonialsRoute,
   MarketingIndexRoute: MarketingIndexRoute,
 }
 
