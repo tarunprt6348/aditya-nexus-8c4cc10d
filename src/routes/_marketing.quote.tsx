@@ -20,14 +20,14 @@ export const Route = createFileRoute("/_marketing/quote")({
 });
 
 const schema = z.object({
-  full_name: z.string().trim().min(2).max(100),
+  name: z.string().trim().min(2).max(100),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().min(7).max(20),
   service_type: z.enum(["construction", "interiors", "hvac", "solar", "real_estate"]),
   budget_range: z.string().trim().max(100).optional().or(z.literal("")),
   timeline: z.string().trim().max(100).optional().or(z.literal("")),
-  city: z.string().trim().max(100).optional().or(z.literal("")),
-  project_details: z.string().trim().min(10).max(2000),
+  location: z.string().trim().max(100).optional().or(z.literal("")),
+  requirements: z.string().trim().min(10).max(2000),
 });
 
 function Quote() {
