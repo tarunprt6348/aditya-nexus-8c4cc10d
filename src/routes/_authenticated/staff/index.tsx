@@ -23,7 +23,7 @@ function Tasks() {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
     setUid(u.user.id);
-    const { data } = await supabase.from("staff_tasks").select("*").eq("assignee_id", u.user.id).order("due_date", { ascending: true });
+    const { data } = await supabase.from("staff_tasks").select("*").eq("assigned_to", u.user.id).order("due_date", { ascending: true });
     setRows(data ?? []);
   };
   useEffect(() => { load(); }, []);

@@ -18,10 +18,10 @@ function Testi() {
   };
   useEffect(() => { load(); }, []);
 
-  async function setApproved(id: string, approved: boolean) {
-    const { error } = await supabase.from("testimonials").update({ approved }).eq("id", id);
+  async function setPublished(id: string, published: boolean) {
+    const { error } = await supabase.from("testimonials").update({ published }).eq("id", id);
     if (error) return toast.error(error.message);
-    toast.success(approved ? "Approved" : "Unapproved");
+    toast.success(published ? "Published" : "Unpublished");
     load();
   }
 
@@ -33,11 +33,11 @@ function Testi() {
           <Card key={t.id} className="p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="font-medium">{t.author_name}</div>
-                <div className="text-xs text-muted-foreground">{t.role || "Client"} · {"★".repeat(t.rating ?? 5)}</div>
+                <div className="font-medium">{t.client_name}</div>
+                <div className="text-xs text-muted-foreground">{t.client_role || "Client"} · {"★".repeat(t.rating ?? 5)}</div>
               </div>
-              <Button size="sm" variant={t.approved ? "outline" : "default"} onClick={() => setApproved(t.id, !t.approved)}>
-                {t.approved ? "Unapprove" : "Approve"}
+              <Button size="sm" variant={t.published ? "outline" : "default"} onClick={() => setPublished(t.id, !t.published)}>
+                {t.published ? "Unpublish" : "Publish"}
               </Button>
             </div>
             <p className="mt-3 text-sm text-muted-foreground">"{t.content}"</p>

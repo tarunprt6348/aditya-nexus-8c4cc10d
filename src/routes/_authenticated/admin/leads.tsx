@@ -8,7 +8,7 @@ import { Database } from "@/integrations/supabase/types";
 
 type Lead = Database["public"]["Tables"]["leads"]["Row"];
 type Status = Database["public"]["Enums"]["lead_status"];
-const STATUSES: Status[] = ["new", "contacted", "qualified", "won", "lost"];
+const STATUSES: Status[] = ["new", "contacted", "qualified", "converted", "lost"];
 
 export const Route = createFileRoute("/_authenticated/admin/leads")({
   head: () => ({ meta: [{ title: "Leads — Admin" }] }),
@@ -44,7 +44,7 @@ function Leads() {
               <tr key={l.id} className="border-t border-border">
                 <td className="px-4 py-3 font-medium">{l.name}</td>
                 <td className="px-4 py-3 text-muted-foreground">{l.email}<br/>{l.phone}</td>
-                <td className="px-4 py-3 capitalize">{l.service_type?.replace("_", " ") ?? "—"}</td>
+                <td className="px-4 py-3 capitalize">{l.service?.replace("_", " ") ?? "—"}</td>
                 <td className="px-4 py-3">
                   <Select value={l.status} onValueChange={(v) => setStatus(l.id, v as Status)}>
                     <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
