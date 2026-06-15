@@ -22,11 +22,20 @@ import { Route as MarketingCareersRouteImport } from './routes/_marketing.career
 import { Route as MarketingBlogRouteImport } from './routes/_marketing.blog'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing.about'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
+import { Route as AuthenticatedStaffRouteRouteImport } from './routes/_authenticated/staff/route'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff/index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as MarketingServicesSolarRouteImport } from './routes/_marketing.services.solar'
 import { Route as MarketingServicesRealEstateRouteImport } from './routes/_marketing.services.real-estate'
 import { Route as MarketingServicesInteriorsRouteImport } from './routes/_marketing.services.interiors'
 import { Route as MarketingServicesHvacRouteImport } from './routes/_marketing.services.hvac'
 import { Route as MarketingServicesConstructionRouteImport } from './routes/_marketing.services.construction'
+import { Route as AuthenticatedAdminTicketsRouteImport } from './routes/_authenticated/admin/tickets'
+import { Route as AuthenticatedAdminTestimonialsRouteImport } from './routes/_authenticated/admin/testimonials'
+import { Route as AuthenticatedAdminQuotesRouteImport } from './routes/_authenticated/admin/quotes'
+import { Route as AuthenticatedAdminProjectsRouteImport } from './routes/_authenticated/admin/projects'
+import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin/leads'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -91,6 +100,26 @@ const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedStaffRouteRoute = AuthenticatedStaffRouteRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedStaffIndexRoute = AuthenticatedStaffIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedStaffRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const MarketingServicesSolarRoute = MarketingServicesSolarRouteImport.update({
   id: '/solar',
   path: '/solar',
@@ -119,10 +148,41 @@ const MarketingServicesConstructionRoute =
     path: '/construction',
     getParentRoute: () => MarketingServicesRoute,
   } as any)
+const AuthenticatedAdminTicketsRoute =
+  AuthenticatedAdminTicketsRouteImport.update({
+    id: '/tickets',
+    path: '/tickets',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminTestimonialsRoute =
+  AuthenticatedAdminTestimonialsRouteImport.update({
+    id: '/testimonials',
+    path: '/testimonials',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminQuotesRoute =
+  AuthenticatedAdminQuotesRouteImport.update({
+    id: '/quotes',
+    path: '/quotes',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminProjectsRoute =
+  AuthenticatedAdminProjectsRouteImport.update({
+    id: '/projects',
+    path: '/projects',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/staff': typeof AuthenticatedStaffRouteRouteWithChildren
   '/portal': typeof AuthenticatedPortalRoute
   '/about': typeof MarketingAboutRoute
   '/blog': typeof MarketingBlogRoute
@@ -132,11 +192,18 @@ export interface FileRoutesByFullPath {
   '/quote': typeof MarketingQuoteRoute
   '/services': typeof MarketingServicesRouteWithChildren
   '/testimonials': typeof MarketingTestimonialsRoute
+  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/projects': typeof AuthenticatedAdminProjectsRoute
+  '/admin/quotes': typeof AuthenticatedAdminQuotesRoute
+  '/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
+  '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
   '/services/interiors': typeof MarketingServicesInteriorsRoute
   '/services/real-estate': typeof MarketingServicesRealEstateRoute
   '/services/solar': typeof MarketingServicesSolarRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/staff/': typeof AuthenticatedStaffIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MarketingIndexRoute
@@ -150,17 +217,26 @@ export interface FileRoutesByTo {
   '/quote': typeof MarketingQuoteRoute
   '/services': typeof MarketingServicesRouteWithChildren
   '/testimonials': typeof MarketingTestimonialsRoute
+  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/projects': typeof AuthenticatedAdminProjectsRoute
+  '/admin/quotes': typeof AuthenticatedAdminQuotesRoute
+  '/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
+  '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
   '/services/interiors': typeof MarketingServicesInteriorsRoute
   '/services/real-estate': typeof MarketingServicesRealEstateRoute
   '/services/solar': typeof MarketingServicesSolarRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/staff': typeof AuthenticatedStaffIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_marketing': typeof MarketingRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/staff': typeof AuthenticatedStaffRouteRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/_marketing/about': typeof MarketingAboutRoute
   '/_marketing/blog': typeof MarketingBlogRoute
@@ -171,17 +247,26 @@ export interface FileRoutesById {
   '/_marketing/services': typeof MarketingServicesRouteWithChildren
   '/_marketing/testimonials': typeof MarketingTestimonialsRoute
   '/_marketing/': typeof MarketingIndexRoute
+  '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/_authenticated/admin/projects': typeof AuthenticatedAdminProjectsRoute
+  '/_authenticated/admin/quotes': typeof AuthenticatedAdminQuotesRoute
+  '/_authenticated/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
+  '/_authenticated/admin/tickets': typeof AuthenticatedAdminTicketsRoute
   '/_marketing/services/construction': typeof MarketingServicesConstructionRoute
   '/_marketing/services/hvac': typeof MarketingServicesHvacRoute
   '/_marketing/services/interiors': typeof MarketingServicesInteriorsRoute
   '/_marketing/services/real-estate': typeof MarketingServicesRealEstateRoute
   '/_marketing/services/solar': typeof MarketingServicesSolarRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/admin'
+    | '/staff'
     | '/portal'
     | '/about'
     | '/blog'
@@ -191,11 +276,18 @@ export interface FileRouteTypes {
     | '/quote'
     | '/services'
     | '/testimonials'
+    | '/admin/leads'
+    | '/admin/projects'
+    | '/admin/quotes'
+    | '/admin/testimonials'
+    | '/admin/tickets'
     | '/services/construction'
     | '/services/hvac'
     | '/services/interiors'
     | '/services/real-estate'
     | '/services/solar'
+    | '/admin/'
+    | '/staff/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -209,16 +301,25 @@ export interface FileRouteTypes {
     | '/quote'
     | '/services'
     | '/testimonials'
+    | '/admin/leads'
+    | '/admin/projects'
+    | '/admin/quotes'
+    | '/admin/testimonials'
+    | '/admin/tickets'
     | '/services/construction'
     | '/services/hvac'
     | '/services/interiors'
     | '/services/real-estate'
     | '/services/solar'
+    | '/admin'
+    | '/staff'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_marketing'
     | '/auth'
+    | '/_authenticated/admin'
+    | '/_authenticated/staff'
     | '/_authenticated/portal'
     | '/_marketing/about'
     | '/_marketing/blog'
@@ -229,11 +330,18 @@ export interface FileRouteTypes {
     | '/_marketing/services'
     | '/_marketing/testimonials'
     | '/_marketing/'
+    | '/_authenticated/admin/leads'
+    | '/_authenticated/admin/projects'
+    | '/_authenticated/admin/quotes'
+    | '/_authenticated/admin/testimonials'
+    | '/_authenticated/admin/tickets'
     | '/_marketing/services/construction'
     | '/_marketing/services/hvac'
     | '/_marketing/services/interiors'
     | '/_marketing/services/real-estate'
     | '/_marketing/services/solar'
+    | '/_authenticated/admin/'
+    | '/_authenticated/staff/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -335,6 +443,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/staff': {
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/staff/': {
+      id: '/_authenticated/staff/'
+      path: '/'
+      fullPath: '/staff/'
+      preLoaderRoute: typeof AuthenticatedStaffIndexRouteImport
+      parentRoute: typeof AuthenticatedStaffRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_marketing/services/solar': {
       id: '/_marketing/services/solar'
       path: '/solar'
@@ -370,14 +506,91 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingServicesConstructionRouteImport
       parentRoute: typeof MarketingServicesRoute
     }
+    '/_authenticated/admin/tickets': {
+      id: '/_authenticated/admin/tickets'
+      path: '/tickets'
+      fullPath: '/admin/tickets'
+      preLoaderRoute: typeof AuthenticatedAdminTicketsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/testimonials': {
+      id: '/_authenticated/admin/testimonials'
+      path: '/testimonials'
+      fullPath: '/admin/testimonials'
+      preLoaderRoute: typeof AuthenticatedAdminTestimonialsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/quotes': {
+      id: '/_authenticated/admin/quotes'
+      path: '/quotes'
+      fullPath: '/admin/quotes'
+      preLoaderRoute: typeof AuthenticatedAdminQuotesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/projects': {
+      id: '/_authenticated/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AuthenticatedAdminProjectsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/leads': {
+      id: '/_authenticated/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AuthenticatedAdminLeadsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
+  AuthenticatedAdminProjectsRoute: typeof AuthenticatedAdminProjectsRoute
+  AuthenticatedAdminQuotesRoute: typeof AuthenticatedAdminQuotesRoute
+  AuthenticatedAdminTestimonialsRoute: typeof AuthenticatedAdminTestimonialsRoute
+  AuthenticatedAdminTicketsRoute: typeof AuthenticatedAdminTicketsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
+    AuthenticatedAdminProjectsRoute: AuthenticatedAdminProjectsRoute,
+    AuthenticatedAdminQuotesRoute: AuthenticatedAdminQuotesRoute,
+    AuthenticatedAdminTestimonialsRoute: AuthenticatedAdminTestimonialsRoute,
+    AuthenticatedAdminTicketsRoute: AuthenticatedAdminTicketsRoute,
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
+interface AuthenticatedStaffRouteRouteChildren {
+  AuthenticatedStaffIndexRoute: typeof AuthenticatedStaffIndexRoute
+}
+
+const AuthenticatedStaffRouteRouteChildren: AuthenticatedStaffRouteRouteChildren =
+  {
+    AuthenticatedStaffIndexRoute: AuthenticatedStaffIndexRoute,
+  }
+
+const AuthenticatedStaffRouteRouteWithChildren =
+  AuthenticatedStaffRouteRoute._addFileChildren(
+    AuthenticatedStaffRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedStaffRouteRoute: typeof AuthenticatedStaffRouteRouteWithChildren
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedStaffRouteRoute: AuthenticatedStaffRouteRouteWithChildren,
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
 }
 

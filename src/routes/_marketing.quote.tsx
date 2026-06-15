@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { AiQuoteAssistant } from "@/components/site/AiQuoteAssistant";
 
 export const Route = createFileRoute("/_marketing/quote")({
   head: () => ({
@@ -69,6 +70,8 @@ function Quote() {
         Share a few details and we'll send a costed, time-bound proposal within 48 hours.
         Everything you tell us is kept strictly confidential.
       </p>
+      <div className="mt-12"><AiQuoteAssistant /></div>
+
       <form onSubmit={onSubmit} className="mt-12 rounded-lg border border-border bg-card p-8 shadow-sm">
         <div className="grid gap-5 md:grid-cols-2">
           <div>
