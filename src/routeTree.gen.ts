@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MarketingRouteImport } from './routes/_marketing'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing.index'
 import { Route as MarketingTestimonialsRouteImport } from './routes/_marketing.testimonials'
 import { Route as MarketingServicesRouteImport } from './routes/_marketing.services'
@@ -19,14 +21,24 @@ import { Route as MarketingContactRouteImport } from './routes/_marketing.contac
 import { Route as MarketingCareersRouteImport } from './routes/_marketing.careers'
 import { Route as MarketingBlogRouteImport } from './routes/_marketing.blog'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing.about'
+import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as MarketingServicesSolarRouteImport } from './routes/_marketing.services.solar'
 import { Route as MarketingServicesRealEstateRouteImport } from './routes/_marketing.services.real-estate'
 import { Route as MarketingServicesInteriorsRouteImport } from './routes/_marketing.services.interiors'
 import { Route as MarketingServicesHvacRouteImport } from './routes/_marketing.services.hvac'
 import { Route as MarketingServicesConstructionRouteImport } from './routes/_marketing.services.construction'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MarketingRoute = MarketingRouteImport.update({
   id: '/_marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketingIndexRoute = MarketingIndexRouteImport.update({
@@ -74,6 +86,11 @@ const MarketingAboutRoute = MarketingAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => MarketingRoute,
 } as any)
+const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const MarketingServicesSolarRoute = MarketingServicesSolarRouteImport.update({
   id: '/solar',
   path: '/solar',
@@ -105,6 +122,8 @@ const MarketingServicesConstructionRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
+  '/auth': typeof AuthRoute
+  '/portal': typeof AuthenticatedPortalRoute
   '/about': typeof MarketingAboutRoute
   '/blog': typeof MarketingBlogRoute
   '/careers': typeof MarketingCareersRoute
@@ -120,6 +139,9 @@ export interface FileRoutesByFullPath {
   '/services/solar': typeof MarketingServicesSolarRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof MarketingIndexRoute
+  '/auth': typeof AuthRoute
+  '/portal': typeof AuthenticatedPortalRoute
   '/about': typeof MarketingAboutRoute
   '/blog': typeof MarketingBlogRoute
   '/careers': typeof MarketingCareersRoute
@@ -128,7 +150,6 @@ export interface FileRoutesByTo {
   '/quote': typeof MarketingQuoteRoute
   '/services': typeof MarketingServicesRouteWithChildren
   '/testimonials': typeof MarketingTestimonialsRoute
-  '/': typeof MarketingIndexRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
   '/services/interiors': typeof MarketingServicesInteriorsRoute
@@ -137,7 +158,10 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_marketing': typeof MarketingRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/_marketing/about': typeof MarketingAboutRoute
   '/_marketing/blog': typeof MarketingBlogRoute
   '/_marketing/careers': typeof MarketingCareersRoute
@@ -157,6 +181,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
+    | '/portal'
     | '/about'
     | '/blog'
     | '/careers'
@@ -172,6 +198,9 @@ export interface FileRouteTypes {
     | '/services/solar'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
+    | '/auth'
+    | '/portal'
     | '/about'
     | '/blog'
     | '/careers'
@@ -180,7 +209,6 @@ export interface FileRouteTypes {
     | '/quote'
     | '/services'
     | '/testimonials'
-    | '/'
     | '/services/construction'
     | '/services/hvac'
     | '/services/interiors'
@@ -188,7 +216,10 @@ export interface FileRouteTypes {
     | '/services/solar'
   id:
     | '__root__'
+    | '/_authenticated'
     | '/_marketing'
+    | '/auth'
+    | '/_authenticated/portal'
     | '/_marketing/about'
     | '/_marketing/blog'
     | '/_marketing/careers'
@@ -206,16 +237,32 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   MarketingRoute: typeof MarketingRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_marketing': {
       id: '/_marketing'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof MarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_marketing/': {
@@ -281,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingAboutRouteImport
       parentRoute: typeof MarketingRoute
     }
+    '/_authenticated/portal': {
+      id: '/_authenticated/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof AuthenticatedPortalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_marketing/services/solar': {
       id: '/_marketing/services/solar'
       path: '/solar'
@@ -318,6 +372,17 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPortalRoute: AuthenticatedPortalRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface MarketingServicesRouteChildren {
   MarketingServicesConstructionRoute: typeof MarketingServicesConstructionRoute
@@ -367,7 +432,9 @@ const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   MarketingRoute: MarketingRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
