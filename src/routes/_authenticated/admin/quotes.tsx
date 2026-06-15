@@ -34,8 +34,8 @@ function Quotes() {
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{q.email} · {q.phone} · {q.location || "—"}</p>
                 <p className="mt-3 text-sm">{q.requirements}</p>
-                {q.ai_estimate_low && (
-                  <p className="mt-2 text-xs text-gold">AI estimate: ₹{q.ai_estimate_low?.toLocaleString()} – ₹{q.ai_estimate_high?.toLocaleString()}</p>
+                {q.ai_estimate && (
+                  <p className="mt-2 text-xs text-gold">AI estimate: {q.ai_estimate}</p>
                 )}
               </div>
               <div className="text-right text-xs text-muted-foreground">
