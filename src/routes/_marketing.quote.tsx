@@ -45,14 +45,14 @@ function Quote() {
     }
     setLoading(true);
     const { error } = await supabase.from("quote_requests").insert({
-      full_name: parsed.data.full_name,
+      name: parsed.data.name,
       email: parsed.data.email,
       phone: parsed.data.phone,
       service_type: parsed.data.service_type,
       budget_range: parsed.data.budget_range || null,
       timeline: parsed.data.timeline || null,
-      city: parsed.data.city || null,
-      project_details: parsed.data.project_details,
+      location: parsed.data.location || null,
+      requirements: parsed.data.requirements,
     });
     setLoading(false);
     if (error) return toast.error("Couldn't submit. Please try again.");
@@ -72,8 +72,8 @@ function Quote() {
       <form onSubmit={onSubmit} className="mt-12 rounded-lg border border-border bg-card p-8 shadow-sm">
         <div className="grid gap-5 md:grid-cols-2">
           <div>
-            <Label htmlFor="full_name">Full name</Label>
-            <Input id="full_name" name="full_name" required maxLength={100} />
+            <Label htmlFor="name">Full name</Label>
+            <Input id="name" name="name" required maxLength={100} />
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
@@ -84,8 +84,8 @@ function Quote() {
             <Input id="phone" name="phone" type="tel" required maxLength={20} />
           </div>
           <div>
-            <Label htmlFor="city">City</Label>
-            <Input id="city" name="city" placeholder="Hyderabad" maxLength={100} />
+            <Label htmlFor="location">Location</Label>
+            <Input id="location" name="location" placeholder="Hyderabad" maxLength={100} />
           </div>
           <div>
             <Label>Service</Label>
@@ -109,8 +109,8 @@ function Quote() {
             <Input id="timeline" name="timeline" placeholder="e.g. Start in 3 months" maxLength={100} />
           </div>
           <div className="md:col-span-2">
-            <Label htmlFor="project_details">Project details</Label>
-            <Textarea id="project_details" name="project_details" required rows={6} maxLength={2000}
+            <Label htmlFor="requirements">Project details</Label>
+            <Textarea id="requirements" name="requirements" required rows={6} maxLength={2000}
               placeholder="Site, scope, design brief, any constraints…" />
           </div>
         </div>
