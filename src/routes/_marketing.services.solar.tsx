@@ -6,30 +6,28 @@ export const Route = createFileRoute("/_marketing/services/solar")({
   head: () => ({
     meta: [
       { title: "Solar — Aditya Constructions" },
-      { name: "description", content: "Grid-tied rooftop and utility-scale solar — design, install and 25-year O&M." },
+      { name: "description", content: "Rooftop solar systems for residential and commercial buildings — design, install and maintain." },
       { property: "og:image", content: img },
     ],
   }),
   component: () => (
     <ServiceDetail
       eyebrow="Service · Solar"
-      title="Solar that pays back, year after year."
+      title="Sustainable energy, professionally installed."
       image={img}
-      intro="MNRE-empanelled EPC for residential, commercial and utility-scale solar. Tier-1 modules, German inverters, and a 25-year performance guarantee monitored from our Hyderabad operations centre."
+      intro="Aditya Constructions supports sustainable development through solar energy installations — rooftop systems for homes and businesses, energy-efficiency consultation and ongoing maintenance."
       features={[
-        "Rooftop solar — 3 kW to 1 MW",
-        "Utility-scale ground-mount up to 50 MW",
-        "Net-metering and subsidy paperwork handled",
-        "Tier-1 modules, Tier-1 inverters",
-        "25-year remote monitoring & O&M",
-        "Battery storage and hybrid systems",
-        "Carbon offset reporting",
+        "Rooftop Solar Systems",
+        "Solar Panel Installation",
+        "Solar Power Solutions for Residential & Commercial Buildings",
+        "Energy Efficiency Consultation",
+        "Solar System Maintenance",
       ]}
       process={[
         { t: "Assess", d: "Shadow analysis and consumption audit." },
         { t: "Engineer", d: "Single-line diagram and structural design." },
         { t: "Install", d: "Commissioned in 2–6 weeks." },
-        { t: "Monitor", d: "Live dashboard and proactive maintenance." },
+        { t: "Maintain", d: "Scheduled servicing and performance monitoring." },
       ]}
     />
   ),

@@ -88,7 +88,7 @@ function Quote() {
           </div>
           <div>
             <Label htmlFor="location">Location</Label>
-            <Input id="location" name="location" placeholder="Hyderabad" maxLength={100} />
+            <Input id="location" name="location" placeholder="Greater Noida" maxLength={100} />
           </div>
           <div>
             <Label>Service</Label>

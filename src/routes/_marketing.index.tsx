@@ -11,10 +11,10 @@ import realestate from "@/assets/service-realestate.jpg";
 export const Route = createFileRoute("/_marketing/")({
   head: () => ({
     meta: [
-      { title: "Aditya Constructions — Building Legacy Spaces in Hyderabad" },
-      { name: "description", content: "Premier construction, interiors, HVAC, solar and real estate company in Hyderabad. 25+ years of trusted craftsmanship across 300+ landmark projects." },
+      { title: "Aditya Constructions — Everything Under One Roof" },
+      { name: "description", content: "Construction, interiors, real estate, HVAC and solar — comprehensive solutions from Greater Noida, delivered with engineering precision and timely execution." },
       { property: "og:title", content: "Aditya Constructions" },
-      { property: "og:description", content: "Premier construction & real estate in Hyderabad — 25+ years, 300+ projects." },
+      { property: "og:description", content: "Everything under one roof — construction, interiors, HVAC, solar and real estate." },
       { property: "og:image", content: hero },
     ],
   }),
@@ -22,18 +22,18 @@ export const Route = createFileRoute("/_marketing/")({
 });
 
 const services = [
-  { to: "/services/construction", icon: Hammer, title: "Construction", img: construction, copy: "Residential, commercial and industrial builds engineered to last." },
-  { to: "/services/interiors", icon: Sparkles, title: "Interiors", img: interiors, copy: "Bespoke interior design and turnkey fit-outs." },
-  { to: "/services/hvac", icon: Wind, title: "HVAC", img: hvac, copy: "Climate engineering for homes, offices and industry." },
-  { to: "/services/solar", icon: Sun, title: "Solar", img: solar, copy: "Grid-tied rooftop and utility-scale solar solutions." },
-  { to: "/services/real-estate", icon: Building2, title: "Real Estate", img: realestate, copy: "Premium plots, villas and apartments across Hyderabad." },
+  { to: "/services/construction", icon: Hammer, title: "Construction", img: construction, copy: "Residential, commercial, industrial and institutional builds, engineered to last." },
+  { to: "/services/interiors", icon: Sparkles, title: "Interiors", img: interiors, copy: "Modular kitchens, wardrobes, false ceilings and turnkey interior fit-outs." },
+  { to: "/services/hvac", icon: Wind, title: "HVAC", img: hvac, copy: "VRV/VRF, central AC, ducting and ventilation — design, install, maintain." },
+  { to: "/services/solar", icon: Sun, title: "Solar", img: solar, copy: "Rooftop solar systems for homes and businesses, plus O&M." },
+  { to: "/services/real-estate", icon: Building2, title: "Real Estate", img: realestate, copy: "Sale, purchase, rental, advisory and investment guidance." },
 ] as const;
 
 const stats = [
-  { v: "25+", l: "Years of craft" },
-  { v: "300+", l: "Projects delivered" },
-  { v: "5M+", l: "Sq.ft built" },
-  { v: "98%", l: "On-time delivery" },
+  { v: "On-time", l: "Delivery commitment" },
+  { v: "Turnkey", l: "End-to-end execution" },
+  { v: "Integrated", l: "All trades, one team" },
+  { v: "Transparent", l: "Costed, time-bound" },
 ];
 
 function Home_() {
@@ -48,15 +48,15 @@ function Home_() {
         <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-24 lg:grid-cols-12 lg:px-8 lg:py-36">
           <div className="lg:col-span-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs uppercase tracking-widest text-gold">
-              <Award className="h-3.5 w-3.5" /> Est. 1998 · Hyderabad
+              <Award className="h-3.5 w-3.5" /> Greater Noida · Everything Under One Roof
             </span>
             <h1 className="mt-6 font-display text-5xl leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-              We build the city's <span className="text-gold">most enduring</span> addresses.
+              We build spaces <span className="text-gold">that last</span>.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-navy-foreground/80">
-              From skyline-defining towers to handcrafted interiors, Aditya Constructions is
-              Hyderabad's trusted multi-discipline builder — construction, interiors, HVAC, solar
-              and real estate, delivered to a single uncompromising standard.
+              Construction, interiors, real estate, HVAC and solar — Aditya Constructions delivers
+              integrated, professionally-managed projects for residential, commercial, industrial
+              and institutional clients.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90">
@@ -124,11 +124,11 @@ function Home_() {
         <div className="mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-2 lg:px-8">
           <div>
             <p className="text-xs uppercase tracking-widest text-gold">Why Aditya</p>
-            <h2 className="mt-3 font-display text-4xl md:text-5xl">A quieter way to build something extraordinary.</h2>
+            <h2 className="mt-3 font-display text-4xl md:text-5xl">Engineering excellence, delivered transparently.</h2>
             <p className="mt-6 text-muted-foreground">
-              We treat every project as a 30-year promise. That means transparent timelines,
-              certified materials, in-house quality control, and a single point of accountability
-              from blueprint to handover.
+              Every project is executed with meticulous attention to detail, adherence to quality
+              standards, and a single point of accountability — from planning and execution to
+              finishing and post-project support.
             </p>
             <div className="mt-8 flex gap-3">
               <Button asChild className="bg-navy text-navy-foreground hover:bg-navy/90">
@@ -141,10 +141,10 @@ function Home_() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { t: "Certified", d: "ISO 9001:2015, RERA registered, NABL tested materials." },
-              { t: "Transparent", d: "Real-time project tracking via your client portal." },
-              { t: "Integrated", d: "Civil, MEP, interiors and finishing under one roof." },
-              { t: "On-time", d: "98% projects delivered on or ahead of schedule." },
+              { t: "Integrated", d: "Civil, interiors, MEP, HVAC and solar — all under one roof." },
+              { t: "Transparent", d: "Costed, time-bound proposals and live project tracking." },
+              { t: "Professional", d: "Engineering-led teams, strong on-site management." },
+              { t: "On-time", d: "Strict adherence to schedule and quality standards." },
             ].map((b) => (
               <div key={b.t} className="rounded-lg border border-border bg-card p-6">
                 <Home className="h-5 w-5 text-gold" />

@@ -10,12 +10,13 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Link } from "@tanstack/react-router";
+import { fetchPrimaryRole, homeForRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — Aditya Constructions" },
-      { name: "description", content: "Sign in or create your client account to track projects, invoices and tickets." },
+      { name: "description", content: "Sign in to the Owner, Staff or Customer portal." },
     ],
   }),
   component: Auth,
@@ -29,13 +30,20 @@ const signUpSchema = signInSchema.extend({
   full_name: z.string().trim().min(2).max(100),
 });
 
+async function routeByRole(navigate: ReturnType<typeof useNavigate>) {
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) return;
+  const role = await fetchPrimaryRole(u.user.id);
+  navigate({ to: homeForRole(role) });
+}
+
 function Auth() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/portal" });
+      if (data.session) routeByRole(navigate);
     });
   }, [navigate]);
 
@@ -49,7 +57,7 @@ function Auth() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back.");
-    navigate({ to: "/portal" });
+    await routeByRole(navigate);
   }
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
@@ -68,7 +76,7 @@ function Auth() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created. Please check your email to confirm.");
+    toast.success("Account created. Please check your email to confirm, then sign in.");
   }
 
   async function handleGoogle() {
@@ -84,9 +92,10 @@ function Auth() {
           <span className="font-display text-lg">Aditya Constructions</span>
         </Link>
         <div>
-          <h1 className="font-display text-4xl leading-tight">Your project, on a single pane of glass.</h1>
+          <h1 className="font-display text-4xl leading-tight">One sign-in. Three portals.</h1>
           <p className="mt-4 max-w-md text-navy-foreground/75">
-            Track milestones, view invoices, raise tickets and chat with our team — anytime.
+            Owner, Staff and Customer accounts all sign in here — you're routed to the right
+            console automatically based on your role.
           </p>
         </div>
         <p className="text-xs text-navy-foreground/50">© Aditya Constructions</p>
@@ -95,7 +104,9 @@ function Auth() {
         <div className="w-full max-w-md">
           <Link to="/" className="mb-8 inline-block text-sm text-muted-foreground lg:hidden">← Back home</Link>
           <h2 className="font-display text-3xl">Welcome</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Sign in to your account or create a new one.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Sign in to your Owner, Staff or Customer account, or create a new customer account.
+          </p>
           <Tabs defaultValue="signin" className="mt-8">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign in</TabsTrigger>

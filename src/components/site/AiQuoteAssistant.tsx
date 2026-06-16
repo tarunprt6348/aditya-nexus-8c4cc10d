@@ -61,7 +61,7 @@ export function AiQuoteAssistant() {
             <SelectItem value="real_estate">Real Estate</SelectItem>
           </SelectContent>
         </Select>
-        <Input placeholder="Location (e.g. Hyderabad)" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <Input placeholder="Location (e.g. Greater Noida)" value={location} onChange={(e) => setLocation(e.target.value)} />
         <Input placeholder="Budget hint (optional)" value={budgetHint} onChange={(e) => setBudgetHint(e.target.value)} />
         <Input placeholder="Timeline (optional)" value={timeline} onChange={(e) => setTimeline(e.target.value)} />
       </div>

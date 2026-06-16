@@ -66,22 +66,22 @@ function Contact() {
             <div className="flex gap-4">
               <MapPin className="h-5 w-5 text-gold" />
               <div>
-                <dt className="font-semibold">Studio</dt>
-                <dd className="text-muted-foreground">Road No. 12, Banjara Hills, Hyderabad 500034</dd>
+                <dt className="font-semibold">Office</dt>
+                <dd className="text-muted-foreground">T-22 & 23, Beta Plaza, Beta-1, Greater Noida, U.P. 201310</dd>
               </div>
             </div>
             <div className="flex gap-4">
               <Phone className="h-5 w-5 text-gold" />
               <div>
                 <dt className="font-semibold">Call</dt>
-                <dd className="text-muted-foreground">+91 90000 00000 · Mon–Sat, 9am–7pm</dd>
+                <dd className="text-muted-foreground">+91 96509 98403 · Mon–Sat, 9am–7pm</dd>
               </div>
             </div>
             <div className="flex gap-4">
               <Mail className="h-5 w-5 text-gold" />
               <div>
                 <dt className="font-semibold">Email</dt>
-                <dd className="text-muted-foreground">hello@adityaconstructions.in</dd>
+                <dd className="text-muted-foreground">adityaconstructionsfirm@gmail.com</dd>
               </div>
             </div>
           </dl>

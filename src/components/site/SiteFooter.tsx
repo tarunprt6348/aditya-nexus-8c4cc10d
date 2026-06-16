@@ -11,8 +11,8 @@ export function SiteFooter() {
             <span className="font-display text-lg">Aditya Constructions</span>
           </div>
           <p className="text-sm text-navy-foreground/70">
-            Building landmark spaces across Hyderabad since 1998 — construction, interiors, HVAC,
-            solar, and real estate under one trusted name.
+            Everything under one roof — construction, interiors, real estate, HVAC and solar,
+            delivered with engineering precision from Greater Noida.
           </p>
         </div>
         <div>
@@ -38,16 +38,16 @@ export function SiteFooter() {
         <div>
           <h4 className="mb-4 font-display text-sm uppercase tracking-widest text-gold">Get in touch</h4>
           <ul className="space-y-3 text-sm text-navy-foreground/80">
-            <li className="flex gap-3"><MapPin className="h-4 w-4 shrink-0 text-gold" /> Banjara Hills, Hyderabad, Telangana 500034</li>
-            <li className="flex gap-3"><Phone className="h-4 w-4 shrink-0 text-gold" /> +91 90000 00000</li>
-            <li className="flex gap-3"><Mail className="h-4 w-4 shrink-0 text-gold" /> hello@adityaconstructions.in</li>
+            <li className="flex gap-3"><MapPin className="h-4 w-4 shrink-0 text-gold" /> T-22 & 23, Beta Plaza, Beta-1, Greater Noida, U.P. 201310</li>
+            <li className="flex gap-3"><Phone className="h-4 w-4 shrink-0 text-gold" /> +91 96509 98403</li>
+            <li className="flex gap-3"><Mail className="h-4 w-4 shrink-0 text-gold" /> adityaconstructionsfirm@gmail.com</li>
           </ul>
         </div>
       </div>
       <div className="border-t border-navy-foreground/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-navy-foreground/60 lg:flex-row lg:px-8">
           <p>© {new Date().getFullYear()} Aditya Constructions. All rights reserved.</p>
-          <p>RERA · ISO 9001:2015 · NABL Certified</p>
+          <p>Everything Under One Roof</p>
         </div>
       </div>
     </footer>

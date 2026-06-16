@@ -396,6 +396,75 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_leaves: {
+        Row: {
+          created_at: string
+          from_date: string
+          id: string
+          leave_type: string
+          reason: string | null
+          staff_user_id: string
+          status: string
+          to_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          from_date: string
+          id?: string
+          leave_type?: string
+          reason?: string | null
+          staff_user_id: string
+          status?: string
+          to_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          from_date?: string
+          id?: string
+          leave_type?: string
+          reason?: string | null
+          staff_user_id?: string
+          status?: string
+          to_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      staff_salaries: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          notes: string | null
+          period_month: string
+          staff_user_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          period_month: string
+          staff_user_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          period_month?: string
+          staff_user_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       staff_tasks: {
         Row: {
           assigned_by: string | null
@@ -593,6 +662,20 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      revoke_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target: string
+        }
+        Returns: undefined
+      }
+      set_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
