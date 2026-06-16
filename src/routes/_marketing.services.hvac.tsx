@@ -6,30 +6,28 @@ export const Route = createFileRoute("/_marketing/services/hvac")({
   head: () => ({
     meta: [
       { title: "HVAC — Aditya Constructions" },
-      { name: "description", content: "VRF, chillers and central HVAC systems — design, install and maintain across Hyderabad." },
+      { name: "description", content: "Heating, ventilation and air conditioning — design, installation and maintenance for comfortable, energy-efficient spaces." },
       { property: "og:image", content: img },
     ],
   }),
   component: () => (
     <ServiceDetail
       eyebrow="Service · HVAC"
-      title="Climate engineering, done quietly."
+      title="Comfortable, energy-efficient environments."
       image={img}
-      intro="Our MEP division designs and commissions HVAC systems for homes, offices, hospitals and industrial plants — energy-modelled, ASHRAE-compliant, and serviced for the life of the building."
+      intro="We provide Heating, Ventilation and Air Conditioning (HVAC) services for residential, commercial and industrial spaces — engineered for performance and serviced for the life of the building."
       features={[
-        "VRF / VRV systems (Daikin, Mitsubishi, LG)",
-        "Centralised chiller plants",
-        "Ducted, cassette and decorative units",
-        "Energy modelling and load calculation",
-        "Indoor air quality and HEPA filtration",
-        "BMS integration",
-        "AMC and 24/7 service contracts",
+        "HVAC System Design & Installation",
+        "VRV / VRF Systems",
+        "Centralized Air Conditioning Systems",
+        "Ducting & Ventilation Works",
+        "HVAC Maintenance & Servicing",
       ]}
       process={[
-        { t: "Audit", d: "Heat-load and space audit with energy modelling." },
+        { t: "Audit", d: "Heat-load and space audit." },
         { t: "Design", d: "Equipment selection, ducting and zoning." },
-        { t: "Install", d: "Phased install with minimal site disruption." },
-        { t: "Service", d: "Commissioning + ongoing AMC." },
+        { t: "Install", d: "Phased install with minimal disruption." },
+        { t: "Service", d: "Commissioning and ongoing maintenance." },
       ]}
     />
   ),
