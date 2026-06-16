@@ -1,33 +1,38 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Users, FileText, Building2, MessageSquare, Star, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Building2, MessageSquare, Star, LogOut, BookOpen, UserCog, CalendarDays, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
-const items = [
+const ownerItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { to: "/admin/leads", label: "Leads", icon: Users },
   { to: "/admin/quotes", label: "Quote Requests", icon: FileText },
   { to: "/admin/projects", label: "Projects", icon: Building2 },
   { to: "/admin/tickets", label: "Tickets", icon: MessageSquare },
   { to: "/admin/testimonials", label: "Testimonials", icon: Star },
+  { to: "/admin/blog", label: "Blog", icon: BookOpen },
+  { to: "/admin/team", label: "Team & Roles", icon: UserCog },
+  { to: "/admin/hr", label: "HR · Salary & Leaves", icon: CalendarDays },
+  { to: "/admin/messages", label: "Messages", icon: Mail },
+] as const;
+
+const staffItems = [
+  { to: "/staff", label: "My Tasks", icon: LayoutDashboard },
+  { to: "/staff/leaves", label: "My Leaves", icon: CalendarDays },
 ] as const;
 
 export function AdminSidebar({ kind = "admin" }: { kind?: "admin" | "staff" }) {
   const navigate = useNavigate();
-  const links = kind === "admin"
-    ? items
-    : [
-        { to: "/staff", label: "My Tasks", icon: LayoutDashboard },
-        { to: "/staff/projects", label: "Projects", icon: Building2 },
-      ] as const;
+  const links = kind === "admin" ? ownerItems : staffItems;
+  const label = kind === "admin" ? "Owner" : "Staff";
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-card md:flex">
       <Link to="/" className="flex items-center gap-2 border-b border-border px-5 py-5">
         <span className="grid h-8 w-8 place-items-center rounded-sm bg-navy text-gold font-display">A</span>
-        <span className="font-display text-sm">Aditya · {kind === "admin" ? "Admin" : "Staff"}</span>
+        <span className="font-display text-sm">Aditya · {label}</span>
       </Link>
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-1 p-3 overflow-y-auto">
         {links.map((it) => {
           const Icon = it.icon;
           return (
