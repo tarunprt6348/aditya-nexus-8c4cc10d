@@ -124,11 +124,11 @@ function Home_() {
         <div className="mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-2 lg:px-8">
           <div>
             <p className="text-xs uppercase tracking-widest text-gold">Why Aditya</p>
-            <h2 className="mt-3 font-display text-4xl md:text-5xl">A quieter way to build something extraordinary.</h2>
+            <h2 className="mt-3 font-display text-4xl md:text-5xl">Engineering excellence, delivered transparently.</h2>
             <p className="mt-6 text-muted-foreground">
-              We treat every project as a 30-year promise. That means transparent timelines,
-              certified materials, in-house quality control, and a single point of accountability
-              from blueprint to handover.
+              Every project is executed with meticulous attention to detail, adherence to quality
+              standards, and a single point of accountability — from planning and execution to
+              finishing and post-project support.
             </p>
             <div className="mt-8 flex gap-3">
               <Button asChild className="bg-navy text-navy-foreground hover:bg-navy/90">
@@ -141,10 +141,10 @@ function Home_() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { t: "Certified", d: "ISO 9001:2015, RERA registered, NABL tested materials." },
-              { t: "Transparent", d: "Real-time project tracking via your client portal." },
-              { t: "Integrated", d: "Civil, MEP, interiors and finishing under one roof." },
-              { t: "On-time", d: "98% projects delivered on or ahead of schedule." },
+              { t: "Integrated", d: "Civil, interiors, MEP, HVAC and solar — all under one roof." },
+              { t: "Transparent", d: "Costed, time-bound proposals and live project tracking." },
+              { t: "Professional", d: "Engineering-led teams, strong on-site management." },
+              { t: "On-time", d: "Strict adherence to schedule and quality standards." },
             ].map((b) => (
               <div key={b.t} className="rounded-lg border border-border bg-card p-6">
                 <Home className="h-5 w-5 text-gold" />
