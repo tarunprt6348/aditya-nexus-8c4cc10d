@@ -92,9 +92,10 @@ function Auth() {
           <span className="font-display text-lg">Aditya Constructions</span>
         </Link>
         <div>
-          <h1 className="font-display text-4xl leading-tight">Your project, on a single pane of glass.</h1>
+          <h1 className="font-display text-4xl leading-tight">One sign-in. Three portals.</h1>
           <p className="mt-4 max-w-md text-navy-foreground/75">
-            Track milestones, view invoices, raise tickets and chat with our team — anytime.
+            Owner, Staff and Customer accounts all sign in here — you're routed to the right
+            console automatically based on your role.
           </p>
         </div>
         <p className="text-xs text-navy-foreground/50">© Aditya Constructions</p>
@@ -103,7 +104,9 @@ function Auth() {
         <div className="w-full max-w-md">
           <Link to="/" className="mb-8 inline-block text-sm text-muted-foreground lg:hidden">← Back home</Link>
           <h2 className="font-display text-3xl">Welcome</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Sign in to your account or create a new one.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Sign in to your Owner, Staff or Customer account, or create a new customer account.
+          </p>
           <Tabs defaultValue="signin" className="mt-8">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign in</TabsTrigger>
