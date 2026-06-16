@@ -11,10 +11,10 @@ import realestate from "@/assets/service-realestate.jpg";
 export const Route = createFileRoute("/_marketing/")({
   head: () => ({
     meta: [
-      { title: "Aditya Constructions — Building Legacy Spaces in Hyderabad" },
-      { name: "description", content: "Premier construction, interiors, HVAC, solar and real estate company in Hyderabad. 25+ years of trusted craftsmanship across 300+ landmark projects." },
+      { title: "Aditya Constructions — Everything Under One Roof" },
+      { name: "description", content: "Construction, interiors, real estate, HVAC and solar — comprehensive solutions from Greater Noida, delivered with engineering precision and timely execution." },
       { property: "og:title", content: "Aditya Constructions" },
-      { property: "og:description", content: "Premier construction & real estate in Hyderabad — 25+ years, 300+ projects." },
+      { property: "og:description", content: "Everything under one roof — construction, interiors, HVAC, solar and real estate." },
       { property: "og:image", content: hero },
     ],
   }),
@@ -22,18 +22,18 @@ export const Route = createFileRoute("/_marketing/")({
 });
 
 const services = [
-  { to: "/services/construction", icon: Hammer, title: "Construction", img: construction, copy: "Residential, commercial and industrial builds engineered to last." },
-  { to: "/services/interiors", icon: Sparkles, title: "Interiors", img: interiors, copy: "Bespoke interior design and turnkey fit-outs." },
-  { to: "/services/hvac", icon: Wind, title: "HVAC", img: hvac, copy: "Climate engineering for homes, offices and industry." },
-  { to: "/services/solar", icon: Sun, title: "Solar", img: solar, copy: "Grid-tied rooftop and utility-scale solar solutions." },
-  { to: "/services/real-estate", icon: Building2, title: "Real Estate", img: realestate, copy: "Premium plots, villas and apartments across Hyderabad." },
+  { to: "/services/construction", icon: Hammer, title: "Construction", img: construction, copy: "Residential, commercial, industrial and institutional builds, engineered to last." },
+  { to: "/services/interiors", icon: Sparkles, title: "Interiors", img: interiors, copy: "Modular kitchens, wardrobes, false ceilings and turnkey interior fit-outs." },
+  { to: "/services/hvac", icon: Wind, title: "HVAC", img: hvac, copy: "VRV/VRF, central AC, ducting and ventilation — design, install, maintain." },
+  { to: "/services/solar", icon: Sun, title: "Solar", img: solar, copy: "Rooftop solar systems for homes and businesses, plus O&M." },
+  { to: "/services/real-estate", icon: Building2, title: "Real Estate", img: realestate, copy: "Sale, purchase, rental, advisory and investment guidance." },
 ] as const;
 
 const stats = [
-  { v: "25+", l: "Years of craft" },
-  { v: "300+", l: "Projects delivered" },
-  { v: "5M+", l: "Sq.ft built" },
-  { v: "98%", l: "On-time delivery" },
+  { v: "On-time", l: "Delivery commitment" },
+  { v: "Turnkey", l: "End-to-end execution" },
+  { v: "Integrated", l: "All trades, one team" },
+  { v: "Transparent", l: "Costed, time-bound" },
 ];
 
 function Home_() {
