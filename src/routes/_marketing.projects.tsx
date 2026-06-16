@@ -18,19 +18,19 @@ export const Route = createFileRoute("/_marketing/projects")({
 });
 
 const projects = [
-  { t: "Aditya Heights", c: "Residential · Banjara Hills", img: hero, y: "2024" },
-  { t: "Cyber Pearl Towers", c: "Commercial · HITEC City", img: construction, y: "2023" },
-  { t: "The Lotus Villa", c: "Interiors · Jubilee Hills", img: interiors, y: "2024" },
-  { t: "Genome Valley Plant", c: "Industrial HVAC · Shamirpet", img: hvac, y: "2023" },
-  { t: "Solar Park 25MW", c: "Utility Solar · Mahbubnagar", img: solar, y: "2022" },
-  { t: "Aditya Greens", c: "Plotted Development · Shankarpally", img: realestate, y: "2024" },
+  { t: "Residential Villa", c: "Construction · Greater Noida", img: hero, y: "2025" },
+  { t: "Commercial Showroom Fit-Out", c: "Interiors · Delhi NCR", img: interiors, y: "2025" },
+  { t: "Society Internal CC Roads", c: "Civil Works · Greater Noida", img: construction, y: "2025" },
+  { t: "Centralised HVAC Installation", c: "HVAC · Noida", img: hvac, y: "2025" },
+  { t: "Rooftop Solar — 50 kW", c: "Solar · Delhi NCR", img: solar, y: "2025" },
+  { t: "Plotted Development Advisory", c: "Real Estate · Greater Noida", img: realestate, y: "2025" },
 ];
 
 function Projects() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
       <p className="text-xs uppercase tracking-widest text-gold">Selected works</p>
-      <h1 className="mt-3 max-w-3xl font-display text-5xl md:text-6xl">Built across Hyderabad. Trusted everywhere.</h1>
+      <h1 className="mt-3 max-w-3xl font-display text-5xl md:text-6xl">A growing portfolio of integrated projects.</h1>
       <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
           <article key={p.t} className="group overflow-hidden rounded-lg border border-border bg-card">
