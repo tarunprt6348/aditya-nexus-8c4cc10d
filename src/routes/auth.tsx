@@ -10,12 +10,13 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Link } from "@tanstack/react-router";
+import { fetchPrimaryRole, homeForRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — Aditya Constructions" },
-      { name: "description", content: "Sign in or create your client account to track projects, invoices and tickets." },
+      { name: "description", content: "Sign in to the Owner, Staff or Customer portal." },
     ],
   }),
   component: Auth,
@@ -29,13 +30,20 @@ const signUpSchema = signInSchema.extend({
   full_name: z.string().trim().min(2).max(100),
 });
 
+async function routeByRole(navigate: ReturnType<typeof useNavigate>) {
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) return;
+  const role = await fetchPrimaryRole(u.user.id);
+  navigate({ to: homeForRole(role) });
+}
+
 function Auth() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/portal" });
+      if (data.session) routeByRole(navigate);
     });
   }, [navigate]);
 
@@ -49,7 +57,7 @@ function Auth() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back.");
-    navigate({ to: "/portal" });
+    await routeByRole(navigate);
   }
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
@@ -68,7 +76,7 @@ function Auth() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created. Please check your email to confirm.");
+    toast.success("Account created. Please check your email to confirm, then sign in.");
   }
 
   async function handleGoogle() {
