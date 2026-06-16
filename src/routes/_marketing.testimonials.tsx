@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_marketing/testimonials")({
   head: () => ({
     meta: [
       { title: "Testimonials — Aditya Constructions" },
-      { name: "description", content: "What clients say after 25 years and 300+ projects." },
+      { name: "description", content: "What our clients say about working with Aditya Constructions." },
     ],
   }),
   component: Testimonials,

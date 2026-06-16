@@ -22,7 +22,7 @@ const items = [
   { to: "/services/construction", icon: Hammer, title: "Construction", img: construction, copy: "Residential, commercial and industrial projects engineered to outlast the city around them." },
   { to: "/services/interiors", icon: Sparkles, title: "Interiors", img: interiors, copy: "Award-winning interior design and turnkey fit-outs for homes, offices and hospitality." },
   { to: "/services/hvac", icon: Wind, title: "HVAC", img: hvac, copy: "VRF, chiller and central HVAC systems, designed, installed and serviced by our in-house MEP team." },
-  { to: "/services/solar", icon: Sun, title: "Solar", img: solar, copy: "Rooftop and utility-scale solar — design, installation and 25-year O&M contracts." },
+  { to: "/services/solar", icon: Sun, title: "Solar", img: solar, copy: "Rooftop solar for residential and commercial — design, install and maintain." },
   { to: "/services/real-estate", icon: Building2, title: "Real Estate", img: realestate, copy: "Premium plots, villas and apartments — RERA-registered, ready to move or pre-launch." },
 ] as const;
 

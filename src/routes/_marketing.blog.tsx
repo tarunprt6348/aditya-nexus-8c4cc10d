@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_marketing/blog")({
 });
 
 const posts = [
-  { t: "Why every Hyderabad rooftop should be solar by 2030", c: "Sustainability · 6 min read", d: "How net-metering, falling panel costs and rising tariffs change the math." },
+  { t: "Why every rooftop should go solar by 2030", c: "Sustainability · 6 min read", d: "How net-metering, falling panel costs and rising tariffs change the math." },
   { t: "The hidden cost of cheap interiors", c: "Design · 4 min read", d: "What a 5-year warranty actually covers — and why most don't." },
   { t: "VRF vs Chiller: a buyer's framework", c: "HVAC · 8 min read", d: "A practical decision tree for offices between 5,000–50,000 sqft." },
   { t: "RERA for first-time buyers", c: "Real Estate · 5 min read", d: "Six checks that prevent 90% of regrets." },

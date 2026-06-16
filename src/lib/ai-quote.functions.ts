@@ -19,7 +19,7 @@ export const estimateQuote = createServerFn({ method: "POST" })
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
     const gateway = createLovableAiGatewayProvider(key);
 
-    const prompt = `You are a senior estimator at Aditya Constructions (India, Hyderabad market). A prospective client describes:
+    const prompt = `You are a senior estimator at Aditya Constructions (India, Delhi NCR / Greater Noida market). A prospective client describes:
 Service: ${data.service_type}
 Location: ${data.location || "(not specified)"}
 Budget hint: ${data.budget_hint || "(not specified)"}
