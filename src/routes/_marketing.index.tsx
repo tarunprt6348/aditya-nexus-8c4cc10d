@@ -48,15 +48,15 @@ function Home_() {
         <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-24 lg:grid-cols-12 lg:px-8 lg:py-36">
           <div className="lg:col-span-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs uppercase tracking-widest text-gold">
-              <Award className="h-3.5 w-3.5" /> Est. 1998 · Hyderabad
+              <Award className="h-3.5 w-3.5" /> Greater Noida · Everything Under One Roof
             </span>
             <h1 className="mt-6 font-display text-5xl leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-              We build the city's <span className="text-gold">most enduring</span> addresses.
+              We build spaces <span className="text-gold">that last</span>.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-navy-foreground/80">
-              From skyline-defining towers to handcrafted interiors, Aditya Constructions is
-              Hyderabad's trusted multi-discipline builder — construction, interiors, HVAC, solar
-              and real estate, delivered to a single uncompromising standard.
+              Construction, interiors, real estate, HVAC and solar — Aditya Constructions delivers
+              integrated, professionally-managed projects for residential, commercial, industrial
+              and institutional clients.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90">
