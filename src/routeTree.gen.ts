@@ -31,11 +31,16 @@ import { Route as MarketingServicesRealEstateRouteImport } from './routes/_marke
 import { Route as MarketingServicesInteriorsRouteImport } from './routes/_marketing.services.interiors'
 import { Route as MarketingServicesHvacRouteImport } from './routes/_marketing.services.hvac'
 import { Route as MarketingServicesConstructionRouteImport } from './routes/_marketing.services.construction'
+import { Route as AuthenticatedStaffLeavesRouteImport } from './routes/_authenticated/staff/leaves'
 import { Route as AuthenticatedAdminTicketsRouteImport } from './routes/_authenticated/admin/tickets'
 import { Route as AuthenticatedAdminTestimonialsRouteImport } from './routes/_authenticated/admin/testimonials'
+import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin/team'
 import { Route as AuthenticatedAdminQuotesRouteImport } from './routes/_authenticated/admin/quotes'
 import { Route as AuthenticatedAdminProjectsRouteImport } from './routes/_authenticated/admin/projects'
+import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin/leads'
+import { Route as AuthenticatedAdminHrRouteImport } from './routes/_authenticated/admin/hr'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -148,6 +153,12 @@ const MarketingServicesConstructionRoute =
     path: '/construction',
     getParentRoute: () => MarketingServicesRoute,
   } as any)
+const AuthenticatedStaffLeavesRoute =
+  AuthenticatedStaffLeavesRouteImport.update({
+    id: '/leaves',
+    path: '/leaves',
+    getParentRoute: () => AuthenticatedStaffRouteRoute,
+  } as any)
 const AuthenticatedAdminTicketsRoute =
   AuthenticatedAdminTicketsRouteImport.update({
     id: '/tickets',
@@ -160,6 +171,11 @@ const AuthenticatedAdminTestimonialsRoute =
     path: '/testimonials',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminQuotesRoute =
   AuthenticatedAdminQuotesRouteImport.update({
     id: '/quotes',
@@ -172,9 +188,25 @@ const AuthenticatedAdminProjectsRoute =
     path: '/projects',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminMessagesRoute =
+  AuthenticatedAdminMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminHrRoute = AuthenticatedAdminHrRouteImport.update({
+  id: '/hr',
+  path: '/hr',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 
@@ -192,11 +224,16 @@ export interface FileRoutesByFullPath {
   '/quote': typeof MarketingQuoteRoute
   '/services': typeof MarketingServicesRouteWithChildren
   '/testimonials': typeof MarketingTestimonialsRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/hr': typeof AuthenticatedAdminHrRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/quotes': typeof AuthenticatedAdminQuotesRoute
+  '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
+  '/staff/leaves': typeof AuthenticatedStaffLeavesRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
   '/services/interiors': typeof MarketingServicesInteriorsRoute
@@ -217,11 +254,16 @@ export interface FileRoutesByTo {
   '/quote': typeof MarketingQuoteRoute
   '/services': typeof MarketingServicesRouteWithChildren
   '/testimonials': typeof MarketingTestimonialsRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/hr': typeof AuthenticatedAdminHrRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/quotes': typeof AuthenticatedAdminQuotesRoute
+  '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
+  '/staff/leaves': typeof AuthenticatedStaffLeavesRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
   '/services/interiors': typeof MarketingServicesInteriorsRoute
@@ -247,11 +289,16 @@ export interface FileRoutesById {
   '/_marketing/services': typeof MarketingServicesRouteWithChildren
   '/_marketing/testimonials': typeof MarketingTestimonialsRoute
   '/_marketing/': typeof MarketingIndexRoute
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/_authenticated/admin/hr': typeof AuthenticatedAdminHrRoute
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/_authenticated/admin/quotes': typeof AuthenticatedAdminQuotesRoute
+  '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
   '/_authenticated/admin/tickets': typeof AuthenticatedAdminTicketsRoute
+  '/_authenticated/staff/leaves': typeof AuthenticatedStaffLeavesRoute
   '/_marketing/services/construction': typeof MarketingServicesConstructionRoute
   '/_marketing/services/hvac': typeof MarketingServicesHvacRoute
   '/_marketing/services/interiors': typeof MarketingServicesInteriorsRoute
@@ -276,11 +323,16 @@ export interface FileRouteTypes {
     | '/quote'
     | '/services'
     | '/testimonials'
+    | '/admin/blog'
+    | '/admin/hr'
     | '/admin/leads'
+    | '/admin/messages'
     | '/admin/projects'
     | '/admin/quotes'
+    | '/admin/team'
     | '/admin/testimonials'
     | '/admin/tickets'
+    | '/staff/leaves'
     | '/services/construction'
     | '/services/hvac'
     | '/services/interiors'
@@ -301,11 +353,16 @@ export interface FileRouteTypes {
     | '/quote'
     | '/services'
     | '/testimonials'
+    | '/admin/blog'
+    | '/admin/hr'
     | '/admin/leads'
+    | '/admin/messages'
     | '/admin/projects'
     | '/admin/quotes'
+    | '/admin/team'
     | '/admin/testimonials'
     | '/admin/tickets'
+    | '/staff/leaves'
     | '/services/construction'
     | '/services/hvac'
     | '/services/interiors'
@@ -330,11 +387,16 @@ export interface FileRouteTypes {
     | '/_marketing/services'
     | '/_marketing/testimonials'
     | '/_marketing/'
+    | '/_authenticated/admin/blog'
+    | '/_authenticated/admin/hr'
     | '/_authenticated/admin/leads'
+    | '/_authenticated/admin/messages'
     | '/_authenticated/admin/projects'
     | '/_authenticated/admin/quotes'
+    | '/_authenticated/admin/team'
     | '/_authenticated/admin/testimonials'
     | '/_authenticated/admin/tickets'
+    | '/_authenticated/staff/leaves'
     | '/_marketing/services/construction'
     | '/_marketing/services/hvac'
     | '/_marketing/services/interiors'
@@ -506,6 +568,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingServicesConstructionRouteImport
       parentRoute: typeof MarketingServicesRoute
     }
+    '/_authenticated/staff/leaves': {
+      id: '/_authenticated/staff/leaves'
+      path: '/leaves'
+      fullPath: '/staff/leaves'
+      preLoaderRoute: typeof AuthenticatedStaffLeavesRouteImport
+      parentRoute: typeof AuthenticatedStaffRouteRoute
+    }
     '/_authenticated/admin/tickets': {
       id: '/_authenticated/admin/tickets'
       path: '/tickets'
@@ -518,6 +587,13 @@ declare module '@tanstack/react-router' {
       path: '/testimonials'
       fullPath: '/admin/testimonials'
       preLoaderRoute: typeof AuthenticatedAdminTestimonialsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/team': {
+      id: '/_authenticated/admin/team'
+      path: '/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AuthenticatedAdminTeamRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/quotes': {
@@ -534,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProjectsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/messages': {
+      id: '/_authenticated/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/leads': {
       id: '/_authenticated/admin/leads'
       path: '/leads'
@@ -541,13 +624,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminLeadsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/hr': {
+      id: '/_authenticated/admin/hr'
+      path: '/hr'
+      fullPath: '/admin/hr'
+      preLoaderRoute: typeof AuthenticatedAdminHrRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
+  AuthenticatedAdminHrRoute: typeof AuthenticatedAdminHrRoute
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
+  AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminProjectsRoute: typeof AuthenticatedAdminProjectsRoute
   AuthenticatedAdminQuotesRoute: typeof AuthenticatedAdminQuotesRoute
+  AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminTestimonialsRoute: typeof AuthenticatedAdminTestimonialsRoute
   AuthenticatedAdminTicketsRoute: typeof AuthenticatedAdminTicketsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -555,9 +656,13 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
+    AuthenticatedAdminHrRoute: AuthenticatedAdminHrRoute,
     AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
+    AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
     AuthenticatedAdminProjectsRoute: AuthenticatedAdminProjectsRoute,
     AuthenticatedAdminQuotesRoute: AuthenticatedAdminQuotesRoute,
+    AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
     AuthenticatedAdminTestimonialsRoute: AuthenticatedAdminTestimonialsRoute,
     AuthenticatedAdminTicketsRoute: AuthenticatedAdminTicketsRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -569,11 +674,13 @@ const AuthenticatedAdminRouteRouteWithChildren =
   )
 
 interface AuthenticatedStaffRouteRouteChildren {
+  AuthenticatedStaffLeavesRoute: typeof AuthenticatedStaffLeavesRoute
   AuthenticatedStaffIndexRoute: typeof AuthenticatedStaffIndexRoute
 }
 
 const AuthenticatedStaffRouteRouteChildren: AuthenticatedStaffRouteRouteChildren =
   {
+    AuthenticatedStaffLeavesRoute: AuthenticatedStaffLeavesRoute,
     AuthenticatedStaffIndexRoute: AuthenticatedStaffIndexRoute,
   }
 
