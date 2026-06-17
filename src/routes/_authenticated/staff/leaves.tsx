@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 export const Route = createFileRoute("/_authenticated/staff/leaves")({
   head: () => ({ meta: [{ title: "My Leaves — Staff" }] }),
-  component: Leaves,
+  component: () => <PermissionGuard module="leaves"><Leaves /></PermissionGuard>,
 });
 
 function Leaves() {

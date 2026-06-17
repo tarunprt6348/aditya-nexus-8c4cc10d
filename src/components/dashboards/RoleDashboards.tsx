@@ -178,7 +178,72 @@ export function OwnerDashboard() {
           <QuickLink to="/admin/tickets" label="Support Tickets" icon={MessageSquare} desc="Customer support queue" />
         </div>
       </div>
+
+      <OwnerDemoCredentials />
     </div>
+  );
+}
+
+const DEMO_ACCOUNTS = [
+  { role: "Owner", email: "owner@adityaconstructions.com", area: "Admin", note: "Full platform + governance" },
+  { role: "Admin", email: "admin@adityaconstructions.com", area: "Admin", note: "Full platform, no governance" },
+  { role: "Managing Director", email: "md@adityaconstructions.com", area: "Admin", note: "Projects, financials, reports" },
+  { role: "Operations Manager", email: "ops@adityaconstructions.com", area: "Admin", note: "Projects, tickets, quotes, leads" },
+  { role: "HR Manager", email: "hr@adityaconstructions.com", area: "Admin", note: "HR, leaves, team management" },
+  { role: "Sales Manager", email: "sales@adityaconstructions.com", area: "Admin", note: "Leads, quotes, pipeline" },
+  { role: "Marketing Manager", email: "mkt@adityaconstructions.com", area: "Admin", note: "Blog, testimonials, leads" },
+  { role: "Accountant", email: "accounts@adityaconstructions.com", area: "Admin", note: "Finance, quotes, reports" },
+  { role: "Sales Executive", email: "salexec@adityaconstructions.com", area: "Staff", note: "My leads + task board" },
+  { role: "Project Manager", email: "pm@adityaconstructions.com", area: "Staff", note: "My projects + tasks" },
+  { role: "Site Engineer", email: "engineer@adityaconstructions.com", area: "Staff", note: "Site tasks + progress" },
+  { role: "Customer Support", email: "support@adityaconstructions.com", area: "Staff", note: "Ticket queue + tasks" },
+  { role: "General Staff", email: "staff@adityaconstructions.com", area: "Staff", note: "Task board + leaves" },
+] as const;
+
+function OwnerDemoCredentials() {
+  return (
+    <Card className="mt-10 border-amber-200 bg-amber-50/60">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-amber-800">
+          <Shield className="h-5 w-5" /> Demo Account Credentials
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="mb-4 text-sm text-amber-700">
+          Default password for all accounts:{" "}
+          <code className="rounded bg-amber-100 px-1.5 py-0.5 font-mono text-xs font-medium">Demo@1234</code>
+          {" "}· Apply{" "}
+          <code className="font-mono text-xs">scripts/seed-demo-accounts.sql</code>{" "}
+          to assign roles after creating each user.
+        </p>
+        <div className="overflow-x-auto rounded-lg border border-amber-200">
+          <table className="w-full text-sm">
+            <thead className="bg-amber-100/80">
+              <tr>
+                <th className="px-3 py-2 text-left font-medium text-amber-800">Role</th>
+                <th className="px-3 py-2 text-left font-medium text-amber-800">Email</th>
+                <th className="px-3 py-2 text-left font-medium text-amber-800">Area</th>
+                <th className="px-3 py-2 text-left font-medium text-amber-800">Access</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DEMO_ACCOUNTS.map((acc) => (
+                <tr key={acc.email} className="border-t border-amber-100 hover:bg-amber-50">
+                  <td className="px-3 py-2 font-medium text-amber-900">{acc.role}</td>
+                  <td className="px-3 py-2 font-mono text-xs text-amber-800">{acc.email}</td>
+                  <td className="px-3 py-2">
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${acc.area === "Admin" ? "bg-navy/10 text-navy" : "bg-blue-100 text-blue-800"}`}>
+                      {acc.area}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 text-amber-700 text-xs">{acc.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

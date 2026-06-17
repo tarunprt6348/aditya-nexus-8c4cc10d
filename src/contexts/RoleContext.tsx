@@ -111,12 +111,12 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     // Load DB permissions for this role
     const overrides = await loadDbPermissions(rr);
 
-    // Check impersonation
+    // Check impersonation — only the owner role may impersonate
     const stored =
       typeof window !== "undefined"
         ? localStorage.getItem(IMPERSONATION_KEY)
         : null;
-    if (stored && (rr === "owner" || rr === "admin")) {
+    if (stored && rr === "owner") {
       const parsed = JSON.parse(stored) as {
         targetId: string;
         targetEmail: string;

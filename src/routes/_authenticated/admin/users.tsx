@@ -489,58 +489,6 @@ function UserManagement() {
         )}
       </div>
 
-      <DemoCredentials />
     </div>
-  );
-}
-
-function DemoCredentials() {
-  const demos = [
-    { role: "Owner", email: "owner@adityaconstructions.com", note: "Full platform access" },
-    { role: "Operations Manager", email: "ops@adityaconstructions.com", note: "Projects, tickets, leads" },
-    { role: "HR Manager", email: "hr@adityaconstructions.com", note: "HR, leaves, team" },
-    { role: "Sales Manager", email: "sales@adityaconstructions.com", note: "Leads, quotes, pipeline" },
-    { role: "Marketing Manager", email: "mkt@adityaconstructions.com", note: "Blog, testimonials, leads" },
-    { role: "Project Manager", email: "pm@adityaconstructions.com", note: "Projects, tasks" },
-    { role: "Site Engineer", email: "engineer@adityaconstructions.com", note: "Projects, tasks" },
-    { role: "Customer Support", email: "support@adityaconstructions.com", note: "Tickets, messages" },
-    { role: "Client", email: "client@adityaconstructions.com", note: "Client portal" },
-  ];
-  return (
-    <Card className="mt-10 border-amber-200 bg-amber-50/50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-amber-800">
-          <Shield className="h-5 w-5" /> Demo Credentials
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4 text-sm text-amber-700">
-          Default password for all demo accounts: <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-xs">Demo@1234</code>
-        </p>
-        <div className="overflow-hidden rounded-lg border border-amber-200">
-          <table className="w-full text-sm">
-            <thead className="bg-amber-100/70">
-              <tr>
-                <th className="px-3 py-2 text-left font-medium text-amber-800">Role</th>
-                <th className="px-3 py-2 text-left font-medium text-amber-800">Email</th>
-                <th className="px-3 py-2 text-left font-medium text-amber-800">Access</th>
-              </tr>
-            </thead>
-            <tbody>
-              {demos.map((acc, i) => (
-                <tr key={i} className="border-t border-amber-100">
-                  <td className="px-3 py-2 font-medium text-amber-900">{acc.role}</td>
-                  <td className="px-3 py-2 font-mono text-xs text-amber-800">{acc.email}</td>
-                  <td className="px-3 py-2 text-amber-700">{acc.note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-3 text-xs text-amber-600">
-          To activate: create each user above → apply the DB migration → set their role via Edit above.
-        </p>
-      </CardContent>
-    </Card>
   );
 }
