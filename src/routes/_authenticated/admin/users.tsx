@@ -7,27 +7,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import {
-  Users, Search, Eye, UserX, UserCheck, Edit2, Plus,
-  Clock, Shield, ChevronDown,
-} from "lucide-react";
+import { Users, Search, Eye, UserX, UserCheck, Edit2, Plus, Shield, Clock, Monitor } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({ meta: [{ title: "User Management — Aditya Constructions" }] }),
+  // Owner-only: admin role cannot access user management
   beforeLoad: async () => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) throw redirect({ to: "/auth" });
     const { data: ok } = await supabase.rpc("has_role", {
-      _user_id: u.user.id, _role: "owner" as AppRole,
+      _user_id: u.user.id,
+      _role: "owner" as AppRole,
     });
-    const { data: ok2 } = await supabase.rpc("has_role", {
-      _user_id: u.user.id, _role: "admin" as AppRole,
-    });
-    if (!ok && !ok2) throw redirect({ to: "/admin" });
+    if (!ok) throw redirect({ to: "/admin" });
   },
   component: UserManagement,
 });
@@ -37,13 +38,23 @@ type UserStatus = "active" | "inactive" | "suspended" | "pending_verification";
 interface UserRecord {
   id: string;
   full_name: string | null;
-  email?: string | null;
+  email: string | null;
   phone: string | null;
   department: string | null;
   status: UserStatus;
   last_seen: string | null;
   created_at: string;
   roles: AppRole[];
+}
+
+interface SessionRecord {
+  id: string;
+  user_id: string;
+  user_agent: string | null;
+  device_type: string | null;
+  created_at: string;
+  last_seen: string;
+  is_active: boolean;
 }
 
 const ALL_ROLES: AppRole[] = [
@@ -60,34 +71,47 @@ const STATUS_COLORS: Record<UserStatus, string> = {
   pending_verification: "bg-yellow-100 text-yellow-800",
 };
 
+const ROLE_PRIORITY: AppRole[] = [
+  "owner","admin","managing_director","operations_manager","hr_manager",
+  "sales_manager","marketing_manager","accountant","sales_executive",
+  "project_manager","site_engineer","customer_support","general_staff","staff","customer",
+];
+
+function primaryRole(u: UserRecord): AppRole {
+  for (const r of ROLE_PRIORITY) {
+    if (u.roles.includes(r)) return r;
+  }
+  return "customer";
+}
+
 function UserManagement() {
   const [users, setUsers] = useState<UserRecord[]>([]);
   const [filtered, setFiltered] = useState<UserRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [editUser, setEditUser] = useState<UserRecord | null>(null);
   const [editRole, setEditRole] = useState<AppRole>("customer");
   const [editStatus, setEditStatus] = useState<UserStatus>("active");
+  const [sessions, setSessions] = useState<SessionRecord[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserRecord | null>(null);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName, setInviteName] = useState("");
   const [inviteRole, setInviteRole] = useState<AppRole>("customer");
   const [invitePassword, setInvitePassword] = useState("");
-  const { realUserId, email: realEmail, startImpersonation } = useRole();
+  const { realUserId, startImpersonation } = useRole();
 
   const load = async () => {
     setLoading(true);
-    // Fetch profiles joined with user_roles
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, full_name, phone, department, status, last_seen, created_at")
+      .select("id, full_name, email, phone, department, status, last_seen, created_at")
       .order("created_at", { ascending: false });
 
     if (!profiles) { setLoading(false); return; }
 
-    // Fetch all user roles
     const { data: allRoles } = await supabase
       .from("user_roles")
       .select("user_id, role");
@@ -98,20 +122,30 @@ function UserManagement() {
       roleMap[r.user_id].push(r.role as AppRole);
     });
 
-    const records: UserRecord[] = profiles.map((p) => ({
-      id: p.id,
-      full_name: p.full_name,
-      phone: p.phone,
-      department: p.department,
-      status: (p.status as UserStatus) ?? "active",
-      last_seen: p.last_seen,
-      created_at: p.created_at,
-      roles: roleMap[p.id] ?? ["customer"],
-    }));
-
-    setUsers(records);
-    setFiltered(records);
+    setUsers(
+      profiles.map((p) => ({
+        id: p.id,
+        full_name: p.full_name,
+        email: (p as { email?: string | null }).email ?? null,
+        phone: p.phone,
+        department: p.department,
+        status: ((p as { status?: string }).status as UserStatus) ?? "active",
+        last_seen: p.last_seen,
+        created_at: p.created_at,
+        roles: roleMap[p.id] ?? ["customer"],
+      })),
+    );
     setLoading(false);
+  };
+
+  const loadSessions = async (userId: string) => {
+    const { data } = await supabase
+      .from("user_sessions" as never)
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(20) as { data: SessionRecord[] | null };
+    setSessions(data ?? []);
   };
 
   useEffect(() => { load(); }, []);
@@ -123,15 +157,12 @@ function UserManagement() {
       result = result.filter(
         (u) =>
           u.full_name?.toLowerCase().includes(q) ||
-          u.id.toLowerCase().includes(q),
+          u.email?.toLowerCase().includes(q) ||
+          u.department?.toLowerCase().includes(q),
       );
     }
-    if (statusFilter !== "all") {
-      result = result.filter((u) => u.status === statusFilter);
-    }
-    if (roleFilter !== "all") {
-      result = result.filter((u) => u.roles.includes(roleFilter as AppRole));
-    }
+    if (statusFilter !== "all") result = result.filter((u) => u.status === statusFilter);
+    if (roleFilter !== "all") result = result.filter((u) => u.roles.includes(roleFilter as AppRole));
     setFiltered(result);
   }, [search, statusFilter, roleFilter, users]);
 
@@ -140,15 +171,18 @@ function UserManagement() {
     const { data: actor } = await supabase.auth.getUser();
     if (!actor.user) return;
 
-    // Update status
-    await supabase
-      .from("profiles")
-      .update({ status: editStatus })
-      .eq("id", editUser.id);
+    // Use secure owner-gated RPCs to mutate role and status
+    const { error: roleErr } = await supabase.rpc("owner_set_user_role" as never, {
+      _target: editUser.id,
+      _role: editRole,
+    } as never);
+    if (roleErr) return toast.error("Failed to update role: " + roleErr.message);
 
-    // Update role: remove old roles, add new
-    await supabase.from("user_roles").delete().eq("user_id", editUser.id);
-    await supabase.from("user_roles").insert({ user_id: editUser.id, role: editRole });
+    const { error: statusErr } = await supabase.rpc("owner_update_user_status" as never, {
+      _target: editUser.id,
+      _status: editStatus,
+    } as never);
+    if (statusErr) return toast.error("Failed to update status: " + statusErr.message);
 
     await logAudit({
       actorId: actor.user.id,
@@ -156,6 +190,7 @@ function UserManagement() {
       action: "user_updated",
       targetType: "user",
       targetId: editUser.id,
+      targetEmail: editUser.email ?? undefined,
       metadata: { newRole: editRole, newStatus: editStatus },
     });
 
@@ -167,7 +202,12 @@ function UserManagement() {
   async function toggleSuspend(user: UserRecord) {
     const { data: actor } = await supabase.auth.getUser();
     const newStatus: UserStatus = user.status === "suspended" ? "active" : "suspended";
-    await supabase.from("profiles").update({ status: newStatus }).eq("id", user.id);
+    const { error } = await supabase.rpc("owner_update_user_status" as never, {
+      _target: user.id,
+      _status: newStatus,
+    } as never);
+    if (error) return toast.error(error.message);
+
     if (actor.user) {
       await logAudit({
         actorId: actor.user.id,
@@ -175,6 +215,7 @@ function UserManagement() {
         action: newStatus === "suspended" ? "user_suspended" : "user_reactivated",
         targetType: "user",
         targetId: user.id,
+        targetEmail: user.email ?? undefined,
       });
     }
     toast.success(`User ${newStatus === "suspended" ? "suspended" : "reactivated"}.`);
@@ -187,7 +228,6 @@ function UserManagement() {
     }
     const { data: actor } = await supabase.auth.getUser();
 
-    // Create auth user via sign up (workaround — no admin API)
     const { data, error } = await supabase.auth.signUp({
       email: inviteEmail,
       password: invitePassword,
@@ -197,9 +237,11 @@ function UserManagement() {
     if (error) return toast.error(error.message);
     if (!data.user) return toast.error("Failed to create user.");
 
-    // Set role
-    await supabase.from("user_roles").delete().eq("user_id", data.user.id);
-    await supabase.from("user_roles").insert({ user_id: data.user.id, role: inviteRole });
+    // Assign role via secure RPC
+    await supabase.rpc("owner_set_user_role" as never, {
+      _target: data.user.id,
+      _role: inviteRole,
+    } as never);
 
     if (actor.user) {
       await logAudit({
@@ -213,7 +255,7 @@ function UserManagement() {
       });
     }
 
-    toast.success(`User ${inviteName} created as ${ROLE_LABELS[inviteRole]}.`);
+    toast.success(`${inviteName} created as ${ROLE_LABELS[inviteRole]}.`);
     setInviteOpen(false);
     setInviteEmail(""); setInviteName(""); setInvitePassword("");
     load();
@@ -222,23 +264,16 @@ function UserManagement() {
   async function handleImpersonate(user: UserRecord) {
     await startImpersonation(
       user.id,
-      `${user.full_name ?? user.id}@impersonated`,
+      user.email ?? `${user.full_name ?? user.id}`,
       user.full_name ?? user.id,
     );
     toast.success(`Now viewing as ${user.full_name ?? "user"}`);
   }
 
-  const primaryRole = (u: UserRecord): AppRole => {
-    const priority: AppRole[] = [
-      "owner","admin","managing_director","operations_manager","hr_manager",
-      "sales_manager","marketing_manager","accountant","sales_executive",
-      "project_manager","site_engineer","customer_support","general_staff","staff","customer",
-    ];
-    for (const r of priority) {
-      if (u.roles.includes(r)) return r;
-    }
-    return "customer";
-  };
+  async function openSessionHistory(user: UserRecord) {
+    setSelectedUser(user);
+    await loadSessions(user.id);
+  }
 
   return (
     <div>
@@ -260,32 +295,19 @@ function UserManagement() {
               <DialogTitle>Create New User</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div>
-                <Label>Full Name</Label>
-                <Input value={inviteName} onChange={(e) => setInviteName(e.target.value)} />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} />
-              </div>
-              <div>
-                <Label>Temporary Password</Label>
-                <Input type="password" value={invitePassword} onChange={(e) => setInvitePassword(e.target.value)} minLength={6} />
-              </div>
+              <div><Label>Full Name</Label><Input value={inviteName} onChange={(e) => setInviteName(e.target.value)} /></div>
+              <div><Label>Email</Label><Input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} /></div>
+              <div><Label>Temporary Password</Label><Input type="password" value={invitePassword} onChange={(e) => setInvitePassword(e.target.value)} minLength={6} /></div>
               <div>
                 <Label>Role</Label>
                 <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as AppRole)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {ALL_ROLES.map((r) => (
-                      <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>
-                    ))}
+                    {ALL_ROLES.map((r) => (<SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>))}
                   </SelectContent>
                 </Select>
               </div>
-              <Button className="w-full bg-navy text-white" onClick={createUser}>
-                Create User
-              </Button>
+              <Button className="w-full bg-navy text-white" onClick={createUser}>Create User</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -295,12 +317,7 @@ function UserManagement() {
       <div className="mt-6 flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by name…"
-            className="pl-9"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <Input placeholder="Search by name or email…" className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
@@ -316,9 +333,7 @@ function UserManagement() {
           <SelectTrigger className="w-44"><SelectValue placeholder="Role" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All roles</SelectItem>
-            {ALL_ROLES.map((r) => (
-              <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>
-            ))}
+            {ALL_ROLES.map((r) => (<SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>))}
           </SelectContent>
         </Select>
       </div>
@@ -334,6 +349,7 @@ function UserManagement() {
             <thead className="border-b border-border bg-muted/50">
               <tr>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Email</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Role</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Last Seen</th>
@@ -341,22 +357,19 @@ function UserManagement() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((u, i) => {
+              {filtered.map((u) => {
                 const pr = primaryRole(u);
                 const isSelf = u.id === realUserId;
                 return (
                   <tr key={u.id} className={`border-b border-border last:border-0 ${isSelf ? "bg-gold/5" : ""}`}>
                     <td className="px-4 py-3">
                       <div className="font-medium">{u.full_name ?? "—"}</div>
-                      {u.department && (
-                        <div className="text-xs text-muted-foreground">{u.department}</div>
-                      )}
+                      {u.department && <div className="text-xs text-muted-foreground">{u.department}</div>}
                       {isSelf && <Badge variant="outline" className="mt-1 text-[10px]">You</Badge>}
                     </td>
+                    <td className="px-4 py-3 text-muted-foreground">{u.email ?? "—"}</td>
                     <td className="px-4 py-3">
-                      <Badge variant="outline" className="text-xs">
-                        {ROLE_LABELS[pr]}
-                      </Badge>
+                      <Badge variant="outline" className="text-xs">{ROLE_LABELS[pr]}</Badge>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[u.status]}`}>
@@ -364,40 +377,26 @@ function UserManagement() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
-                      {u.last_seen
-                        ? new Date(u.last_seen).toLocaleDateString()
-                        : "Never"}
+                      {u.last_seen ? new Date(u.last_seen).toLocaleDateString() : "Never"}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        {/* Edit */}
+                      <div className="flex flex-wrap gap-1.5">
+                        {/* Edit dialog */}
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setEditUser(u);
-                                setEditRole(pr);
-                                setEditStatus(u.status);
-                              }}
-                            >
+                            <Button size="sm" variant="outline" onClick={() => { setEditUser(u); setEditRole(pr); setEditStatus(u.status); }}>
                               <Edit2 className="h-3 w-3" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Edit {editUser?.full_name ?? "User"}</DialogTitle>
-                            </DialogHeader>
+                            <DialogHeader><DialogTitle>Edit {editUser?.full_name ?? "User"}</DialogTitle></DialogHeader>
                             <div className="space-y-4">
                               <div>
                                 <Label>Role</Label>
                                 <Select value={editRole} onValueChange={(v) => setEditRole(v as AppRole)}>
                                   <SelectTrigger><SelectValue /></SelectTrigger>
                                   <SelectContent>
-                                    {ALL_ROLES.map((r) => (
-                                      <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>
-                                    ))}
+                                    {ALL_ROLES.map((r) => (<SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>))}
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -413,41 +412,73 @@ function UserManagement() {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <Button className="w-full bg-navy text-white" onClick={saveEdit}>
-                                Save Changes
-                              </Button>
+                              <Button className="w-full bg-navy text-white" onClick={saveEdit}>Save Changes</Button>
                             </div>
                           </DialogContent>
                         </Dialog>
 
-                        {/* Suspend/Reactivate */}
+                        {/* Suspend/reactivate */}
                         {!isSelf && (
                           <Button
                             size="sm"
-                            variant={u.status === "suspended" ? "outline" : "ghost"}
+                            variant="ghost"
                             className={u.status === "suspended" ? "text-green-600" : "text-red-600"}
                             onClick={() => toggleSuspend(u)}
+                            title={u.status === "suspended" ? "Reactivate" : "Suspend"}
                           >
-                            {u.status === "suspended" ? (
-                              <UserCheck className="h-3 w-3" />
-                            ) : (
-                              <UserX className="h-3 w-3" />
-                            )}
+                            {u.status === "suspended" ? <UserCheck className="h-3 w-3" /> : <UserX className="h-3 w-3" />}
                           </Button>
                         )}
 
-                        {/* Impersonate */}
+                        {/* Impersonate (owner can't impersonate another owner) */}
                         {!isSelf && pr !== "owner" && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-amber-600"
-                            onClick={() => handleImpersonate(u)}
-                            title="View as this user"
-                          >
+                          <Button size="sm" variant="ghost" className="text-amber-600" onClick={() => handleImpersonate(u)} title="View as this user">
                             <Eye className="h-3 w-3" />
                           </Button>
                         )}
+
+                        {/* Session history */}
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="ghost" className="text-blue-600" onClick={() => openSessionHistory(u)} title="Session history">
+                              <Clock className="h-3 w-3" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-lg">
+                            <DialogHeader>
+                              <DialogTitle>Session History — {selectedUser?.full_name ?? "User"}</DialogTitle>
+                            </DialogHeader>
+                            <div className="max-h-80 overflow-y-auto">
+                              {sessions.length === 0 ? (
+                                <p className="py-4 text-center text-sm text-muted-foreground">No sessions recorded yet.</p>
+                              ) : (
+                                <table className="w-full text-sm">
+                                  <thead className="border-b border-border">
+                                    <tr>
+                                      <th className="pb-2 text-left text-xs font-medium text-muted-foreground">When</th>
+                                      <th className="pb-2 text-left text-xs font-medium text-muted-foreground">Device</th>
+                                      <th className="pb-2 text-left text-xs font-medium text-muted-foreground">Last Seen</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {sessions.map((s) => (
+                                      <tr key={s.id} className="border-b border-border last:border-0">
+                                        <td className="py-2 text-xs text-muted-foreground">{new Date(s.created_at).toLocaleString()}</td>
+                                        <td className="py-2">
+                                          <span className="flex items-center gap-1 text-xs">
+                                            <Monitor className="h-3 w-3" />
+                                            {s.device_type ?? "unknown"}
+                                          </span>
+                                        </td>
+                                        <td className="py-2 text-xs text-muted-foreground">{new Date(s.last_seen).toLocaleString()}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </td>
                   </tr>
@@ -458,30 +489,28 @@ function UserManagement() {
         )}
       </div>
 
-      {/* Demo Credentials Card */}
       <DemoCredentials />
     </div>
   );
 }
 
 function DemoCredentials() {
-  const demoAccounts = [
+  const demos = [
     { role: "Owner", email: "owner@adityaconstructions.com", note: "Full platform access" },
     { role: "Operations Manager", email: "ops@adityaconstructions.com", note: "Projects, tickets, leads" },
     { role: "HR Manager", email: "hr@adityaconstructions.com", note: "HR, leaves, team" },
     { role: "Sales Manager", email: "sales@adityaconstructions.com", note: "Leads, quotes, pipeline" },
-    { role: "Project Manager", email: "pm@adityaconstructions.com", note: "Projects, tasks, site reports" },
+    { role: "Marketing Manager", email: "mkt@adityaconstructions.com", note: "Blog, testimonials, leads" },
+    { role: "Project Manager", email: "pm@adityaconstructions.com", note: "Projects, tasks" },
     { role: "Site Engineer", email: "engineer@adityaconstructions.com", note: "Projects, tasks" },
     { role: "Customer Support", email: "support@adityaconstructions.com", note: "Tickets, messages" },
-    { role: "Client / Customer", email: "client@adityaconstructions.com", note: "Client portal access" },
+    { role: "Client", email: "client@adityaconstructions.com", note: "Client portal" },
   ];
-
   return (
     <Card className="mt-10 border-amber-200 bg-amber-50/50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-amber-800">
-          <Shield className="h-5 w-5" />
-          Demo Credentials (Development Reference)
+          <Shield className="h-5 w-5" /> Demo Credentials
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -498,7 +527,7 @@ function DemoCredentials() {
               </tr>
             </thead>
             <tbody>
-              {demoAccounts.map((acc, i) => (
+              {demos.map((acc, i) => (
                 <tr key={i} className="border-t border-amber-100">
                   <td className="px-3 py-2 font-medium text-amber-900">{acc.role}</td>
                   <td className="px-3 py-2 font-mono text-xs text-amber-800">{acc.email}</td>
@@ -509,7 +538,7 @@ function DemoCredentials() {
           </table>
         </div>
         <p className="mt-3 text-xs text-amber-600">
-          To activate these accounts: create each user above with the matching email and password, then set the correct role.
+          To activate: create each user above → apply the DB migration → set their role via Edit above.
         </p>
       </CardContent>
     </Card>

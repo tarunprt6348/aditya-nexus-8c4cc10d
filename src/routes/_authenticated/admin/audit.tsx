@@ -3,21 +3,21 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Download, ClipboardList, Eye, UserX, UserCheck, Edit2, Plus, LogIn } from "lucide-react";
+import { Search, Download, ClipboardList, Eye, UserX, UserCheck, Edit2, Plus } from "lucide-react";
 import type { AppRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/_authenticated/admin/audit")({
   head: () => ({ meta: [{ title: "Audit Log — Aditya Constructions" }] }),
+  // Owner-only governance page
   beforeLoad: async () => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) throw redirect({ to: "/auth" });
-    const [{ data: ok }, { data: ok2 }] = await Promise.all([
-      supabase.rpc("has_role", { _user_id: u.user.id, _role: "owner" as AppRole }),
-      supabase.rpc("has_role", { _user_id: u.user.id, _role: "admin" as AppRole }),
-    ]);
-    if (!ok && !ok2) throw redirect({ to: "/admin" });
+    const { data: ok } = await supabase.rpc("has_role", {
+      _user_id: u.user.id,
+      _role: "owner" as AppRole,
+    });
+    if (!ok) throw redirect({ to: "/admin" });
   },
   component: AuditLog,
 });
@@ -78,9 +78,7 @@ function AuditLog() {
           e.action.includes(q),
       );
     }
-    if (actionFilter !== "all") {
-      result = result.filter((e) => e.action === actionFilter);
-    }
+    if (actionFilter !== "all") result = result.filter((e) => e.action === actionFilter);
     setFiltered(result);
     setPage(0);
   }, [search, actionFilter, entries]);
@@ -89,11 +87,12 @@ function AuditLog() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
 
   function exportCSV() {
-    const header = "id,actor_email,action,target_email,target_type,created_at\n";
+    const header = "id,actor_email,action,target_email,target_type,metadata,created_at\n";
     const rows = filtered
       .map((e) =>
-        [e.id, e.actor_email, e.action, e.target_email, e.target_type, e.created_at]
-          .map((v) => `"${v ?? ""}"`)
+        [e.id, e.actor_email, e.action, e.target_email, e.target_type,
+          JSON.stringify(e.metadata ?? {}), e.created_at]
+          .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
           .join(","),
       )
       .join("\n");
@@ -101,8 +100,9 @@ function AuditLog() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "audit-log.csv";
+    a.download = `audit-log-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
+    URL.revokeObjectURL(url);
   }
 
   const uniqueActions = [...new Set(entries.map((e) => e.action))];
@@ -132,15 +132,11 @@ function AuditLog() {
           />
         </div>
         <Select value={actionFilter} onValueChange={setActionFilter}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Filter action" />
-          </SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Filter action" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All actions</SelectItem>
             {uniqueActions.map((a) => (
-              <SelectItem key={a} value={a}>
-                {ACTION_META[a]?.label ?? a}
-              </SelectItem>
+              <SelectItem key={a} value={a}>{ACTION_META[a]?.label ?? a}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -150,7 +146,10 @@ function AuditLog() {
         {loading ? (
           <div className="p-8 text-center text-muted-foreground">Loading audit log…</div>
         ) : paginated.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">No audit entries found.</div>
+          <div className="p-8 text-center text-muted-foreground">
+            No audit entries yet.{" "}
+            <span className="text-xs">Actions like role changes, suspensions, and impersonations appear here.</span>
+          </div>
         ) : (
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-muted/50">
@@ -177,16 +176,14 @@ function AuditLog() {
                         {meta?.label ?? e.action}
                       </span>
                     </td>
+                    <td className="px-4 py-3 text-muted-foreground">{e.actor_email ?? "—"}</td>
                     <td className="px-4 py-3 text-muted-foreground">
-                      {e.actor_email ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {e.target_email ?? e.target_id?.slice(0, 8) ?? "—"}
+                      {e.target_email ?? (e.target_id ? e.target_id.slice(0, 8) + "…" : "—")}
                     </td>
                     <td className="px-4 py-3">
                       {e.metadata && Object.keys(e.metadata).length > 0 && (
                         <code className="text-xs text-muted-foreground">
-                          {JSON.stringify(e.metadata).slice(0, 60)}
+                          {JSON.stringify(e.metadata).slice(0, 80)}
                         </code>
                       )}
                     </td>
@@ -202,8 +199,8 @@ function AuditLog() {
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <span>Page {page + 1} of {totalPages}</span>
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" disabled={page === 0} onClick={() => setPage(p => p - 1)}>Previous</Button>
-            <Button size="sm" variant="outline" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}>Next</Button>
+            <Button size="sm" variant="outline" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>Previous</Button>
+            <Button size="sm" variant="outline" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>Next</Button>
           </div>
         </div>
       )}

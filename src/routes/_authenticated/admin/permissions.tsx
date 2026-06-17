@@ -6,19 +6,19 @@ import { type Module } from "@/lib/permissions";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Check, X, Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/permissions")({
   head: () => ({ meta: [{ title: "Permission Matrix — Aditya Constructions" }] }),
+  // Owner-only governance: admin role cannot change permission matrix
   beforeLoad: async () => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) throw redirect({ to: "/auth" });
-    const [{ data: ok }, { data: ok2 }] = await Promise.all([
-      supabase.rpc("has_role", { _user_id: u.user.id, _role: "owner" as AppRole }),
-      supabase.rpc("has_role", { _user_id: u.user.id, _role: "admin" as AppRole }),
-    ]);
-    if (!ok && !ok2) throw redirect({ to: "/admin" });
+    const { data: ok } = await supabase.rpc("has_role", {
+      _user_id: u.user.id,
+      _role: "owner" as AppRole,
+    });
+    if (!ok) throw redirect({ to: "/admin" });
   },
   component: PermissionMatrix,
 });
@@ -34,15 +34,13 @@ const ALL_MODULES: { id: Module; label: string }[] = [
   { id: "team", label: "Team & Roles" },
   { id: "testimonials", label: "Testimonials" },
   { id: "messages", label: "Messages" },
-  { id: "users", label: "User Management" },
-  { id: "audit", label: "Audit Log" },
-  { id: "permissions", label: "Permissions" },
   { id: "tasks", label: "Tasks" },
   { id: "leaves", label: "Leaves" },
   { id: "reports", label: "Reports" },
   { id: "finance", label: "Finance" },
 ];
 
+// Configurable roles (owner/admin always have full access — not configurable)
 const CONFIGURABLE_ROLES: AppRole[] = [
   "managing_director","operations_manager","hr_manager","sales_manager",
   "marketing_manager","accountant","sales_executive","project_manager",
@@ -51,9 +49,18 @@ const CONFIGURABLE_ROLES: AppRole[] = [
 
 type PermMatrix = Record<AppRole, Record<Module, boolean>>;
 
+function buildEmptyMatrix(): PermMatrix {
+  const m: PermMatrix = {} as PermMatrix;
+  CONFIGURABLE_ROLES.forEach((role) => {
+    m[role] = {} as Record<Module, boolean>;
+    ALL_MODULES.forEach(({ id }) => { m[role][id] = false; });
+  });
+  return m;
+}
+
 function PermissionMatrix() {
-  const [matrix, setMatrix] = useState<PermMatrix>({} as PermMatrix);
-  const [original, setOriginal] = useState<PermMatrix>({} as PermMatrix);
+  const [matrix, setMatrix] = useState<PermMatrix>(buildEmptyMatrix);
+  const [original, setOriginal] = useState<PermMatrix>(buildEmptyMatrix);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -62,16 +69,14 @@ function PermissionMatrix() {
 
   async function load() {
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("role_permissions" as never)
-      .select("role, module, allowed") as { data: Array<{ role: AppRole; module: Module; allowed: boolean }> | null };
+      .select("role, module, allowed") as {
+      data: Array<{ role: AppRole; module: Module; allowed: boolean }> | null;
+      error: unknown;
+    };
 
-    const m: PermMatrix = {} as PermMatrix;
-    CONFIGURABLE_ROLES.forEach((role) => {
-      m[role] = {} as Record<Module, boolean>;
-      ALL_MODULES.forEach(({ id }) => { m[role][id] = false; });
-    });
-
+    const m = buildEmptyMatrix();
     (data ?? []).forEach(({ role, module, allowed }) => {
       if (m[role]) m[role][module] = allowed;
     });
@@ -95,19 +100,16 @@ function PermissionMatrix() {
     setSaving(true);
     const { data: u } = await supabase.auth.getUser();
 
-    const upserts: Array<{ role: string; module: string; allowed: boolean }> = [];
-    CONFIGURABLE_ROLES.forEach((role) => {
-      ALL_MODULES.forEach(({ id }) => {
-        upserts.push({ role, module: id, allowed: matrix[role][id] });
-      });
-    });
+    const upserts = CONFIGURABLE_ROLES.flatMap((role) =>
+      ALL_MODULES.map(({ id }) => ({ role, module: id, allowed: matrix[role][id] })),
+    );
 
     const { error } = await supabase
       .from("role_permissions" as never)
       .upsert(upserts as never, { onConflict: "role,module" });
 
     if (error) {
-      toast.error("Failed to save permissions.");
+      toast.error("Failed to save: " + (error as { message: string }).message);
       setSaving(false);
       return;
     }
@@ -117,11 +119,11 @@ function PermissionMatrix() {
         actorId: u.user.id,
         actorEmail: u.user.email ?? "",
         action: "permission_updated",
-        metadata: { roles: CONFIGURABLE_ROLES },
+        metadata: { affected_roles: CONFIGURABLE_ROLES },
       });
     }
 
-    toast.success("Permission matrix saved.");
+    toast.success("Permission matrix saved. Changes take effect on next login.");
     setOriginal(JSON.parse(JSON.stringify(matrix)));
     setDirty(false);
     setSaving(false);
@@ -146,7 +148,8 @@ function PermissionMatrix() {
         <div>
           <h1 className="font-display text-3xl">Permission Matrix</h1>
           <p className="mt-1 text-muted-foreground">
-            Configure which modules each role can access. Owner and Admin always have full access.
+            Configure module access per role. Owner and Admin have full access and are not configurable.
+            Changes take effect on next login.
           </p>
         </div>
         <div className="flex gap-2">
@@ -170,11 +173,11 @@ function PermissionMatrix() {
         <table className="text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/50">
-              <th className="sticky left-0 z-10 bg-muted/50 px-4 py-3 text-left font-medium text-muted-foreground min-w-36">
+              <th className="sticky left-0 z-10 bg-muted/50 min-w-36 px-4 py-3 text-left font-medium text-muted-foreground">
                 Module
               </th>
               {CONFIGURABLE_ROLES.map((role) => (
-                <th key={role} className="px-3 py-3 text-center font-medium text-muted-foreground min-w-28">
+                <th key={role} className="min-w-28 px-3 py-3 text-center font-medium text-muted-foreground">
                   <div className="text-[11px] leading-tight">{ROLE_LABELS[role]}</div>
                 </th>
               ))}
@@ -190,7 +193,7 @@ function PermissionMatrix() {
                   const allowed = matrix[role]?.[id] ?? false;
                   return (
                     <td key={role} className="px-3 py-2.5 text-center">
-                      <div className="flex items-center justify-center">
+                      <div className="flex justify-center">
                         <Switch
                           checked={allowed}
                           onCheckedChange={() => toggle(role, id)}
@@ -206,11 +209,11 @@ function PermissionMatrix() {
         </table>
       </div>
 
-      {/* Legend */}
-      <div className="mt-4 flex flex-wrap gap-4 text-xs text-muted-foreground">
-        <span>Owner & Admin: full access (not configurable)</span>
-        <span>Toggle switches to grant or revoke module access per role</span>
-        <span className="text-amber-600 font-medium">Changes take effect on next login</span>
+      <div className="mt-4 text-xs text-muted-foreground space-y-1">
+        <p>Owner &amp; Admin: always full access — not shown here.</p>
+        <p className="text-amber-600 font-medium">
+          Permission changes are stored in the database and loaded fresh on each login.
+        </p>
       </div>
     </div>
   );
