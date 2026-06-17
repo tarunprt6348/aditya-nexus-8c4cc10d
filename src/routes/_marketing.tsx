@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { ChatAssistant } from "@/components/site/ChatAssistant";
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/_marketing")({
@@ -19,6 +20,7 @@ function MarketingLayout() {
         <Outlet />
       </main>
       <SiteFooter />
+      <ChatAssistant />
       <Toaster richColors position="top-center" />
     </div>
   );

@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Link } from "@tanstack/react-router";
 import { fetchPrimaryRole, homeForRole } from "@/lib/roles";
+import { Logo } from "@/components/site/Logo";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -87,8 +88,8 @@ function Auth() {
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       <div className="relative hidden bg-navy text-navy-foreground lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-sm bg-gold text-navy font-display text-lg">A</span>
+        <Link to="/" className="flex items-center gap-3">
+          <Logo className="h-12 w-auto" />
           <span className="font-display text-lg">Aditya Constructions</span>
         </Link>
         <div>
