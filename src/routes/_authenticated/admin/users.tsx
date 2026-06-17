@@ -226,17 +226,14 @@ function UserManagement() {
 
   async function createUser() {
     if (!inviteEmail || !inviteName) return toast.error("Fill in all fields.");
-    const { data: actor } = await supabase.auth.getUser();
-    if (!actor.user) return;
     setInviting(true);
     try {
+      // actorId/actorEmail are NOT sent — server derives them from the JWT
       const result = await inviteUser({
         data: {
           email: inviteEmail,
           name: inviteName,
           role: inviteRole,
-          actorId: actor.user.id,
-          actorEmail: actor.user.email ?? "",
         },
       });
       setInviteLink(result.inviteLink);
@@ -252,14 +249,12 @@ function UserManagement() {
   }
 
   async function handlePasswordReset(user: UserRecord) {
-    const { data: actor } = await supabase.auth.getUser();
-    if (!actor.user || !user.email) return;
+    if (!user.email) return;
     try {
+      // actor is verified server-side from JWT; only targetEmail/targetId needed
       const result = await sendPasswordReset({
         data: {
           targetEmail: user.email,
-          actorId: actor.user.id,
-          actorEmail: actor.user.email ?? "",
           targetId: user.id,
         },
       });
