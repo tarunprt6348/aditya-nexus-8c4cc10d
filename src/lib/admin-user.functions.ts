@@ -21,7 +21,7 @@ const InviteSchema = z.object({
  * magic-link token they can copy if SMTP isn't wired up yet.
  */
 export const inviteUser = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => InviteSchema.parse(d))
+  .validator((d: unknown) => InviteSchema.parse(d))
   .handler(async ({ data }) => {
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -92,7 +92,7 @@ const ResetSchema = z.object({
  * and records an audit event.
  */
 export const sendPasswordReset = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => ResetSchema.parse(d))
+  .validator((d: unknown) => ResetSchema.parse(d))
   .handler(async ({ data }) => {
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
