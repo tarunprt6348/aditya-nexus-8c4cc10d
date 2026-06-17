@@ -1,13 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { Logo } from "@/components/site/Logo";
 
 export function SiteFooter() {
   return (
     <footer className="bg-navy text-navy-foreground">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 lg:grid-cols-4 lg:px-8">
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-sm bg-gold text-navy font-display text-lg">A</span>
+          <div className="flex items-center gap-3">
+            <Logo className="h-12 w-auto" />
             <span className="font-display text-lg">Aditya Constructions</span>
           </div>
           <p className="text-sm text-navy-foreground/70">

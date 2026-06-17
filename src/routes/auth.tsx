@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Link } from "@tanstack/react-router";
 import { fetchPrimaryRole, homeForRole } from "@/lib/roles";
+import { Logo } from "@/components/site/Logo";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
