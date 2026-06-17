@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useRole } from "@/contexts/RoleContext";
 import type { Module } from "@/lib/permissions";
+import { homeForRole } from "@/lib/roles";
 import { ShieldX } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ export function PermissionGuard({ module, children }: PermissionGuardProps) {
   }
 
   if (!can(module)) {
+    const home = homeForRole(role);
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-red-50">
@@ -33,7 +35,7 @@ export function PermissionGuard({ module, children }: PermissionGuardProps) {
           to access this module. Contact the owner to request access.
         </p>
         <Button variant="outline" className="mt-6" asChild>
-          <Link to="/admin">Go to Dashboard</Link>
+          <Link to={home}>Go to Dashboard</Link>
         </Button>
       </div>
     );

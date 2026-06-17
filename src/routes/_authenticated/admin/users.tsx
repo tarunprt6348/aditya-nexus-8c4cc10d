@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useRole } from "@/contexts/RoleContext";
 import { ROLE_LABELS, logAudit, type AppRole } from "@/lib/roles";
+import { inviteUser, sendPasswordReset } from "@/lib/admin-user.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Users, Search, Eye, UserX, UserCheck, Edit2, Info, Clock, Monitor, ExternalLink } from "lucide-react";
+import { Users, Search, Eye, UserX, UserCheck, Edit2, Plus, KeyRound, Clock, Monitor, Copy } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({ meta: [{ title: "User Management — Aditya Constructions" }] }),
@@ -96,6 +97,12 @@ function UserManagement() {
   const [editStatus, setEditStatus] = useState<UserStatus>("active");
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserRecord | null>(null);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteName, setInviteName] = useState("");
+  const [inviteRole, setInviteRole] = useState<AppRole>("staff");
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [inviting, setInviting] = useState(false);
   const { realUserId, startImpersonation } = useRole();
 
   const load = async () => {
@@ -217,6 +224,56 @@ function UserManagement() {
     load();
   }
 
+  async function createUser() {
+    if (!inviteEmail || !inviteName) return toast.error("Fill in all fields.");
+    const { data: actor } = await supabase.auth.getUser();
+    if (!actor.user) return;
+    setInviting(true);
+    try {
+      const result = await inviteUser({
+        data: {
+          email: inviteEmail,
+          name: inviteName,
+          role: inviteRole,
+          actorId: actor.user.id,
+          actorEmail: actor.user.email ?? "",
+        },
+      });
+      setInviteLink(result.inviteLink);
+      toast.success(`${inviteName} created as ${ROLE_LABELS[inviteRole]}.`);
+      setInviteEmail("");
+      setInviteName("");
+      load();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to create user.");
+    } finally {
+      setInviting(false);
+    }
+  }
+
+  async function handlePasswordReset(user: UserRecord) {
+    const { data: actor } = await supabase.auth.getUser();
+    if (!actor.user || !user.email) return;
+    try {
+      const result = await sendPasswordReset({
+        data: {
+          targetEmail: user.email,
+          actorId: actor.user.id,
+          actorEmail: actor.user.email ?? "",
+          targetId: user.id,
+        },
+      });
+      if (result.resetLink) {
+        await navigator.clipboard.writeText(result.resetLink);
+        toast.success("Password reset link copied to clipboard.", { duration: 5000 });
+      } else {
+        toast.success("Password reset email sent to " + user.email);
+      }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to send reset.");
+    }
+  }
+
   async function handleImpersonate(user: UserRecord) {
     await startImpersonation(
       user.id,
@@ -237,30 +294,61 @@ function UserManagement() {
         <div>
           <h1 className="font-display text-3xl">User Management</h1>
           <p className="mt-1 text-muted-foreground">
-            {users.length} users · Manage roles, status, and sessions.
+            {users.length} users · Create, edit, suspend, and impersonate accounts.
           </p>
         </div>
-      </div>
 
-      {/* Secure user provisioning notice */}
-      <div className="mt-4 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50/60 p-4 text-sm text-blue-800">
-        <Info className="mt-0.5 h-4 w-4 shrink-0" />
-        <div>
-          <p className="font-medium">Adding new users</p>
-          <p className="mt-0.5 text-blue-700">
-            Create accounts via{" "}
-            <a
-              href="https://supabase.com/dashboard/project/jzbapqihfmdjjjyqltcq/auth/users"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 underline hover:no-underline"
-            >
-              Supabase Dashboard → Authentication → Add User
-              <ExternalLink className="h-3 w-3" />
-            </a>
-            , then assign their role below. This keeps owner session intact and uses service-role provisioning.
-          </p>
-        </div>
+        {/* Create User — server-side via service role (no session disruption) */}
+        <Dialog open={inviteOpen} onOpenChange={(o) => { setInviteOpen(o); if (!o) setInviteLink(null); }}>
+          <DialogTrigger asChild>
+            <Button className="bg-navy text-white hover:bg-navy/90">
+              <Plus className="mr-2 h-4 w-4" /> Create User
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New User</DialogTitle>
+            </DialogHeader>
+            {inviteLink ? (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  User created. Copy the one-time invite link below and share it securely. It lets the user set their password without needing an email from Supabase.
+                </p>
+                <div className="flex items-center gap-2 rounded-md border bg-muted p-3">
+                  <code className="flex-1 break-all text-xs">{inviteLink}</code>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => { navigator.clipboard.writeText(inviteLink); toast.success("Copied!"); }}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <Button className="w-full" variant="outline" onClick={() => { setInviteOpen(false); setInviteLink(null); }}>Done</Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div><Label>Full Name</Label><Input value={inviteName} onChange={(e) => setInviteName(e.target.value)} /></div>
+                <div><Label>Email</Label><Input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} /></div>
+                <div>
+                  <Label>Role</Label>
+                  <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as AppRole)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {ALL_ROLES.map((r) => (<SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  User is created server-side (owner session is preserved). A one-time invite link is generated for secure onboarding.
+                </p>
+                <Button className="w-full bg-navy text-white" onClick={createUser} disabled={inviting}>
+                  {inviting ? "Creating…" : "Create User & Get Invite Link"}
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Filters */}
@@ -377,6 +465,19 @@ function UserManagement() {
                             title={u.status === "suspended" ? "Reactivate" : "Suspend"}
                           >
                             {u.status === "suspended" ? <UserCheck className="h-3 w-3" /> : <UserX className="h-3 w-3" />}
+                          </Button>
+                        )}
+
+                        {/* Password reset */}
+                        {!isSelf && u.email && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-purple-600"
+                            onClick={() => handlePasswordReset(u)}
+                            title="Send password reset link"
+                          >
+                            <KeyRound className="h-3 w-3" />
                           </Button>
                         )}
 
