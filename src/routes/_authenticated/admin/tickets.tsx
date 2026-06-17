@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 export const Route = createFileRoute("/_authenticated/admin/tickets")({
   head: () => ({ meta: [{ title: "Tickets — Admin" }] }),
-  component: Tickets,
+  component: () => <PermissionGuard module="tickets"><Tickets /></PermissionGuard>,
 });
 
 function Tickets() {

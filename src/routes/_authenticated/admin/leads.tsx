@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Database } from "@/integrations/supabase/types";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 type Lead = Database["public"]["Tables"]["leads"]["Row"];
 type Status = Database["public"]["Enums"]["lead_status"];
@@ -12,7 +13,7 @@ const STATUSES: Status[] = ["new", "contacted", "qualified", "converted", "lost"
 
 export const Route = createFileRoute("/_authenticated/admin/leads")({
   head: () => ({ meta: [{ title: "Leads — Admin" }] }),
-  component: Leads,
+  component: () => <PermissionGuard module="leads"><Leads /></PermissionGuard>,
 });
 
 function Leads() {

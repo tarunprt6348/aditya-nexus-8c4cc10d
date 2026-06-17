@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 export const Route = createFileRoute("/_authenticated/admin/quotes")({
   head: () => ({ meta: [{ title: "Quote Requests — Admin" }] }),
-  component: Quotes,
+  component: () => <PermissionGuard module="quotes"><Quotes /></PermissionGuard>,
 });
 
 function Quotes() {

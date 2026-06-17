@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { toast } from "sonner";
 import { Plus, Pencil } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
 type Service = Database["public"]["Enums"]["service_type"];
@@ -22,7 +23,7 @@ const STATUSES: Status[] = ["planning", "in_progress", "on_hold", "completed", "
 
 export const Route = createFileRoute("/_authenticated/admin/projects")({
   head: () => ({ meta: [{ title: "Projects — Owner" }] }),
-  component: Projects,
+  component: () => <PermissionGuard module="projects"><Projects /></PermissionGuard>,
 });
 
 type Draft = {

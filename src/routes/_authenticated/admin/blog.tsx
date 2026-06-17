@@ -9,10 +9,11 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 export const Route = createFileRoute("/_authenticated/admin/blog")({
   head: () => ({ meta: [{ title: "Blog — Owner" }] }),
-  component: Blog,
+  component: () => <PermissionGuard module="blog"><Blog /></PermissionGuard>,
 });
 
 function slugify(s: string) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); }

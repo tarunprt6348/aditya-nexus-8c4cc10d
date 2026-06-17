@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 export const Route = createFileRoute("/_authenticated/admin/team")({
   head: () => ({ meta: [{ title: "Team & Roles — Owner" }] }),
-  component: Team,
+  component: () => <PermissionGuard module="team"><Team /></PermissionGuard>,
 });
 
 type Role = "admin" | "staff" | "customer";

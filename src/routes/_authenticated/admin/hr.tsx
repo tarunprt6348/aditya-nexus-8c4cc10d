@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { PermissionGuard } from "@/components/site/PermissionGuard";
 
 export const Route = createFileRoute("/_authenticated/admin/hr")({
   head: () => ({ meta: [{ title: "HR — Owner" }] }),
-  component: HR,
+  component: () => <PermissionGuard module="hr"><HR /></PermissionGuard>,
 });
 
 function HR() {
