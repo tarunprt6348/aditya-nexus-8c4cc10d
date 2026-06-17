@@ -9,15 +9,23 @@ const Input = z.object({
   timeline: z.string().max(100).optional().default(""),
 });
 
-export const estimateQuote = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => Input.parse(data))
-  .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+const OutputSchema = z.object({
+  summary: z.string(),
+  ballpark_inr: z.object({ low: z.number(), high: z.number(), unit: z.string() }),
+  assumptions: z.array(z.string()),
+  next_steps: z.array(z.string()),
+  confidence: z.enum(["low", "medium", "high"]),
+});
 
-    const { generateText, Output } = await import("ai");
-    const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
-    const gateway = createLovableAiGatewayProvider(key);
+export const estimateQuote = createServerFn({ method: "POST" })
+  .validator((data: unknown) => Input.parse(data))
+  .handler(async ({ data }) => {
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) throw new Error("AI quote assistant is not configured.");
+
+    const { generateObject } = await import("ai");
+    const { createOpenAI } = await import("@ai-sdk/openai");
+    const openai = createOpenAI({ apiKey: key });
 
     const prompt = `You are a senior estimator at Aditya Constructions (India, Delhi NCR / Greater Noida market). A prospective client describes:
 Service: ${data.service_type}
@@ -28,19 +36,11 @@ Scope: ${data.description}
 
 Produce a ballpark estimate in Indian Rupees with low/high range, a one-paragraph scope summary, 3–5 assumptions, and 3 recommended next steps. Be conservative; flag if scope is too vague.`;
 
-    const { experimental_output: output } = await generateText({
-      model: gateway.chatModel("google/gemini-2.5-flash"),
+    const { object } = await generateObject({
+      model: openai("gpt-4o-mini"),
       prompt,
-      experimental_output: Output.object({
-        schema: z.object({
-          summary: z.string(),
-          ballpark_inr: z.object({ low: z.number(), high: z.number(), unit: z.string() }),
-          assumptions: z.array(z.string()),
-          next_steps: z.array(z.string()),
-          confidence: z.enum(["low", "medium", "high"]),
-        }),
-      }),
+      schema: OutputSchema,
     });
 
-    return output;
+    return object;
   });
