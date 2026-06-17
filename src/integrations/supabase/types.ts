@@ -679,7 +679,22 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "staff" | "customer"
+      app_role:
+        | "owner"
+        | "admin"
+        | "managing_director"
+        | "operations_manager"
+        | "hr_manager"
+        | "sales_manager"
+        | "sales_executive"
+        | "marketing_manager"
+        | "accountant"
+        | "project_manager"
+        | "site_engineer"
+        | "customer_support"
+        | "general_staff"
+        | "staff"
+        | "customer"
       lead_status: "new" | "contacted" | "qualified" | "converted" | "lost"
       milestone_status: "pending" | "in_progress" | "completed" | "delayed"
       project_status:
@@ -825,7 +840,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "staff", "customer"],
+      app_role: [
+        "owner","admin","managing_director","operations_manager",
+        "hr_manager","sales_manager","sales_executive","marketing_manager",
+        "accountant","project_manager","site_engineer","customer_support",
+        "general_staff","staff","customer",
+      ],
       lead_status: ["new", "contacted", "qualified", "converted", "lost"],
       milestone_status: ["pending", "in_progress", "completed", "delayed"],
       project_status: [

@@ -32,15 +32,18 @@ import { Route as MarketingServicesInteriorsRouteImport } from './routes/_market
 import { Route as MarketingServicesHvacRouteImport } from './routes/_marketing.services.hvac'
 import { Route as MarketingServicesConstructionRouteImport } from './routes/_marketing.services.construction'
 import { Route as AuthenticatedStaffLeavesRouteImport } from './routes/_authenticated/staff/leaves'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminTicketsRouteImport } from './routes/_authenticated/admin/tickets'
 import { Route as AuthenticatedAdminTestimonialsRouteImport } from './routes/_authenticated/admin/testimonials'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin/team'
 import { Route as AuthenticatedAdminQuotesRouteImport } from './routes/_authenticated/admin/quotes'
 import { Route as AuthenticatedAdminProjectsRouteImport } from './routes/_authenticated/admin/projects'
+import { Route as AuthenticatedAdminPermissionsRouteImport } from './routes/_authenticated/admin/permissions'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin/leads'
 import { Route as AuthenticatedAdminHrRouteImport } from './routes/_authenticated/admin/hr'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -159,6 +162,11 @@ const AuthenticatedStaffLeavesRoute =
     path: '/leaves',
     getParentRoute: () => AuthenticatedStaffRouteRoute,
   } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminTicketsRoute =
   AuthenticatedAdminTicketsRouteImport.update({
     id: '/tickets',
@@ -188,6 +196,12 @@ const AuthenticatedAdminProjectsRoute =
     path: '/projects',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPermissionsRoute =
+  AuthenticatedAdminPermissionsRouteImport.update({
+    id: '/permissions',
+    path: '/permissions',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminMessagesRoute =
   AuthenticatedAdminMessagesRouteImport.update({
     id: '/messages',
@@ -209,6 +223,11 @@ const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
@@ -224,15 +243,18 @@ export interface FileRoutesByFullPath {
   '/quote': typeof MarketingQuoteRoute
   '/services': typeof MarketingServicesRouteWithChildren
   '/testimonials': typeof MarketingTestimonialsRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/hr': typeof AuthenticatedAdminHrRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/permissions': typeof AuthenticatedAdminPermissionsRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/quotes': typeof AuthenticatedAdminQuotesRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/staff/leaves': typeof AuthenticatedStaffLeavesRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
@@ -254,15 +276,18 @@ export interface FileRoutesByTo {
   '/quote': typeof MarketingQuoteRoute
   '/services': typeof MarketingServicesRouteWithChildren
   '/testimonials': typeof MarketingTestimonialsRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/hr': typeof AuthenticatedAdminHrRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/permissions': typeof AuthenticatedAdminPermissionsRoute
   '/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/admin/quotes': typeof AuthenticatedAdminQuotesRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/staff/leaves': typeof AuthenticatedStaffLeavesRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
@@ -289,15 +314,18 @@ export interface FileRoutesById {
   '/_marketing/services': typeof MarketingServicesRouteWithChildren
   '/_marketing/testimonials': typeof MarketingTestimonialsRoute
   '/_marketing/': typeof MarketingIndexRoute
+  '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/hr': typeof AuthenticatedAdminHrRoute
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/_authenticated/admin/permissions': typeof AuthenticatedAdminPermissionsRoute
   '/_authenticated/admin/projects': typeof AuthenticatedAdminProjectsRoute
   '/_authenticated/admin/quotes': typeof AuthenticatedAdminQuotesRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/testimonials': typeof AuthenticatedAdminTestimonialsRoute
   '/_authenticated/admin/tickets': typeof AuthenticatedAdminTicketsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/staff/leaves': typeof AuthenticatedStaffLeavesRoute
   '/_marketing/services/construction': typeof MarketingServicesConstructionRoute
   '/_marketing/services/hvac': typeof MarketingServicesHvacRoute
@@ -323,15 +351,18 @@ export interface FileRouteTypes {
     | '/quote'
     | '/services'
     | '/testimonials'
+    | '/admin/audit'
     | '/admin/blog'
     | '/admin/hr'
     | '/admin/leads'
     | '/admin/messages'
+    | '/admin/permissions'
     | '/admin/projects'
     | '/admin/quotes'
     | '/admin/team'
     | '/admin/testimonials'
     | '/admin/tickets'
+    | '/admin/users'
     | '/staff/leaves'
     | '/services/construction'
     | '/services/hvac'
@@ -353,15 +384,18 @@ export interface FileRouteTypes {
     | '/quote'
     | '/services'
     | '/testimonials'
+    | '/admin/audit'
     | '/admin/blog'
     | '/admin/hr'
     | '/admin/leads'
     | '/admin/messages'
+    | '/admin/permissions'
     | '/admin/projects'
     | '/admin/quotes'
     | '/admin/team'
     | '/admin/testimonials'
     | '/admin/tickets'
+    | '/admin/users'
     | '/staff/leaves'
     | '/services/construction'
     | '/services/hvac'
@@ -387,15 +421,18 @@ export interface FileRouteTypes {
     | '/_marketing/services'
     | '/_marketing/testimonials'
     | '/_marketing/'
+    | '/_authenticated/admin/audit'
     | '/_authenticated/admin/blog'
     | '/_authenticated/admin/hr'
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/messages'
+    | '/_authenticated/admin/permissions'
     | '/_authenticated/admin/projects'
     | '/_authenticated/admin/quotes'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/testimonials'
     | '/_authenticated/admin/tickets'
+    | '/_authenticated/admin/users'
     | '/_authenticated/staff/leaves'
     | '/_marketing/services/construction'
     | '/_marketing/services/hvac'
@@ -575,6 +612,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStaffLeavesRouteImport
       parentRoute: typeof AuthenticatedStaffRouteRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/tickets': {
       id: '/_authenticated/admin/tickets'
       path: '/tickets'
@@ -610,6 +654,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProjectsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/permissions': {
+      id: '/_authenticated/admin/permissions'
+      path: '/permissions'
+      fullPath: '/admin/permissions'
+      preLoaderRoute: typeof AuthenticatedAdminPermissionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/messages': {
       id: '/_authenticated/admin/messages'
       path: '/messages'
@@ -638,33 +689,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminHrRoute: typeof AuthenticatedAdminHrRoute
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
+  AuthenticatedAdminPermissionsRoute: typeof AuthenticatedAdminPermissionsRoute
   AuthenticatedAdminProjectsRoute: typeof AuthenticatedAdminProjectsRoute
   AuthenticatedAdminQuotesRoute: typeof AuthenticatedAdminQuotesRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminTestimonialsRoute: typeof AuthenticatedAdminTestimonialsRoute
   AuthenticatedAdminTicketsRoute: typeof AuthenticatedAdminTicketsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
     AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
     AuthenticatedAdminHrRoute: AuthenticatedAdminHrRoute,
     AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
     AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
+    AuthenticatedAdminPermissionsRoute: AuthenticatedAdminPermissionsRoute,
     AuthenticatedAdminProjectsRoute: AuthenticatedAdminProjectsRoute,
     AuthenticatedAdminQuotesRoute: AuthenticatedAdminQuotesRoute,
     AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
     AuthenticatedAdminTestimonialsRoute: AuthenticatedAdminTestimonialsRoute,
     AuthenticatedAdminTicketsRoute: AuthenticatedAdminTicketsRoute,
+    AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 
