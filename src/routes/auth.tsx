@@ -71,7 +71,7 @@ function Auth() {
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
-        emailRedirectTo: window.location.origin + "/portal",
+        emailRedirectTo: window.location.origin + "/auth",
         data: { full_name: parsed.data.full_name },
       },
     });
@@ -81,7 +81,7 @@ function Auth() {
   }
 
   async function handleGoogle() {
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/portal" });
+    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
     if (res.error) toast.error("Google sign-in failed.");
   }
 
