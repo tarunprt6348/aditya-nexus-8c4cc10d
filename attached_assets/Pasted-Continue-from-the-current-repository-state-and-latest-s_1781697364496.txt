@@ -1,0 +1,214 @@
+Continue from the current repository state and latest successful checkpoint.
+
+Do not restart project discovery.
+
+Do not re-analyze the repository from scratch.
+
+Do not regenerate completed work.
+
+Do not rebuild RBAC, Identity Management, Authentication, Supabase integration, dashboards, or any system that already exists and is functioning.
+
+Confirm the following work been substantially completed:
+
+* Enterprise RBAC implementation
+* Identity Management
+* User Management
+* Role Management
+* Authentication foundation
+* Supabase integration
+* User invitation flow
+* Password reset flow
+* Protected route foundation
+* Lovable → Replit migration (partially completed)
+
+Your task is to finish execution, validation, repair, stabilization, and deployment readiness.
+
+CURRENT OBJECTIVE
+
+Complete the migration and make the platform fully operational.
+
+EXECUTE IN THIS ORDER
+
+PHASE 1 — DETERMINE CURRENT CHECKPOINT
+
+Inspect:
+
+* Latest commits
+* Current branch state
+* Current build state
+* Current migration status
+* Current validation status
+
+Determine:
+
+* What was successfully completed
+* What remains incomplete
+* What blockers currently exist
+* What validation failures remain
+
+Do not produce a lengthy audit report.
+
+Use findings only to continue execution.
+
+PHASE 2 — COMPLETE MIGRATION
+
+Finish any remaining Lovable → Replit migration work.
+
+Verify and repair:
+
+* TanStack Start configuration
+* Vite configuration
+* Build configuration
+* Package dependencies
+* Environment variable usage
+* Supabase configuration
+* API integrations
+* Routing
+
+Remove all remaining Lovable-specific code, packages, imports, references, and configuration files while preserving functionality.
+
+PHASE 3 — VALIDATION & REPAIR
+
+Execute validation passes for:
+
+* Build
+* TypeScript
+* Authentication
+* RBAC
+* Supabase
+* Routes
+* APIs
+* Environment variables
+
+Automatically repair all discovered issues.
+
+Resolve:
+
+* Build failures
+* Runtime failures
+* TypeScript errors
+* Import errors
+* Dependency issues
+* Routing issues
+* Configuration issues
+* Security issues
+
+PHASE 4 — AUTHENTICATION VERIFICATION
+
+Verify:
+
+* Login
+* Logout
+* Session persistence
+* Password reset
+* User invitations
+* User creation
+* User suspension
+* User activation
+* Role assignment
+
+Repair anything that fails validation.
+
+PHASE 5 — RBAC VERIFICATION
+
+Verify permissions for:
+
+* Owner
+* Managing Director
+* Operations Manager
+* HR Manager
+* Sales Manager
+* Sales Executive
+* Marketing Manager
+* Accountant
+* Project Manager
+* Site Engineer
+* Customer Support
+* General Staff
+
+Verify:
+
+* Protected routes
+* Permission boundaries
+* Dashboard visibility
+* Unauthorized access prevention
+
+Repair all discovered issues.
+
+PHASE 6 — SUPABASE VERIFICATION
+
+Validate:
+
+* Database connectivity
+* Authentication
+* Session management
+* User provisioning
+* Role tables
+* Audit logs
+* Policies
+* Queries
+
+Repair all failures.
+
+PHASE 7 — STABILIZATION
+
+Perform:
+
+* Dependency cleanup
+* Dead code removal
+* Security hardening
+* Error handling improvements
+* Logging improvements
+* Type safety improvements
+
+Do not perform unnecessary refactors.
+
+Preserve existing architecture.
+
+PHASE 8 — DEPLOYMENT READINESS
+
+Verify:
+
+* Development server starts successfully
+* Production build succeeds
+* Application runs without critical errors
+* Authentication works
+* RBAC works
+* Supabase works
+* Routes render correctly
+
+Repair anything preventing deployment.
+
+FINAL DELIVERABLE
+
+Continue execution until:
+
+* Migration is fully complete
+* Build succeeds
+* Application runs
+* Authentication works
+* RBAC works
+* Supabase works
+* No critical migration issues remain
+
+At completion provide:
+
+* Migration completion status
+* Files modified
+* Files created
+* Files removed
+* Validation results
+* Build results
+* Authentication results
+* RBAC results
+* Supabase results
+* Remaining risks
+* Recommended next implementation phase
+
+After stabilization, automatically prepare the foundation for the next phase:
+
+CRM + Lead Management System
+
+but do not rebuild existing systems.
+
+Continue execution immediately from the latest checkpoint.

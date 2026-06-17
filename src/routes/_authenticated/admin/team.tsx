@@ -45,7 +45,7 @@ function Team() {
   const load = async () => {
     setLoading(true);
     const [{ data: profiles }, { data: roles }] = await Promise.all([
-      supabase.from("profiles").select("id, full_name, email"),
+      supabase.from("profiles").select("id, full_name"),
       supabase.from("user_roles").select("user_id, role"),
     ]);
     const byUser = new Map<string, AppRole[]>();
@@ -55,10 +55,10 @@ function Team() {
       byUser.set(r.user_id, arr);
     });
     setRows(
-      (profiles ?? []).map((p: { id: string; full_name: string | null; email?: string | null }) => ({
+      (profiles ?? []).map((p: { id: string; full_name: string | null }) => ({
         id: p.id,
         full_name: p.full_name,
-        email: (p as { email?: string | null }).email ?? null,
+        email: null,
         roles: byUser.get(p.id) ?? (["customer"] as AppRole[]),
       })),
     );

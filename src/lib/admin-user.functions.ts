@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
-import { getWebRequest } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 
 /**
  * Returns a Supabase admin client (service role) for server-side use.
@@ -26,7 +26,7 @@ function getAdminClient() {
  * Throws with HTTP-401 semantics if the token is missing or invalid.
  */
 async function getVerifiedCaller() {
-  const req = getWebRequest();
+  const req = getRequest();
   const authHeader = req?.headers.get("authorization") ?? "";
   const token = authHeader.replace(/^Bearer\s+/i, "").trim();
   if (!token) throw new Error("Unauthorized: no session token.");

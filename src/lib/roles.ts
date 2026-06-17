@@ -106,5 +106,5 @@ export async function logAudit(params: {
     target_id: params.targetId,
     target_email: params.targetEmail,
     metadata: params.metadata ?? {},
-  });
+  } as never);
 }

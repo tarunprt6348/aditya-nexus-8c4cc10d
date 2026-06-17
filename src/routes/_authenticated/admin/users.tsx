@@ -109,7 +109,7 @@ function UserManagement() {
     setLoading(true);
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, full_name, email, phone, department, status, last_seen, created_at")
+      .select("id, full_name, phone, created_at")
       .order("created_at", { ascending: false });
 
     if (!profiles) { setLoading(false); return; }
@@ -128,11 +128,11 @@ function UserManagement() {
       profiles.map((p) => ({
         id: p.id,
         full_name: p.full_name,
-        email: (p as { email?: string | null }).email ?? null,
+        email: null,
         phone: p.phone,
-        department: p.department,
-        status: ((p as { status?: string }).status as UserStatus) ?? "active",
-        last_seen: p.last_seen,
+        department: null,
+        status: "active" as UserStatus,
+        last_seen: null,
         created_at: p.created_at,
         roles: roleMap[p.id] ?? ["customer"],
       })),

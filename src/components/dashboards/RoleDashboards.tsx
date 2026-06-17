@@ -301,7 +301,7 @@ export function ManagingDirectorDashboard() {
   const { isImpersonating, impersonationName } = useRole();
   const [kpi, setKpi] = useState({ projects: 0, totalBudget: 0, leads: 0, teamSize: 0 });
   const [projectsByStatus, setProjectsByStatus] = useState<Array<{ status: string; count: number }>>([]);
-  const [recentProjects, setRecentProjects] = useState<Array<{ id: string; name: string; status: string; budget: number | null }>>([]);
+  const [recentProjects, setRecentProjects] = useState<Array<{ id: string; title: string; status: string; budget: number | null }>>([]);
 
   useEffect(() => {
     (async () => {
@@ -309,7 +309,7 @@ export function ManagingDirectorDashboard() {
         supabase.from("projects").select("id,status,budget"),
         supabase.from("profiles").select("id", { count: "exact", head: true }),
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "new"),
-        supabase.from("projects").select("id,name,status,budget").order("created_at", { ascending: false }).limit(5),
+        supabase.from("projects").select("id,title,status,budget").order("created_at", { ascending: false }).limit(5),
       ]);
       const projects = pRes.data ?? [];
       const totalBudget = projects.reduce((s, p) => s + (p.budget ?? 0), 0);
@@ -384,7 +384,7 @@ export function ManagingDirectorDashboard() {
                   {recentProjects.map((p) => (
                     <div key={p.id} className="flex items-center justify-between py-3">
                       <div>
-                        <div className="text-sm font-medium">{p.name}</div>
+                        <div className="text-sm font-medium">{p.title}</div>
                         <div className="text-xs text-muted-foreground mt-0.5">
                           ₹{(p.budget ?? 0).toLocaleString("en-IN")}
                         </div>
@@ -419,7 +419,7 @@ export function ManagingDirectorDashboard() {
 export function OperationsManagerDashboard() {
   const { isImpersonating, impersonationName } = useRole();
   const [kpi, setKpi] = useState({ activeProjects: 0, openQuotes: 0, openTickets: 0, leads: 0 });
-  const [projects, setProjects] = useState<Array<{ id: string; name: string; status: string; location: string | null }>>([]);
+  const [projects, setProjects] = useState<Array<{ id: string; title: string; status: string; location: string | null }>>([]);
   const [tickets, setTickets] = useState<Array<{ id: string; subject: string; priority: string; status: string }>>([]);
 
   useEffect(() => {
@@ -429,7 +429,7 @@ export function OperationsManagerDashboard() {
         supabase.from("quote_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("tickets").select("id", { count: "exact", head: true }).neq("status", "closed"),
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "new"),
-        supabase.from("projects").select("id,name,status,location").in("status", ["in_progress", "planning"]).order("created_at", { ascending: false }).limit(6),
+        supabase.from("projects").select("id,title,status,location").in("status", ["in_progress", "planning"]).order("created_at", { ascending: false }).limit(6),
         supabase.from("tickets").select("id,subject,priority,status").neq("status", "closed").order("created_at", { ascending: false }).limit(5),
       ]);
       setKpi({ activeProjects: pRes.count ?? 0, openQuotes: qRes.count ?? 0, openTickets: tRes.count ?? 0, leads: lRes.count ?? 0 });
@@ -465,7 +465,7 @@ export function OperationsManagerDashboard() {
                   {projects.map((p) => (
                     <div key={p.id} className="flex items-center justify-between py-3">
                       <div>
-                        <div className="text-sm font-medium">{p.name}</div>
+                        <div className="text-sm font-medium">{p.title}</div>
                         {p.location && <div className="text-xs text-muted-foreground">{p.location}</div>}
                       </div>
                       <Badge variant="outline" className="text-xs capitalize">{p.status.replace("_", " ")}</Badge>
@@ -508,24 +508,19 @@ export function HRManagerDashboard() {
   const { isImpersonating, impersonationName } = useRole();
   const [kpi, setKpi] = useState({ totalStaff: 0, pendingLeaves: 0, departments: 0 });
   const [byDept, setByDept] = useState<Array<{ dept: string; count: number }>>([]);
-  const [recentStaff, setRecentStaff] = useState<Array<{ id: string; full_name: string | null; department: string | null; created_at: string }>>([]);
+  const [recentStaff, setRecentStaff] = useState<Array<{ id: string; full_name: string | null; created_at: string }>>([]);
 
   useEffect(() => {
     (async () => {
       const [staffData, leavesRes] = await Promise.all([
-        supabase.from("profiles").select("id,full_name,department,created_at,status").neq("status" as never, "pending_verification"),
+        supabase.from("profiles").select("id,full_name,created_at"),
         supabase.from("staff_leaves" as never).select("id", { count: "exact", head: true }).eq("status", "pending"),
       ]);
 
       const staff = staffData.data ?? [];
-      const deptMap: Record<string, number> = {};
-      staff.forEach((s) => {
-        const d = s.department ?? "Unassigned";
-        deptMap[d] = (deptMap[d] ?? 0) + 1;
-      });
 
-      setKpi({ totalStaff: staff.length, pendingLeaves: (leavesRes as { count: number | null }).count ?? 0, departments: Object.keys(deptMap).length });
-      setByDept(Object.entries(deptMap).map(([dept, count]) => ({ dept, count })).sort((a, b) => b.count - a.count));
+      setKpi({ totalStaff: staff.length, pendingLeaves: (leavesRes as { count: number | null }).count ?? 0, departments: 1 });
+      setByDept([]);
       setRecentStaff(
         [...staff].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
       );
@@ -578,7 +573,6 @@ export function HRManagerDashboard() {
                     <div key={s.id} className="flex items-center justify-between py-3">
                       <div>
                         <div className="text-sm font-medium">{s.full_name ?? "—"}</div>
-                        <div className="text-xs text-muted-foreground">{s.department ?? "—"}</div>
                       </div>
                       <span className="text-xs text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</span>
                     </div>
@@ -609,12 +603,12 @@ export function SalesManagerDashboard() {
   const { isImpersonating, impersonationName } = useRole();
   const [kpi, setKpi] = useState({ newLeads: 0, quotedLeads: 0, pendingQuotes: 0, acceptedQuotes: 0 });
   const [pipeline, setPipeline] = useState<Array<{ status: string; count: number }>>([]);
-  const [recentLeads, setRecentLeads] = useState<Array<{ id: string; name: string; service_interest: string | null; status: string; created_at: string }>>([]);
+  const [recentLeads, setRecentLeads] = useState<Array<{ id: string; name: string; service: string | null; status: string; created_at: string }>>([]);
 
   useEffect(() => {
     (async () => {
       const [leadData, qNew, qAccepted] = await Promise.all([
-        supabase.from("leads").select("id,name,service_interest,status,created_at").order("created_at", { ascending: false }),
+        supabase.from("leads").select("id,name,service,status,created_at").order("created_at", { ascending: false }),
         supabase.from("quote_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("quote_requests").select("id", { count: "exact", head: true }).eq("status", "accepted"),
       ]);
@@ -687,7 +681,7 @@ export function SalesManagerDashboard() {
                     <div key={l.id} className="flex items-center justify-between py-3">
                       <div>
                         <div className="text-sm font-medium">{l.name}</div>
-                        <div className="text-xs text-muted-foreground">{l.service_interest ?? "—"}</div>
+                        <div className="text-xs text-muted-foreground">{l.service ?? "—"}</div>
                       </div>
                       <span className={`text-xs rounded-full px-2 py-0.5 ${STATUS_COLOR[l.status] ?? ""}`}>{l.status}</span>
                     </div>
@@ -709,18 +703,18 @@ export function SalesManagerDashboard() {
 export function MarketingManagerDashboard() {
   const { isImpersonating, impersonationName } = useRole();
   const [kpi, setKpi] = useState({ publishedPosts: 0, draftPosts: 0, testimonials: 0, newMessages: 0 });
-  const [recentPosts, setRecentPosts] = useState<Array<{ id: string; title: string; status: string; created_at: string }>>([]);
-  const [recentTesti, setRecentTesti] = useState<Array<{ id: string; name: string; rating: number | null; company: string | null }>>([]);
+  const [recentPosts, setRecentPosts] = useState<Array<{ id: string; title: string; published: boolean; created_at: string }>>([]);
+  const [recentTesti, setRecentTesti] = useState<Array<{ id: string; client_name: string; rating: number | null }>>([]);
 
   useEffect(() => {
     (async () => {
       const [bPub, bDraft, tRes, msgRes, posts, testis] = await Promise.all([
-        supabase.from("blog_posts").select("id", { count: "exact", head: true }).eq("status", "published"),
-        supabase.from("blog_posts").select("id", { count: "exact", head: true }).eq("status", "draft"),
+        supabase.from("blog_posts").select("id", { count: "exact", head: true }).eq("published", true),
+        supabase.from("blog_posts").select("id", { count: "exact", head: true }).eq("published", false),
         supabase.from("testimonials").select("id", { count: "exact", head: true }),
         supabase.from("contact_messages").select("id", { count: "exact", head: true }),
-        supabase.from("blog_posts").select("id,title,status,created_at").order("created_at", { ascending: false }).limit(5),
-        supabase.from("testimonials").select("id,name,rating,company").order("created_at", { ascending: false }).limit(4),
+        supabase.from("blog_posts").select("id,title,published,created_at").order("created_at", { ascending: false }).limit(5),
+        supabase.from("testimonials").select("id,client_name,rating").order("created_at", { ascending: false }).limit(4),
       ]);
       setKpi({
         publishedPosts: bPub.count ?? 0, draftPosts: bDraft.count ?? 0,
@@ -754,7 +748,7 @@ export function MarketingManagerDashboard() {
                   {recentPosts.map((p) => (
                     <div key={p.id} className="flex items-center justify-between py-3">
                       <div className="text-sm font-medium line-clamp-1 flex-1">{p.title}</div>
-                      <Badge variant="outline" className={`ml-2 text-xs capitalize ${p.status === "published" ? "border-green-300 text-green-700" : ""}`}>{p.status}</Badge>
+                      <Badge variant="outline" className={`ml-2 text-xs capitalize ${p.published ? "border-green-300 text-green-700" : ""}`}>{p.published ? "published" : "draft"}</Badge>
                     </div>
                   ))}
                 </div>
@@ -773,8 +767,7 @@ export function MarketingManagerDashboard() {
                   {recentTesti.map((t) => (
                     <div key={t.id} className="flex items-center justify-between py-3">
                       <div>
-                        <div className="text-sm font-medium">{t.name}</div>
-                        <div className="text-xs text-muted-foreground">{t.company ?? "—"}</div>
+                        <div className="text-sm font-medium">{t.client_name}</div>
                       </div>
                       <div className="flex items-center gap-0.5">
                         {Array.from({ length: t.rating ?? 0 }).map((_, i) => (
@@ -896,7 +889,7 @@ function TaskKanban({ userId }: { userId: string }) {
     low: "", medium: "", high: "border-orange-300 text-orange-700", urgent: "border-red-300 text-red-700"
   };
 
-  async function advance(id: string, status: string) {
+  async function advance(id: string, status: "todo" | "in_progress" | "done" | "blocked") {
     await supabase.from("staff_tasks").update({ status }).eq("id", id);
     load();
   }
@@ -925,9 +918,9 @@ function TaskKanban({ userId }: { userId: string }) {
                     </p>
                   )}
                   <div className="mt-3 flex gap-2">
-                    {col === "todo" && <Button size="sm" variant="outline" onClick={() => advance(t.id, "in_progress")}>Start</Button>}
-                    {col !== "done" && <Button size="sm" className="bg-navy text-white text-xs" onClick={() => advance(t.id, "done")}>Complete</Button>}
-                    {col === "done" && <Button size="sm" variant="ghost" className="text-xs" onClick={() => advance(t.id, "todo")}>Reopen</Button>}
+                    {col === "todo" && <Button size="sm" variant="outline" onClick={() => advance(t.id, "in_progress" as const)}>Start</Button>}
+                    {col !== "done" && <Button size="sm" className="bg-navy text-white text-xs" onClick={() => advance(t.id, "done" as const)}>Complete</Button>}
+                    {col === "done" && <Button size="sm" variant="ghost" className="text-xs" onClick={() => advance(t.id, "todo" as const)}>Reopen</Button>}
                   </div>
                 </Card>
               ))}
@@ -978,13 +971,13 @@ export function SalesExecutiveDashboard() {
 
 export function ProjectManagerDashboard() {
   const { userId, isImpersonating, impersonationName } = useRole();
-  const [projects, setProjects] = useState<Array<{ id: string; name: string; status: string; location: string | null }>>([]);
+  const [projects, setProjects] = useState<Array<{ id: string; title: string; status: string; location: string | null }>>([]);
   const [taskCount, setTaskCount] = useState(0);
 
   useEffect(() => {
     (async () => {
       const [projRes, taskRes] = await Promise.all([
-        supabase.from("projects").select("id,name,status,location").eq("project_manager_id" as never, userId),
+        supabase.from("projects").select("id,title,status,location").eq("project_manager_id" as never, userId),
         supabase.from("staff_tasks").select("id", { count: "exact", head: true }).eq("assigned_to", userId).neq("status", "done"),
       ]);
       setProjects(projRes.data ?? []);
@@ -1014,7 +1007,7 @@ export function ProjectManagerDashboard() {
               <Card key={p.id} className="p-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="font-medium">{p.name}</div>
+                    <div className="font-medium">{p.title}</div>
                     {p.location && <div className="text-xs text-muted-foreground mt-0.5">{p.location}</div>}
                   </div>
                   <span className={`text-xs rounded-full px-2 py-0.5 ${STATUS_COLOR[p.status] ?? ""}`}>{p.status.replace("_", " ")}</span>

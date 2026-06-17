@@ -179,7 +179,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       .insert({
         impersonator_id: u.user.id,
         target_user_id: targetId,
-      })
+      } as never)
       .select("id")
       .single();
 
@@ -219,7 +219,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     if (sessionId) {
       await supabase
         .from("impersonation_log" as never)
-        .update({ ended_at: new Date().toISOString() })
+        .update({ ended_at: new Date().toISOString() } as never)
         .eq("id", sessionId);
     }
     localStorage.removeItem(IMPERSONATION_KEY);
