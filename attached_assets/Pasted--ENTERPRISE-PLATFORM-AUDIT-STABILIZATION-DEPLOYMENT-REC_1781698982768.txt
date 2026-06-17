@@ -1,0 +1,565 @@
+# ENTERPRISE PLATFORM AUDIT, STABILIZATION, DEPLOYMENT RECOVERY & CONTINUATION DIRECTIVE
+
+You are operating as:
+
+* Principal Software Architect
+* Enterprise Solutions Architect
+* Senior Full-Stack Engineer
+* DevOps Engineer
+* Database Architect
+* Security Engineer
+* Performance Engineer
+* UX Architect
+* Migration Specialist
+* QA Lead
+
+You are attached to an existing repository that has already undergone substantial development and migration work.
+
+Your objective is NOT to rebuild the platform.
+
+Your objective is to:
+
+1. Preserve completed work.
+2. Repair broken work.
+3. Complete unfinished work.
+4. Stabilize deployment.
+5. Improve usability.
+6. Optimize performance.
+7. Continue platform evolution toward a production-grade Construction Business Operating Platform.
+
+---
+
+# CRITICAL RULES
+
+Before writing any code:
+
+Audit first.
+
+Do not:
+
+* Rebuild completed systems
+* Create duplicate modules
+* Replace stable implementations
+* Regenerate working functionality
+* Introduce parallel architectures
+* Remove working features
+
+Always:
+
+* Analyze
+* Validate
+* Repair
+* Extend
+* Optimize
+* Harden
+
+Priority order:
+
+Repair > Complete > Optimize > Expand
+
+Reuse before recreating.
+
+---
+
+# CURRENT PROJECT CONTEXT
+
+Migration work has already been performed.
+
+Previously completed:
+
+## Migration
+
+* Lovable → Replit migration completed
+* TanStack Start + Vite migration completed
+* TypeScript errors resolved (previously 27)
+* Production build previously validated successfully
+* Remaining Lovable references removed
+* Google OAuth moved to Supabase
+* OpenAI integration migrated away from Lovable gateway
+* RBAC foundation implemented
+* Identity Management implemented
+* User invitation flow implemented
+* Password reset flow implemented
+* CRM Lead Management foundation already exists
+* Leads CRUD already exists
+* Status pipeline already exists
+* Supabase integration already exists
+
+Do NOT recreate these systems.
+
+Audit and validate them.
+
+---
+
+# PHASE 0 — REPOSITORY DISCOVERY
+
+Before modifying anything:
+
+Analyze:
+
+* Entire repository
+* Folder structure
+* Dependencies
+* package.json
+* package-lock.json
+* Build pipeline
+* Deployment pipeline
+* Git history
+* Recent commits
+* Environment variables
+* Replit configuration
+* Supabase configuration
+* Authentication flows
+* RBAC implementation
+* CRM implementation
+* CMS implementation
+* Operations Portal
+* Dashboards
+* Routing
+* API structure
+
+Determine:
+
+### Completed
+
+What is production-ready?
+
+### Partial
+
+What exists but is unfinished?
+
+### Broken
+
+What exists but fails validation?
+
+### Missing
+
+What genuinely does not exist?
+
+Generate a complete audit before implementation.
+
+---
+
+# PHASE 1 — DEPLOYMENT FAILURE RECOVERY (HIGHEST PRIORITY)
+
+Publishing currently fails despite local execution.
+
+Investigate completely.
+
+Audit:
+
+* package.json
+* package-lock.json
+* npm dependency tree
+* peer dependencies
+* build commands
+* deployment commands
+* Replit deployment configuration
+* environment configuration
+
+Identify root cause of:
+
+npm ERESOLVE could not resolve
+
+Fix:
+
+* dependency conflicts
+* peer dependency conflicts
+* package version mismatches
+* lockfile inconsistencies
+* deployment pipeline failures
+* build pipeline failures
+
+Requirements:
+
+* npm install succeeds
+* npm ci succeeds
+* npm run build succeeds
+* deployment succeeds
+* publish succeeds
+
+Provide:
+
+* root cause
+* affected packages
+* fixes applied
+* validation results
+
+Do not continue platform expansion until deployment succeeds.
+
+---
+
+# PHASE 2 — FULL SYSTEM AUDIT
+
+Audit:
+
+* Frontend
+* Backend
+* APIs
+* Routing
+* Authentication
+* Supabase
+* RBAC
+* CRM
+* CMS
+* Dashboards
+* Operations Portal
+* Reporting
+* Forms
+* Upload systems
+* Notifications
+
+Identify:
+
+* broken functionality
+* incomplete workflows
+* security issues
+* performance issues
+* UI inconsistencies
+* integration failures
+
+Automatically repair safe issues.
+
+---
+
+# PHASE 3 — CTA, WORKFLOW & NAVIGATION VALIDATION
+
+Audit every:
+
+* Button
+* CTA
+* Card action
+* Sidebar item
+* Dashboard action
+* Navigation item
+* Internal link
+* External link
+* Form submission
+
+Verify:
+
+* every CTA has purpose
+* every button works
+* every route exists
+* every workflow completes
+* every form submits
+* every role workflow functions
+
+Repair:
+
+* dead links
+* placeholder actions
+* broken navigation
+* missing routes
+* incomplete workflows
+
+No dead CTA may remain.
+
+---
+
+# PHASE 4 — RESPONSIVE OPTIMIZATION
+
+Perform a complete responsive audit.
+
+Target:
+
+* Mobile
+* Tablet
+* Laptop
+* Desktop
+* Ultra-wide
+
+Fix:
+
+* horizontal scrolling
+* overflow
+* clipping
+* overlapping content
+* broken grids
+* broken cards
+* layout inconsistencies
+
+Requirements:
+
+* fluid layouts
+* responsive typography
+* responsive spacing
+* responsive containers
+* consistent breakpoints
+
+---
+
+# PHASE 5 — UI DENSITY, SPACING & ALIGNMENT OPTIMIZATION
+
+The platform currently feels oversized.
+
+Reduce excessive:
+
+* padding
+* margins
+* whitespace
+* oversized sections
+* oversized cards
+
+Improve:
+
+* information density
+* visual hierarchy
+* alignment
+* spacing consistency
+* enterprise appearance
+
+Create a unified spacing system.
+
+Target:
+
+* premium enterprise SaaS
+* construction-industry professionalism
+* better screen utilization
+
+Optimize for:
+
+* 1366×768
+* 1440×900
+* 1920×1080
+* 2560×1440
+* ultrawide displays
+
+---
+
+# PHASE 6 — AUTHENTICATION & RBAC VALIDATION
+
+Audit:
+
+* login
+* logout
+* session persistence
+* password reset
+* user invitations
+* user creation
+* role assignment
+* protected routes
+* impersonation
+
+Validate roles:
+
+* Owner
+* Managing Director
+* Operations Manager
+* HR Manager
+* Sales Manager
+* Sales Executive
+* Marketing Manager
+* Accountant
+* Project Manager
+* Site Engineer
+* Customer Support
+* General Staff
+
+Verify permission boundaries.
+
+Repair violations.
+
+---
+
+# PHASE 7 — SUPABASE VALIDATION
+
+Validate:
+
+* connectivity
+* auth
+* sessions
+* user provisioning
+* audit logs
+* RBAC tables
+* permissions
+* row-level security
+* migrations
+
+Repair all discovered issues.
+
+---
+
+# PHASE 8 — PERFORMANCE OPTIMIZATION
+
+Audit:
+
+* bundle size
+* lazy loading
+* route loading
+* API calls
+* database queries
+* images
+* caching
+* rerenders
+
+Target:
+
+* LCP < 2.5s
+* CLS < 0.1
+* improved Lighthouse scores
+
+Optimize without breaking stability.
+
+---
+
+# PHASE 9 — QUALITY ASSURANCE
+
+Execute:
+
+* type checks
+* build checks
+* dependency checks
+* routing checks
+* API checks
+* authentication checks
+* RBAC checks
+* Supabase checks
+* deployment checks
+
+Automatically repair all safely repairable issues.
+
+Requirements:
+
+* build succeeds
+* publish succeeds
+* deployment succeeds
+* authentication succeeds
+* RBAC succeeds
+* routes succeed
+* APIs succeed
+
+---
+
+# PHASE 10 — ENTERPRISE PLATFORM CONTINUATION
+
+Only after all previous phases pass.
+
+Audit existing implementations before building.
+
+Extend existing systems rather than recreating them.
+
+Priority roadmap:
+
+1. CRM Pipeline Enhancement
+
+   * Kanban Pipeline
+   * Drag & Drop
+   * Lead Assignment
+   * Follow-ups
+   * Lead Scoring
+   * Activity Timeline
+   * Attachments
+
+2. Financial Management
+
+   * Revenue Tracking
+   * Expense Tracking
+   * Invoices
+   * Profitability Dashboard
+
+3. Construction Operations
+
+   * Project Tracking
+   * Milestones
+   * Site Reports
+   * Material Management
+   * Procurement
+   * Vendor Management
+   * BOQ Management
+   * Tender Management
+
+4. Content Operating System
+
+   * Draft
+   * Preview
+   * Publish
+   * Scheduling
+   * Version History
+   * Rollback
+   * Audit Trail
+
+5. Visual Page Builder
+
+   * Drag-and-Drop Sections
+   * Templates
+   * Reordering
+   * Reusable Components
+
+6. Digital Asset Management
+
+   * Images
+   * Videos
+   * PDFs
+   * Drawings
+   * Certifications
+   * Version History
+   * Tagging
+
+---
+
+# FINAL DELIVERABLE
+
+At completion provide:
+
+## Architecture Audit
+
+* Completed Features
+* Partial Features
+* Missing Features
+* Broken Features
+
+## Deployment Report
+
+* Root Cause
+* Fixes Applied
+* Validation Results
+
+## Files
+
+* Modified
+* Created
+* Removed
+
+## Dependency Changes
+
+## Database Changes
+
+## API Changes
+
+## Security Findings
+
+## Performance Findings
+
+## CTA Fixes
+
+## Navigation Fixes
+
+## Responsive Improvements
+
+## UI/UX Improvements
+
+## Authentication Results
+
+## RBAC Results
+
+## Supabase Results
+
+## Build Results
+
+## Deployment Results
+
+## Remaining Risks
+
+## Recommended Next Phase
+
+Continue until:
+
+* Deployment succeeds
+* Publishing succeeds
+* Build succeeds
+* Authentication succeeds
+* RBAC succeeds
+* Supabase succeeds
+* Critical workflows succeed
+* Platform is production-ready

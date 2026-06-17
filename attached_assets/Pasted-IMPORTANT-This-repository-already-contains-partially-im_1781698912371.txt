@@ -1,0 +1,904 @@
+IMPORTANT:
+
+This repository already contains partially implemented systems.
+
+Before implementing anything:
+
+1. Audit the repository.
+2. Identify completed features.
+3. Identify partially completed features.
+4. Identify broken features.
+5. Reuse existing implementations whenever possible.
+6. Repair before rebuilding.
+7. Extend before replacing.
+
+Do not create duplicate systems.
+Do not regenerate completed functionality.
+
+
+# ENTERPRISE CONSTRUCTION BUSINESS OPERATING PLATFORM TRANSFORMATION
+
+Continue from the current repository state.
+
+The current application already contains partially completed systems, workflows, architecture, UI components, authentication flows, dashboards, CMS components, CRM functionality, Operations Portal functionality, database structures, and RBAC implementations.
+
+The objective is NOT to rebuild the platform.
+
+The objective is to transform the current platform into a production-ready, enterprise-grade Construction Business Operating Platform.
+
+---
+
+# CONTINUATION & NON-DESTRUCTIVE IMPLEMENTATION DIRECTIVE
+
+Before making any code changes:
+
+Analyze the entire repository.
+
+Determine:
+
+* What already exists.
+* What is complete.
+* What is partially complete.
+* What is broken.
+* What is missing.
+* What can be reused.
+* What can be enhanced.
+* What must be repaired.
+
+DO NOT:
+
+* Rebuild working systems.
+* Regenerate completed modules.
+* Replace stable architecture.
+* Introduce duplicate implementations.
+* Remove functioning features.
+* Rewrite modules that already satisfy requirements.
+
+Instead:
+
+* Audit.
+* Validate.
+* Repair.
+* Complete.
+* Optimize.
+* Harden.
+
+Only implement missing functionality.
+
+---
+
+# COMPLETION-FIRST EXECUTION MODEL
+
+For every requirement:
+
+1. Search repository for existing implementation.
+2. Determine completion percentage.
+3. Determine production readiness.
+4. Identify gaps.
+5. Identify bugs.
+6. Identify missing permissions.
+7. Identify missing workflows.
+8. Identify missing integrations.
+9. Identify missing UI components.
+
+If functionality exists:
+
+* Test it.
+* Validate it.
+* Improve it.
+* Complete it.
+* Secure it.
+
+Do not recreate it.
+
+---
+
+# FIRST PRIORITY — FIX DEPLOYMENT FAILURE
+
+The application runs locally but publishing fails.
+
+Investigate and resolve deployment failure completely.
+
+Specifically:
+
+* Identify the root cause of npm ERESOLVE dependency conflicts.
+* Analyze package.json.
+* Analyze package-lock.json.
+* Analyze dependency tree.
+* Analyze peer dependency conflicts.
+* Analyze build configuration.
+* Analyze deployment configuration.
+* Analyze publishing pipeline.
+
+Resolve:
+
+* Dependency conflicts.
+* Build failures.
+* Publishing failures.
+* Installation failures.
+
+Requirements:
+
+* npm install succeeds.
+* Build succeeds.
+* Publish succeeds.
+* Production deployment succeeds.
+* No manual intervention required.
+
+Provide:
+
+* Root cause analysis.
+* Dependency conflicts identified.
+* Corrective actions taken.
+* Validation results.
+
+No new functionality should be implemented until deployment is stable.
+
+---
+
+# SECOND PRIORITY — FULL APPLICATION AUDIT
+
+Perform a complete audit of:
+
+* Frontend
+* Backend
+* APIs
+* Database
+* Supabase
+* Authentication
+* RBAC
+* Routing
+* CMS
+* CRM
+* Dashboards
+* Operations Portal
+* Forms
+* File Upload Systems
+* Notifications
+* Reporting
+
+Identify:
+
+* Broken functionality
+* Missing functionality
+* Incomplete workflows
+* UI inconsistencies
+* Security concerns
+* Performance bottlenecks
+* Data flow issues
+* State management issues
+* Broken integrations
+
+Automatically repair all safely repairable issues.
+
+---
+
+# THIRD PRIORITY — CTA & NAVIGATION VALIDATION
+
+Audit every:
+
+* CTA
+* Button
+* Form
+* Card Action
+* Navigation Item
+* Dashboard Action
+* Sidebar Item
+* Menu Item
+* Internal Link
+* External Link
+
+Verify:
+
+* Every CTA leads somewhere meaningful.
+* Every button performs the intended action.
+* Every form submits successfully.
+* Every route exists.
+* Every dashboard action functions.
+* Every role-specific workflow functions.
+
+Fix:
+
+* Dead links
+* Broken routes
+* Missing navigation
+* Placeholder actions
+* Incomplete workflows
+* Non-functional buttons
+
+No CTA should exist without purpose.
+
+---
+
+# FOURTH PRIORITY — RESPONSIVE DESIGN OPTIMIZATION
+
+Perform a complete responsive audit.
+
+Optimize:
+
+* Mobile
+* Tablet
+* Laptop
+* Desktop
+* Ultra-Wide Screens
+
+Verify:
+
+* No horizontal scrolling
+* No overflow issues
+* No clipped content
+* No overlapping elements
+* No broken layouts
+* No broken grids
+* No inconsistent spacing
+
+Implement responsive behavior using modern CSS best practices.
+
+---
+
+# FIFTH PRIORITY — SPACING, ALIGNMENT & LAYOUT REFINEMENT
+
+The platform currently feels oversized in some areas.
+
+Refine:
+
+* Padding
+* Margins
+* Layout density
+* Visual hierarchy
+* Dashboard layouts
+* Card layouts
+* Table layouts
+* Mobile layouts
+* Grid systems
+
+Goals:
+
+* Better information density
+* Better visual balance
+* Better alignment
+* Better consistency
+* Premium enterprise appearance
+
+Implement a unified spacing system across the platform.
+
+---
+
+# SIXTH PRIORITY — UI/UX ENHANCEMENT
+
+Maintain existing premium construction-industry branding.
+
+Improve:
+
+* Readability
+* Accessibility
+* Typography hierarchy
+* Color consistency
+* Navigation experience
+* Form usability
+* Dashboard usability
+* Visual balance
+
+Implement:
+
+* Hover states
+* Loading states
+* Empty states
+* Success states
+* Error states
+* Validation states
+* Skeleton loaders where appropriate
+
+Avoid flashy animations.
+
+Maintain a professional enterprise experience.
+
+---
+
+# SEVENTH PRIORITY — PERFORMANCE OPTIMIZATION
+
+Audit and optimize:
+
+* Bundle size
+* Route loading
+* Lazy loading
+* Image optimization
+* Database queries
+* API efficiency
+* Re-renders
+* Initial page load
+* Caching opportunities
+
+Target:
+
+* Improved Lighthouse scores
+* Faster page loads
+* Better responsiveness
+* Better Core Web Vitals
+
+Core Web Vital Targets:
+
+* LCP under 2.5 seconds
+* CLS below 0.1
+* Excellent interaction responsiveness
+
+---
+
+# EIGHTH PRIORITY — DATA FLOW VALIDATION
+
+Validate all integrations.
+
+Ensure:
+
+* Supabase connectivity works.
+* Authentication works.
+* RBAC works.
+* CMS works.
+* CRM works.
+* Operations Portal works.
+* Lead Management works.
+* User Management works.
+* File Uploads work.
+* Reporting works.
+
+Repair all failures discovered.
+
+---
+
+# NINTH PRIORITY — QUALITY ASSURANCE
+
+Perform complete validation.
+
+Verify:
+
+* Build succeeds
+* Deployment succeeds
+* Authentication succeeds
+* RBAC succeeds
+* API calls succeed
+* Database operations succeed
+* Forms succeed
+* Navigation succeeds
+* CMS succeeds
+* CRM succeeds
+* Operations Portal succeeds
+
+Automatically fix all discovered issues.
+
+---
+
+# ENTERPRISE CONTENT OPERATING SYSTEM
+
+Build or extend a complete content operating system.
+
+Every editable item must support:
+
+* Draft Mode
+* Preview Mode
+* Publish Mode
+* Scheduled Publishing
+* Version History
+* Rollback
+* Change Tracking
+* Audit Trail
+
+The owner should be able to restore previous versions of:
+
+* Pages
+* Services
+* Blogs
+* Testimonials
+* Projects
+* CTAs
+* Forms
+* Navigation
+* SEO Content
+
+No content change should be irreversible.
+
+---
+
+# VISUAL PAGE BUILDER
+
+Build or extend a drag-and-drop page builder inside the Operations Portal.
+
+Capabilities:
+
+* Create Pages
+* Duplicate Pages
+* Delete Pages
+* Reorder Sections
+* Hide Sections
+* Show Sections
+* Add Components
+* Remove Components
+* Modify Layouts
+* Save Templates
+
+Provide:
+
+* Hero Components
+* CTA Components
+* Service Components
+* Testimonial Components
+* Statistics Components
+* Gallery Components
+* Contact Components
+* FAQ Components
+
+Maintain design consistency.
+
+---
+
+# DIGITAL ASSET MANAGEMENT SYSTEM
+
+Create centralized media management.
+
+Manage:
+
+* Images
+* Videos
+* PDFs
+* Brochures
+* Certifications
+* Drawings
+* Site Images
+* Logos
+* Team Photos
+
+Features:
+
+* Folder Organization
+* Search
+* Tagging
+* Version History
+* Compression
+* Optimization
+
+All media should be managed centrally.
+
+---
+
+# CRM SALES PIPELINE
+
+Implement or extend CRM.
+
+Stages:
+
+1. New Lead
+2. Contacted
+3. Qualified
+4. Site Visit Scheduled
+5. Proposal Sent
+6. Quotation Sent
+7. Negotiation
+8. Won
+9. Lost
+
+Features:
+
+* Lead Assignment
+* Follow-Up Reminders
+* Activity Timeline
+* Notes
+* Attachments
+* Lead Scoring
+* Conversion Tracking
+
+Provide dedicated dashboards for Sales Managers and Owners.
+
+---
+
+# FINANCIAL MANAGEMENT MODULE
+
+Implement:
+
+## Revenue Tracking
+
+* Project Revenue
+* Service Revenue
+* Monthly Revenue Reports
+
+## Expense Tracking
+
+* Operational Expenses
+* Site Expenses
+* Material Expenses
+* Vendor Expenses
+
+## Invoice Management
+
+* Create Invoices
+* Send Invoices
+* Track Status
+* Track Payments
+
+## Profitability Dashboard
+
+* Revenue
+* Expenses
+* Gross Profit
+* Net Profit
+
+---
+
+# CONSTRUCTION OPERATIONS MANAGEMENT
+
+## PROJECT OPERATIONS
+
+Implement:
+
+* Project Dashboard
+* Milestone Tracking
+* Site Progress Tracking
+* Resource Tracking
+* Team Assignment
+* Site Documentation
+
+---
+
+## DAILY SITE REPORTS
+
+Allow Project Managers and Site Engineers to submit:
+
+* Daily Reports
+* Photos
+* Issues
+* Delays
+* Safety Observations
+
+Archive all reports.
+
+---
+
+## MATERIAL MANAGEMENT
+
+Implement:
+
+* Material Inventory
+* Material Requests
+* Material Usage Logs
+* Low Stock Alerts
+
+Track:
+
+* Cement
+* Steel
+* Paint
+* Electrical Materials
+* Plumbing Materials
+
+---
+
+## PROCUREMENT MANAGEMENT
+
+Implement:
+
+* Purchase Orders
+* Vendor Quotes
+* Vendor Comparison
+* Approval Workflow
+
+---
+
+## VENDOR MANAGEMENT
+
+Track:
+
+* Vendors
+* Suppliers
+* Contractors
+* Service Providers
+
+Store:
+
+* Contact Information
+* Payment History
+* Performance Notes
+* Documents
+
+---
+
+## BOQ MANAGEMENT
+
+Implement:
+
+* BOQ Creation
+* Cost Estimation
+* Item Tracking
+* Quantity Tracking
+* Budget Comparison
+
+---
+
+## TENDER MANAGEMENT
+
+Implement:
+
+* Tender Creation
+* Tender Tracking
+* Bid Status
+* Submission Deadlines
+* Tender Documents
+
+---
+
+# ADVANCED ROLE SYSTEM
+
+Expand RBAC.
+
+Roles:
+
+* Owner
+* Managing Director
+* Operations Manager
+* HR Manager
+* Sales Manager
+* Sales Executive
+* Marketing Manager
+* Accountant
+* Project Manager
+* Site Engineer
+* Customer Support
+* General Staff
+
+Each role must have:
+
+* Custom Dashboard
+* Custom Permissions
+* Custom Reports
+* Restricted Modules
+
+Owner must have configurable permission management.
+
+---
+
+# SYSTEM ACCESS, DEMO ENVIRONMENT & IDENTITY MANAGEMENT
+
+Implement enterprise identity management.
+
+## MASTER ACCOUNT
+
+Create one System Owner account.
+
+Capabilities:
+
+* Access all modules
+* View all users
+* Create users
+* Edit users
+* Disable users
+* Reset passwords
+* Manage permissions
+* Access all dashboards
+* Access all projects
+* Access all CRM records
+* Access all financial records
+* Access audit logs
+* Impersonate users
+
+This should be the only unrestricted account.
+
+---
+
+## DEMO ACCOUNTS
+
+Provide working demo credentials.
+
+### Operations Manager
+
+Access:
+
+* Projects
+* Employees
+* Vendors
+* Site Reports
+
+### General Staff
+
+Access:
+
+* Assigned Tasks
+* Assigned Projects
+
+Restricted:
+
+* Finance
+* Administration
+
+### Client/User
+
+Access:
+
+* Assigned Projects
+* Document Uploads
+* Project Tracking
+* Support Requests
+
+### Project Manager / Site Engineer
+
+Access:
+
+* Site Reports
+* Milestones
+* Progress Tracking
+* Site Images
+
+Provide realistic sample data.
+
+---
+
+# USER MANAGEMENT
+
+Implement:
+
+* User Creation
+* User Invitations
+* Email Verification
+* Password Reset
+* Session Management
+* Login History
+* Activity Logs
+* Last Seen Tracking
+* Device Tracking
+* Account Status Management
+
+Statuses:
+
+* Active
+* Inactive
+* Suspended
+* Pending Verification
+
+---
+
+# AUTHENTICATION & SECURITY
+
+Implement:
+
+* Secure Authentication
+* RBAC
+* Permission-Based Access
+* JWT Security
+* Refresh Tokens
+* Session Timeout
+* Password Policies
+* Audit Logging
+* IP Tracking
+* Device Tracking
+
+All actions must be auditable.
+
+---
+
+# USER IMPERSONATION
+
+Allow System Owner to impersonate users.
+
+Requirements:
+
+* Permission Controlled
+* Fully Logged
+* Time Stamped
+* Audit Recorded
+* Reversible
+
+---
+
+# WEBSITE EXCELLENCE IMPLEMENTATION
+
+Implement:
+
+## Responsive Design
+
+* Mobile First
+* Tablet Optimized
+* Desktop Optimized
+* Ultra-Wide Compatible
+
+## Accessibility
+
+Meet WCAG AA standards.
+
+Implement:
+
+* Keyboard Navigation
+* Semantic HTML
+* ARIA Labels
+* Screen Reader Support
+
+## Information Architecture
+
+Implement:
+
+* Three Click Rule
+* Clear Navigation
+* Predictable User Flows
+
+## Conversion Optimization
+
+Optimize:
+
+* Quote Requests
+* Consultation Bookings
+* WhatsApp Leads
+* Phone Calls
+* Contact Forms
+
+Use:
+
+* Trust Signals
+* Testimonials
+* Certifications
+* Project Proof
+
+---
+
+# CONSTRUCTION WEBSITE BEST PRACTICES
+
+Implement:
+
+* Before/After Galleries
+* Project Timelines
+* Project Locations
+* Service Landing Pages
+* Estimate Wizard
+* Blueprint Uploads
+* Site Image Uploads
+* Trust & Safety Section
+* Certifications Section
+
+---
+
+# FINAL IMPLEMENTATION REQUIREMENTS
+
+Before implementation provide:
+
+1. Existing Architecture Analysis
+2. Gap Analysis
+3. Existing Features Reused
+4. Existing Features Repaired
+5. Existing Features Enhanced
+6. Affected Files
+7. Database Migrations
+8. Risks
+9. Implementation Roadmap
+
+Only then begin implementation.
+
+After implementation provide:
+
+* Deployment Fixes
+* Dependency Fixes
+* Modified Files
+* New Files
+* Removed Files
+* Database Changes
+* API Changes
+* Security Changes
+* Permission Matrix
+* Role Matrix
+* Demo Credentials
+* CTA Fixes
+* Navigation Fixes
+* Responsive Improvements
+* UI/UX Improvements
+* Performance Improvements
+* Testing Results
+* Build Validation Results
+* Deployment Validation Results
+* Security Validation Results
+* Remaining Risks
+* Recommendations For Next Phase
+
+Do not remove working functionality.
+
+Maintain backward compatibility.
+
+Repair before rebuilding.
+
+Extend before replacing.
+
+Reuse before recreating.
+
+Continue implementation until deployment succeeds, builds succeed, workflows are complete, and the platform is production-ready.

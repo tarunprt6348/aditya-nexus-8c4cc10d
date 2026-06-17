@@ -1,3 +1,5 @@
 - [Supabase schema quirks](supabase-schema-quirks.md) — profiles has no email/department; projects uses title not name; leads uses service not service_interest; blog_posts uses published bool not status; testimonials uses client_name.
 - [TanStack Start API](tanstack-start-api.md) — use .validator() not .inputValidator(); import getRequest not getWebRequest from @tanstack/react-start/server.
 - [Supabase untyped tables](supabase-untyped-tables.md) — audit_logs, impersonation_log, role_permissions, user_sessions not in types; cast both table name and object as never.
+- [Deployment fix](deployment-fix.md) — ERESOLVE on npm install caused by @tanstack/react-start peerOptional vite>=7; fix is .npmrc legacy-peer-deps=true. Vite stays at 6.4.3.
+- [Mobile sidebar pattern](mobile-sidebar.md) — AdminSidebar accepts optional onNavigate prop; admin/staff route layouts own the hamburger toggle + dark overlay; sidebar is fixed/z-40 on mobile, static on md+.

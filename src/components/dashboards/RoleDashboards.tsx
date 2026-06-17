@@ -26,12 +26,12 @@ function KpiCard({ label, value, icon: Icon, to, color = "text-gold" }: {
 }) {
   const inner = (
     <Card className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-        <Icon className={`h-4 w-4 ${color}`} />
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1.5 pt-4 px-4">
+        <CardTitle className="text-xs font-medium text-muted-foreground">{label}</CardTitle>
+        <Icon className={`h-3.5 w-3.5 ${color}`} />
       </CardHeader>
-      <CardContent>
-        <div className="font-display text-3xl">{value}</div>
+      <CardContent className="px-4 pb-4">
+        <div className="font-display text-2xl">{value}</div>
       </CardContent>
     </Card>
   );
@@ -44,16 +44,16 @@ function QuickLink({ to, label, icon: Icon, desc }: {
   return (
     <Link to={to}>
       <Card className="group cursor-pointer transition-all hover:shadow-md">
-        <CardContent className="pt-5 pb-4">
+        <CardContent className="px-4 pt-4 pb-3">
           <div className="flex items-start gap-3">
-            <div className="rounded-md bg-navy/10 p-2 group-hover:bg-navy/20 transition-colors">
-              <Icon className="h-5 w-5 text-navy" />
+            <div className="rounded-md bg-navy/10 p-1.5 group-hover:bg-navy/20 transition-colors">
+              <Icon className="h-4 w-4 text-navy" />
             </div>
             <div className="flex-1">
               <div className="text-sm font-medium">{label}</div>
               <div className="text-xs text-muted-foreground mt-0.5">{desc}</div>
             </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground/40 mt-1 group-hover:text-muted-foreground transition-colors" />
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 mt-0.5 group-hover:text-muted-foreground transition-colors" />
           </div>
         </CardContent>
       </Card>

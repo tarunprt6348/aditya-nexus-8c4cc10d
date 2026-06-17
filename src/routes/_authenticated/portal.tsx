@@ -100,7 +100,7 @@ function Portal() {
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               {projects.map((p) => (
                 <Card key={p.id}>
-                  <CardHeader><CardTitle className="text-base">{p.name}</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="text-base">{p.title}</CardTitle></CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
                     <div>Status: <span className="capitalize text-foreground">{p.status}</span></div>
                     <div>Progress: {p.progress ?? 0}%</div>

@@ -41,16 +41,18 @@ const STAFF_NAV: NavItem[] = [
   { to: "/staff/leaves", label: "My Leaves", icon: CalendarDays, module: "leaves" },
 ];
 
-export function AdminSidebar({ area }: { area: "admin" | "staff" }) {
+export function AdminSidebar({
+  area,
+  onNavigate,
+}: {
+  area: "admin" | "staff";
+  onNavigate?: () => void;
+}) {
   const navigate = useNavigate();
   const { role, can, isImpersonating } = useRole();
 
   const navItems = area === "admin" ? ADMIN_NAV : STAFF_NAV;
 
-  // Filter nav items:
-  // 1. ownerOnly items: only shown to the owner role (not even admin)
-  // 2. Other items: shown when the permission system grants module access
-  // Dashboard is always shown within the user's designated area
   const filteredItems = navItems.filter((it) => {
     if (it.ownerOnly) return role === "owner";
     return it.module === "dashboard" || can(it.module);
@@ -59,10 +61,11 @@ export function AdminSidebar({ area }: { area: "admin" | "staff" }) {
   const roleLabel = ROLE_LABELS[role] ?? role;
 
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-card md:flex">
+    <aside className="flex h-full w-60 shrink-0 flex-col border-r border-border bg-card">
       <Link
         to="/"
         className="flex items-center gap-2 border-b border-border px-5 py-5"
+        onClick={onNavigate}
       >
         <span className="grid h-8 w-8 place-items-center rounded-sm bg-navy text-gold font-display text-sm">
           A
@@ -75,7 +78,6 @@ export function AdminSidebar({ area }: { area: "admin" | "staff" }) {
         </div>
       </Link>
 
-      {/* Role badge */}
       <div className="flex items-center gap-2 border-b border-border px-5 py-3">
         <Badge
           variant="outline"
@@ -98,6 +100,7 @@ export function AdminSidebar({ area }: { area: "admin" | "staff" }) {
               to={it.to}
               activeOptions={{ exact: it.exact ?? false }}
               className="group flex items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&.active]:bg-navy [&.active]:text-gold"
+              onClick={onNavigate}
             >
               <Icon className="h-4 w-4 shrink-0" />
               <span className="flex-1">{it.label}</span>
