@@ -1,0 +1,414 @@
+# ENTERPRISE OPERATIONS EXPANSION
+
+The current website must evolve from a marketing website into a complete Construction Business Operating Platform.
+
+Implement the following systems and integrate them with the Operations Portal.
+
+---
+
+# ENTERPRISE CONTENT OPERATING SYSTEM
+
+Build a complete content operating system.
+
+Every editable item must support:
+
+* Draft Mode
+* Preview Mode
+* Publish Mode
+* Scheduled Publishing
+* Version History
+* Rollback
+* Change Tracking
+* Audit Trail
+
+The owner should be able to restore any previous version of:
+
+* Pages
+* Services
+* Blogs
+* Testimonials
+* Projects
+* CTAs
+* Forms
+* Navigation
+* SEO Content
+
+No content changes should be irreversible.
+
+---
+
+# VISUAL PAGE BUILDER
+
+Build a drag-and-drop page builder inside the Operations Portal.
+
+The owner should be able to:
+
+* Create new pages
+* Duplicate pages
+* Delete pages
+* Reorder sections
+* Hide sections
+* Show sections
+* Add components
+* Remove components
+* Modify layouts
+* Save templates
+
+without writing code.
+
+The page builder should preserve design consistency.
+
+Provide:
+
+* Hero Components
+* CTA Components
+* Service Components
+* Testimonial Components
+* Statistics Components
+* Gallery Components
+* Contact Components
+* FAQ Components
+
+---
+
+# DIGITAL ASSET MANAGEMENT SYSTEM
+
+Create a central asset manager.
+
+Manage:
+
+* Images
+* Videos
+* PDFs
+* Brochures
+* Certifications
+* Drawings
+* Site Images
+* Logos
+* Team Photos
+
+Features:
+
+* Folder Organization
+* Search
+* Tagging
+* Version History
+* Compression
+* Media Optimization
+
+All website media should be managed through this system.
+
+---
+
+# CRM SALES PIPELINE
+
+Implement a complete CRM.
+
+Lead Stages:
+
+1. New Lead
+2. Contacted
+3. Qualified
+4. Site Visit Scheduled
+5. Proposal Sent
+6. Quotation Sent
+7. Negotiation
+8. Won
+9. Lost
+
+Features:
+
+* Lead Assignment
+* Follow-Up Reminders
+* Activity Timeline
+* Notes
+* Attachments
+* Lead Scoring
+* Conversion Tracking
+
+Sales Managers and Owners should have CRM dashboards.
+
+---
+
+# FINANCIAL MANAGEMENT MODULE
+
+Expand beyond salary management.
+
+Implement:
+
+## Revenue Tracking
+
+* Project Revenue
+* Service Revenue
+* Monthly Revenue Reports
+
+## Expense Tracking
+
+* Operational Expenses
+* Site Expenses
+* Material Expenses
+* Vendor Expenses
+
+## Invoice Management
+
+* Create Invoices
+* Send Invoices
+* Track Status
+* Payment Tracking
+
+## Profitability Dashboard
+
+* Revenue
+* Expenses
+* Gross Profit
+* Net Profit
+
+---
+
+# CONSTRUCTION OPERATIONS MANAGEMENT
+
+Implement construction-specific workflows.
+
+---
+
+## PROJECT OPERATIONS
+
+Add:
+
+* Project Dashboard
+* Milestone Tracking
+* Site Progress Tracking
+* Resource Tracking
+* Team Assignment
+* Site Documentation
+
+---
+
+## DAILY SITE REPORTS
+
+Site Engineers and Project Managers should be able to submit:
+
+* Daily Progress Reports
+* Photos
+* Issues
+* Delays
+* Safety Observations
+
+All reports should be archived.
+
+---
+
+## MATERIAL MANAGEMENT
+
+Implement:
+
+* Material Inventory
+* Material Requests
+* Material Usage Logs
+* Low Stock Alerts
+
+Examples:
+
+* Cement
+* Steel
+* Paint
+* Electrical Materials
+* Plumbing Materials
+
+---
+
+## PROCUREMENT MANAGEMENT
+
+Implement:
+
+* Purchase Orders
+* Vendor Quotes
+* Vendor Comparison
+* Approval Workflow
+
+---
+
+## VENDOR MANAGEMENT
+
+Create Vendor Database.
+
+Track:
+
+* Vendors
+* Suppliers
+* Contractors
+* Service Providers
+
+Store:
+
+* Contact Details
+* Payment History
+* Performance Notes
+* Documents
+
+---
+
+## BOQ MANAGEMENT
+
+Implement Bill of Quantities System.
+
+Features:
+
+* BOQ Creation
+* Cost Estimation
+* Item Tracking
+* Quantity Tracking
+* Budget Comparison
+
+---
+
+## TENDER MANAGEMENT
+
+Implement:
+
+* Tender Creation
+* Tender Tracking
+* Bid Status
+* Submission Deadlines
+* Tender Documents
+
+---
+
+# ADVANCED ROLE SYSTEM
+
+Expand RBAC.
+
+Roles:
+
+* Owner
+* Managing Director
+* Operations Manager
+* HR Manager
+* Sales Manager
+* Sales Executive
+* Marketing Manager
+* Accountant
+* Project Manager
+* Site Engineer
+* Customer Support
+* General Staff
+
+Each role should have:
+
+* Custom Dashboard
+* Permissions
+* Reports
+* Restricted Modules
+
+Permission management must be configurable by Owner.
+
+---
+
+# WEBSITE EXCELLENCE IMPLEMENTATION
+
+Implement the following principles throughout the site:
+
+## Responsive Design
+
+* Mobile First
+* Tablet Optimized
+* Desktop Optimized
+* Ultra-Wide Compatible
+
+---
+
+## Core Web Vitals
+
+Target:
+
+* LCP under 2.5 seconds
+* CLS below 0.1
+* Excellent Interaction Performance
+
+---
+
+## Accessibility
+
+Meet WCAG AA standards.
+
+Implement:
+
+* Keyboard Navigation
+* Semantic HTML
+* Proper ARIA Labels
+* Screen Reader Compatibility
+
+---
+
+## Information Architecture
+
+Follow:
+
+* Three Click Rule
+* Clear Navigation
+* Predictable User Flows
+
+---
+
+## Conversion-Centered Design
+
+Optimize:
+
+* Quote Requests
+* Consultation Bookings
+* WhatsApp Leads
+* Phone Calls
+* Contact Form Conversions
+
+Use:
+
+* Trust Signals
+* Testimonials
+* Certifications
+* Project Proof
+
+---
+
+# CONSTRUCTION WEBSITE BEST PRACTICES
+
+Improve website experience with:
+
+* Before/After Galleries
+* Project Timelines
+* Project Locations
+* Service Landing Pages
+* Estimate Wizard
+* Blueprint Uploads
+* Site Image Uploads
+* Trust & Safety Section
+* Certifications Section
+
+---
+
+# FINAL IMPLEMENTATION REQUIREMENT
+
+Before making code changes:
+
+1. Analyze existing architecture.
+2. Generate implementation plan.
+3. Identify affected files.
+4. Identify database migrations.
+5. Identify risks.
+6. Present plan.
+
+Only then begin implementation.
+
+After implementation provide:
+
+* Modified Files
+* New Files
+* Database Changes
+* API Changes
+* Security Changes
+* Permission Structure
+* Testing Results
+* Performance Improvements
+
+Do not remove working functionality.
+
+Extend and improve the existing system while maintaining backward compatibility.
