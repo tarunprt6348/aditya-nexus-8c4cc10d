@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_marketing/about")({
   head: () => ({
@@ -93,6 +95,28 @@ function About() {
                 <p className="mt-2 text-sm text-muted-foreground">{v.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-navy py-24 text-navy-foreground">
+        <div className="mx-auto max-w-4xl px-4 text-center lg:px-8">
+          <p className="text-xs uppercase tracking-widest text-gold">Work with us</p>
+          <h2 className="mt-3 font-display text-4xl md:text-5xl">Ready to start your project?</h2>
+          <p className="mx-auto mt-4 max-w-xl text-navy-foreground/75">
+            From the first consultation to the final handover, Aditya Constructions is your
+            single point of accountability.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Button asChild size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90">
+              <Link to="/quote">Request a Quote <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-navy-foreground/30 bg-transparent text-navy-foreground hover:bg-navy-foreground/10">
+              <Link to="/services">Explore Services</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-navy-foreground/30 bg-transparent text-navy-foreground hover:bg-navy-foreground/10">
+              <Link to="/contact">Talk to us</Link>
+            </Button>
           </div>
         </div>
       </section>

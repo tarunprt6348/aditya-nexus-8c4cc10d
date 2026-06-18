@@ -1,0 +1,698 @@
+# ADITYA CONSTRUCTIONS WEBSITE V2 – ENTERPRISE OPERATING PLATFORM EXPANSION
+
+## CONTEXT
+
+Transform the existing Aditya Constructions website from a standard corporate website into a complete enterprise-grade digital operating platform.
+
+The company operates in:
+
+* Construction Services
+* Interior Solutions
+* HVAC Solutions
+* Solar Energy Solutions
+* Real Estate Services
+
+Use the company branding, content, service categories, vision, mission, experience and positioning from the uploaded Aditya Constructions profile. Ensure the official Aditya Constructions logo is displayed consistently throughout the platform and branding remains premium, professional and enterprise-grade.
+
+---
+
+# BRANDING CHANGES
+
+## AI Assistant
+
+Replace every occurrence of:
+
+* Ask Aditya
+* Aditya Assistant
+
+with:
+
+# LEO
+
+LEO will be the official AI assistant of Aditya Constructions.
+
+Capabilities:
+
+* Website guidance
+* Service recommendations
+* Lead qualification
+* Quotation assistance
+* Career guidance
+* FAQ handling
+* Project inquiry support
+* Customer assistance
+
+Future-ready architecture must allow LEO to be connected to OpenAI APIs later.
+
+---
+
+# SERVICES SECTION EXPANSION
+
+Current service cards must become dedicated modules.
+
+Create separate dynamic pages:
+
+## Construction
+
+URL:
+/services/construction
+
+CTA:
+Explore Construction
+
+---
+
+## Interiors
+
+URL:
+/services/interiors
+
+CTA:
+Explore Interiors
+
+---
+
+## HVAC
+
+URL:
+/services/hvac
+
+CTA:
+Explore HVAC
+
+---
+
+## Solar
+
+URL:
+/services/solar
+
+CTA:
+Explore Solar
+
+---
+
+## Real Estate
+
+URL:
+/services/real-estate
+
+CTA:
+Explore Real Estate
+
+---
+
+Requirements:
+
+* Dedicated hero section
+* Rich content area
+* Project showcase area
+* FAQs
+* Inquiry form
+* Gallery
+* Testimonials
+* Service highlights
+
+ALL content must be editable only through Operations Portal CMS.
+
+No hardcoded content.
+
+---
+
+# INSIGHTS SECTION EXPANSION
+
+Every Insights card must contain:
+
+* Read More CTA
+* Dedicated page
+* SEO URL
+
+Example:
+
+/insights/article-name
+
+Each insight page shall support:
+
+* Featured image
+* Rich text editor
+* Videos
+* Attachments
+* Tags
+* Categories
+* Related posts
+* Comments toggle
+
+Everything editable through Operations Portal.
+
+Operations team should be able to:
+
+* Create article
+* Edit article
+* Publish article
+* Schedule article
+* Archive article
+* Delete article
+
+---
+
+# CAREERS SYSTEM EXPANSION
+
+Convert Careers page into a complete recruitment management system.
+
+All sections must be:
+
+* Editable
+* Addable
+* Deletable
+* Sortable
+* Publishable
+
+via Operations Portal.
+
+Career system must support:
+
+## Job Postings
+
+Fields:
+
+* Job Title
+* Department
+* Employment Type
+* Internship / Full Time / Part Time
+* Location
+* Salary Range
+* Description
+* Requirements
+* Responsibilities
+* Benefits
+* Hiring Manager
+* Closing Date
+
+---
+
+## Applications
+
+Candidate submits:
+
+* Name
+* Email
+* Phone
+* Gender
+* Resume
+* Portfolio
+* Cover Letter
+* LinkedIn
+* Additional Notes
+
+Operations Portal receives applications instantly.
+
+---
+
+## Candidate Tracking
+
+Statuses:
+
+* New
+* Under Review
+* Shortlisted
+* Interview Scheduled
+* Offer Sent
+* Rejected
+* Hired
+
+---
+
+# ENTERPRISE AUTHENTICATION SYSTEM
+
+Replace current login system.
+
+When clicking Sign In:
+
+Show modal with 4 portals.
+
+---
+
+## OWNER / AUTHORIZER PORTAL
+
+Highest authority.
+
+Capabilities:
+
+* Full system access
+* Manage Operations Portal users
+* Manage permissions
+* Approve registrations
+* Financial controls
+* Audit controls
+* Escalation authority
+* User promotion/demotion
+* Portal creation controls
+* Global settings
+
+Rename existing Aditya Admin Portal to:
+
+# Authorizer Portal
+
+---
+
+## OPERATIONS PORTAL
+
+Central control hub.
+
+Capabilities:
+
+* Website CMS
+* Career management
+* Insights management
+* Staff management
+* Client management
+* User approvals
+* Content approvals
+* Portal controls
+* Theme controls
+* Role controls
+* Permission controls
+* Audit controls
+
+Operations can access and manage all portals.
+
+---
+
+## STAFF PORTAL
+
+Enhance existing staff portal.
+
+Add modules:
+
+### Dashboard
+
+### Tasks
+
+Editable by Ops and Owner.
+
+### Attendance
+
+* Daily logs
+* Check in
+* Check out
+* Leave requests
+
+### Salary Records
+
+* Payslips
+* Salary history
+* Bonus records
+
+### Performance
+
+* KPI tracking
+* Ratings
+* Reviews
+
+### Personal Information
+
+* Contact details
+* Emergency contacts
+* Documents
+
+### Assigned Client Queries
+
+### Assigned Escalations
+
+### Messages
+
+### Records
+
+Everything timestamped.
+
+---
+
+## CLIENTELE PORTAL
+
+Create entirely new portal.
+
+Features:
+
+### Dashboard
+
+### Queries
+
+Create issue
+
+Fields:
+
+* Title
+* Description
+* Category
+* Priority
+
+---
+
+### Quotations
+
+* Request quote
+* Track quote
+* View history
+
+---
+
+### Support Tickets
+
+Statuses:
+
+* Open
+* Assigned
+* In Progress
+* Escalated
+* Resolved
+* Closed
+
+---
+
+### Messaging System
+
+Client ↔ Assigned Staff
+
+Real-time chat architecture.
+
+---
+
+### Escalation System
+
+Client can escalate:
+
+* Urgent issue
+* Conduct issue
+* Payment issue
+* Service issue
+
+Visible to:
+
+* Staff
+* Operations
+* Authorizer
+
+Actions:
+
+* Comment
+* Resolve
+* Reassign
+* Escalate Further
+* Close
+
+---
+
+# REGISTRATION WORKFLOW
+
+Create Account page.
+
+Fields:
+
+* Full Name
+* Email
+* Phone Number
+* Gender
+* Address
+* Purpose of Registration
+* Short Introduction
+
+When submitted:
+
+DO NOT immediately grant access.
+
+Show message:
+
+"Thank you for signing up. Your request has been submitted for review. An authorized administrator will contact you shortly."
+
+Request automatically appears in:
+
+* Operations Portal
+* Authorizer Portal
+
+Approval actions:
+
+* Approve
+* Reject
+* Request More Information
+
+Only after approval:
+
+User receives portal access.
+
+---
+
+# ROLE MANAGEMENT SYSTEM
+
+Operations Portal and Authorizer Portal must support:
+
+## Dynamic Roles
+
+Examples:
+
+* Operations Manager
+* HR Manager
+* Recruiter
+* Project Manager
+* Site Supervisor
+* Finance Manager
+* Sales Executive
+* Staff
+* Client
+
+System must allow:
+
+* Create role
+* Edit role
+* Delete role
+* Clone role
+
+---
+
+## Permission Engine
+
+Granular permissions:
+
+* Create
+* Read
+* Update
+* Delete
+* Approve
+* Export
+* Manage Users
+* Manage Content
+
+Role-based access control mandatory.
+
+---
+
+# WEBSITE CMS SYSTEM
+
+Entire website becomes CMS-driven.
+
+Editable from Operations Portal:
+
+* All text
+* Images
+* Videos
+* Icons
+* CTA buttons
+* Menus
+* Pages
+* Service pages
+* Careers
+* Insights
+* Contact details
+* SEO settings
+* Metadata
+
+Nothing should require developer intervention.
+
+---
+
+# THEME MANAGEMENT
+
+Operations Portal must control:
+
+* Primary colors
+* Secondary colors
+* Typography
+* Button styles
+* Theme presets
+* Dark mode
+* Light mode
+
+Changes should update website instantly.
+
+---
+
+# AUDIT & RECORDS CENTER
+
+Create dedicated Audit Module.
+
+Track:
+
+* Login history
+* Logout history
+* Content edits
+* User creation
+* User deletion
+* Permission changes
+* Job posting changes
+* Quote changes
+* Escalation updates
+
+Fields:
+
+* User
+* Action
+* Timestamp
+* IP
+* Module
+* Description
+
+Export options:
+
+* CSV
+* Excel
+* PDF
+
+---
+
+# DEMO DATABASE
+
+Populate database with realistic demo records.
+
+Create:
+
+## 1 Authorizer
+
+Name:
+Aditya Sharma
+
+---
+
+## 3 Operations Users
+
+Operations Manager
+HR Manager
+Content Manager
+
+---
+
+## 10 Staff Members
+
+Various departments.
+
+---
+
+## 20 Clients
+
+With quotations.
+
+---
+
+## 25 Queries
+
+Mixed statuses.
+
+---
+
+## 20 Support Tickets
+
+Mixed statuses.
+
+---
+
+## 15 Escalations
+
+Mixed priorities.
+
+---
+
+## 10 Job Postings
+
+---
+
+## 50 Audit Records
+
+---
+
+## 25 Insight Articles
+
+---
+
+# SECURITY
+
+Implement:
+
+* JWT Authentication
+* Role Based Access Control
+* Session Management
+* Password Hashing
+* CSRF Protection
+* Input Validation
+* Activity Logs
+* File Upload Security
+
+---
+
+# UI / UX REQUIREMENTS
+
+Build a premium enterprise dashboard experience.
+
+Reference quality:
+
+* Salesforce
+* HubSpot
+* Zoho One
+* Monday.com
+* Notion
+* Jira
+
+Features:
+
+* Modern sidebar
+* Search everywhere
+* Global notifications
+* Breadcrumb navigation
+* Analytics widgets
+* Quick actions
+* Responsive design
+
+---
+
+# ANALYTICS DASHBOARD
+
+Operations and Authorizer dashboards must display:
+
+* Active Users
+* Website Visits
+* Leads Generated
+* Career Applications
+* Open Queries
+* Open Escalations
+* Revenue Widgets
+* Staff Count
+* Client Count
+* Portal Activity
+
+---
+
+# FINAL REQUIREMENT
+
+Deliver a fully functional enterprise operating ecosystem consisting of:
+
+1. Public Website
+2. LEO AI Assistant
+3. Authorizer Portal
+4. Operations Portal
+5. Staff Portal
+6. Clientele Portal
+7. Recruitment System
+8. CMS System
+9. Audit & Compliance System
+10. Role & Permission Engine
+11. Messaging & Escalation System
+12. Analytics Dashboard
+
+All modules must be production-ready, interconnected, role-based, database-driven, scalable and manageable entirely through the Operations Portal and Authorizer Portal without requiring code changes.

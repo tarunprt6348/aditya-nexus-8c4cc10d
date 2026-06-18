@@ -24,6 +24,7 @@ import { Route as MarketingAboutRouteImport } from './routes/_marketing.about'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedStaffRouteRouteImport } from './routes/_authenticated/staff/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as MarketingBlogIndexRouteImport } from './routes/_marketing.blog.index'
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as MarketingServicesSolarRouteImport } from './routes/_marketing.services.solar'
@@ -31,6 +32,7 @@ import { Route as MarketingServicesRealEstateRouteImport } from './routes/_marke
 import { Route as MarketingServicesInteriorsRouteImport } from './routes/_marketing.services.interiors'
 import { Route as MarketingServicesHvacRouteImport } from './routes/_marketing.services.hvac'
 import { Route as MarketingServicesConstructionRouteImport } from './routes/_marketing.services.construction'
+import { Route as MarketingBlogSlugRouteImport } from './routes/_marketing.blog.$slug'
 import { Route as AuthenticatedStaffLeavesRouteImport } from './routes/_authenticated/staff/leaves'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminTicketsRouteImport } from './routes/_authenticated/admin/tickets'
@@ -118,6 +120,11 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const MarketingBlogIndexRoute = MarketingBlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MarketingBlogRoute,
+} as any)
 const AuthenticatedStaffIndexRoute = AuthenticatedStaffIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -156,6 +163,11 @@ const MarketingServicesConstructionRoute =
     path: '/construction',
     getParentRoute: () => MarketingServicesRoute,
   } as any)
+const MarketingBlogSlugRoute = MarketingBlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => MarketingBlogRoute,
+} as any)
 const AuthenticatedStaffLeavesRoute =
   AuthenticatedStaffLeavesRouteImport.update({
     id: '/leaves',
@@ -236,7 +248,7 @@ export interface FileRoutesByFullPath {
   '/staff': typeof AuthenticatedStaffRouteRouteWithChildren
   '/portal': typeof AuthenticatedPortalRoute
   '/about': typeof MarketingAboutRoute
-  '/blog': typeof MarketingBlogRoute
+  '/blog': typeof MarketingBlogRouteWithChildren
   '/careers': typeof MarketingCareersRoute
   '/contact': typeof MarketingContactRoute
   '/projects': typeof MarketingProjectsRoute
@@ -256,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/staff/leaves': typeof AuthenticatedStaffLeavesRoute
+  '/blog/$slug': typeof MarketingBlogSlugRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
   '/services/interiors': typeof MarketingServicesInteriorsRoute
@@ -263,13 +276,13 @@ export interface FileRoutesByFullPath {
   '/services/solar': typeof MarketingServicesSolarRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/staff/': typeof AuthenticatedStaffIndexRoute
+  '/blog/': typeof MarketingBlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MarketingIndexRoute
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/about': typeof MarketingAboutRoute
-  '/blog': typeof MarketingBlogRoute
   '/careers': typeof MarketingCareersRoute
   '/contact': typeof MarketingContactRoute
   '/projects': typeof MarketingProjectsRoute
@@ -289,6 +302,7 @@ export interface FileRoutesByTo {
   '/admin/tickets': typeof AuthenticatedAdminTicketsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/staff/leaves': typeof AuthenticatedStaffLeavesRoute
+  '/blog/$slug': typeof MarketingBlogSlugRoute
   '/services/construction': typeof MarketingServicesConstructionRoute
   '/services/hvac': typeof MarketingServicesHvacRoute
   '/services/interiors': typeof MarketingServicesInteriorsRoute
@@ -296,6 +310,7 @@ export interface FileRoutesByTo {
   '/services/solar': typeof MarketingServicesSolarRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/staff': typeof AuthenticatedStaffIndexRoute
+  '/blog': typeof MarketingBlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -306,7 +321,7 @@ export interface FileRoutesById {
   '/_authenticated/staff': typeof AuthenticatedStaffRouteRouteWithChildren
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/_marketing/about': typeof MarketingAboutRoute
-  '/_marketing/blog': typeof MarketingBlogRoute
+  '/_marketing/blog': typeof MarketingBlogRouteWithChildren
   '/_marketing/careers': typeof MarketingCareersRoute
   '/_marketing/contact': typeof MarketingContactRoute
   '/_marketing/projects': typeof MarketingProjectsRoute
@@ -327,6 +342,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/tickets': typeof AuthenticatedAdminTicketsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/staff/leaves': typeof AuthenticatedStaffLeavesRoute
+  '/_marketing/blog/$slug': typeof MarketingBlogSlugRoute
   '/_marketing/services/construction': typeof MarketingServicesConstructionRoute
   '/_marketing/services/hvac': typeof MarketingServicesHvacRoute
   '/_marketing/services/interiors': typeof MarketingServicesInteriorsRoute
@@ -334,6 +350,7 @@ export interface FileRoutesById {
   '/_marketing/services/solar': typeof MarketingServicesSolarRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
+  '/_marketing/blog/': typeof MarketingBlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -364,6 +381,7 @@ export interface FileRouteTypes {
     | '/admin/tickets'
     | '/admin/users'
     | '/staff/leaves'
+    | '/blog/$slug'
     | '/services/construction'
     | '/services/hvac'
     | '/services/interiors'
@@ -371,13 +389,13 @@ export interface FileRouteTypes {
     | '/services/solar'
     | '/admin/'
     | '/staff/'
+    | '/blog/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/portal'
     | '/about'
-    | '/blog'
     | '/careers'
     | '/contact'
     | '/projects'
@@ -397,6 +415,7 @@ export interface FileRouteTypes {
     | '/admin/tickets'
     | '/admin/users'
     | '/staff/leaves'
+    | '/blog/$slug'
     | '/services/construction'
     | '/services/hvac'
     | '/services/interiors'
@@ -404,6 +423,7 @@ export interface FileRouteTypes {
     | '/services/solar'
     | '/admin'
     | '/staff'
+    | '/blog'
   id:
     | '__root__'
     | '/_authenticated'
@@ -434,6 +454,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/tickets'
     | '/_authenticated/admin/users'
     | '/_authenticated/staff/leaves'
+    | '/_marketing/blog/$slug'
     | '/_marketing/services/construction'
     | '/_marketing/services/hvac'
     | '/_marketing/services/interiors'
@@ -441,6 +462,7 @@ export interface FileRouteTypes {
     | '/_marketing/services/solar'
     | '/_authenticated/admin/'
     | '/_authenticated/staff/'
+    | '/_marketing/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -556,6 +578,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_marketing/blog/': {
+      id: '/_marketing/blog/'
+      path: '/'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof MarketingBlogIndexRouteImport
+      parentRoute: typeof MarketingBlogRoute
+    }
     '/_authenticated/staff/': {
       id: '/_authenticated/staff/'
       path: '/'
@@ -604,6 +633,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/construction'
       preLoaderRoute: typeof MarketingServicesConstructionRouteImport
       parentRoute: typeof MarketingServicesRoute
+    }
+    '/_marketing/blog/$slug': {
+      id: '/_marketing/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof MarketingBlogSlugRouteImport
+      parentRoute: typeof MarketingBlogRoute
     }
     '/_authenticated/staff/leaves': {
       id: '/_authenticated/staff/leaves'
@@ -768,6 +804,20 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface MarketingBlogRouteChildren {
+  MarketingBlogSlugRoute: typeof MarketingBlogSlugRoute
+  MarketingBlogIndexRoute: typeof MarketingBlogIndexRoute
+}
+
+const MarketingBlogRouteChildren: MarketingBlogRouteChildren = {
+  MarketingBlogSlugRoute: MarketingBlogSlugRoute,
+  MarketingBlogIndexRoute: MarketingBlogIndexRoute,
+}
+
+const MarketingBlogRouteWithChildren = MarketingBlogRoute._addFileChildren(
+  MarketingBlogRouteChildren,
+)
+
 interface MarketingServicesRouteChildren {
   MarketingServicesConstructionRoute: typeof MarketingServicesConstructionRoute
   MarketingServicesHvacRoute: typeof MarketingServicesHvacRoute
@@ -789,7 +839,7 @@ const MarketingServicesRouteWithChildren =
 
 interface MarketingRouteChildren {
   MarketingAboutRoute: typeof MarketingAboutRoute
-  MarketingBlogRoute: typeof MarketingBlogRoute
+  MarketingBlogRoute: typeof MarketingBlogRouteWithChildren
   MarketingCareersRoute: typeof MarketingCareersRoute
   MarketingContactRoute: typeof MarketingContactRoute
   MarketingProjectsRoute: typeof MarketingProjectsRoute
@@ -801,7 +851,7 @@ interface MarketingRouteChildren {
 
 const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingAboutRoute: MarketingAboutRoute,
-  MarketingBlogRoute: MarketingBlogRoute,
+  MarketingBlogRoute: MarketingBlogRouteWithChildren,
   MarketingCareersRoute: MarketingCareersRoute,
   MarketingContactRoute: MarketingContactRoute,
   MarketingProjectsRoute: MarketingProjectsRoute,

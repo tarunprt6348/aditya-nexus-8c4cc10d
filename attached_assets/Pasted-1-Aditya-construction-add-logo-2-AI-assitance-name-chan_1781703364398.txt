@@ -1,0 +1,29 @@
+1.	Aditya construction add logo
+2.	AI assitance name changed from ask aditya and aditya assistant to LEO
+3.	Link a new editable and individual page for each of the following on services page 
+⦁	Explore construction
+⦁	Explore Interiors
+⦁	Explore HVAC
+⦁	Explore Solar
+⦁	Explore Real Estate
+Make sure it shall be only editable by ops portal. Give password and demo id for ops portal.
+6. Career tab - Make the jobs and other sections and headings editable, deletable addable and everything managed and uploaded and updated through ops portal.
+7. Insights tab - Add cta to all 4 blocks which direct to new pages individually and respectively. Make sure they have relevant content in each page associate to it’s heading CTA and All the text is editable through ops portal.
+
+About ops portal 
+Make sure the whole website is visible in a dashboard layout where all the texts, colour theme and other formulaes and features can be added and disabled according to the ops incharge. Only 3 emails can have the access to ops which will be controlled through the demo Email id you create. 
+Ops portal wll have another exclusive right of managing and adding staff users, hr etc. 
+Ops can release new job offers, internships etc with headings etc which reflect on careers page in the dashboard.
+The dashboard shall reflect the id holder’s profile information, credentials of all users, authority provider  to users and staf who can also promote and demote staff based on roles created by itself through enteries. 
+It must have all records with timestamps for each user and logined individual on records tab on the portal.
+
+Other extras
+⦁	Create a demo id database for all and they must have authorisation to edit and change and delete and add users and other information 
+⦁	Create a database such that all info ops portal is filled. 
+⦁	The current owner’s id Aditya’ operation id portal is to be renamed as authorizer’s or owners portal and should have these features. The ops portal can access this directly.
+ We need to CREATE STAFF, OWNER/authorizer, USER and OPERATIONS PORTAL. 
+
+All these handles will be taken care off and looked after by the ops portal.
+
+Develop all these portal and on clicking Sign in the pop up must show up on clicking sign in with all 4 options redirecting to it’s each page.
+On sign up / create an account portal there must be a message segment shown as thank you for signing up we will get back to you soon. This request shall pop up on The signee’s page and should not yet get the handle access. The request must be forwarded to the ops portal, owners and authorizers and any one of them can give the permision to access portal. This sign up page must ask for phone number, gender, and a basic line of intro or purpose of registering.
