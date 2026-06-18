@@ -4,6 +4,7 @@ import {
   Star, LogOut, BookOpen, UserCog, CalendarDays, Mail,
   ShieldCheck, ClipboardList, BarChart3, ChevronRight,
 } from "lucide-react";
+import { Logo } from "@/components/site/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useRole } from "@/contexts/RoleContext";
@@ -64,16 +65,14 @@ export function AdminSidebar({
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-border bg-card">
       <Link
         to="/"
-        className="flex items-center gap-2 border-b border-border px-5 py-5"
+        className="flex items-center gap-3 border-b border-border px-4 py-4"
         onClick={onNavigate}
       >
-        <span className="grid h-8 w-8 place-items-center rounded-sm bg-navy text-gold font-display text-sm">
-          A
-        </span>
-        <div className="flex flex-col">
-          <span className="font-display text-sm leading-none">Aditya</span>
+        <Logo className="h-9 w-auto shrink-0" />
+        <div className="flex flex-col min-w-0">
+          <span className="font-display text-sm leading-none truncate">Aditya Constructions</span>
           <span className="mt-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
-            Operations
+            {area === "admin" ? "Operations Portal" : "Staff Portal"}
           </span>
         </div>
       </Link>

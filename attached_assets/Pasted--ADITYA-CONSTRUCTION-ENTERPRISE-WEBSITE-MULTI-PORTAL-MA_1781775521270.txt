@@ -1,0 +1,582 @@
+# ADITYA CONSTRUCTION - ENTERPRISE WEBSITE & MULTI-PORTAL MANAGEMENT SYSTEM
+
+## PROJECT OBJECTIVE
+
+Upgrade and extend the existing Aditya Construction website into a fully integrated enterprise management ecosystem consisting of:
+
+1. Public Website
+2. Operations Portal
+3. Owner / Authorizer Portal
+4. Staff Portal
+5. Clientele Portal
+
+The system must be scalable, role-based, database-driven, and fully manageable through administrative dashboards.
+
+---
+
+# PHASE 1 — BRANDING CHANGES
+
+## Logo Integration
+
+Replace all placeholder branding with the official Aditya Construction logo.
+
+The logo must automatically appear in:
+
+* Header
+* Footer
+* Login Pages
+* Dashboard Pages
+* Email Templates
+* PDF Exports
+* Reports
+* Mobile Navigation
+
+---
+
+## AI ASSISTANT RENAMING
+
+Rename every occurrence of:
+
+* "Ask Aditya"
+* "Aditya Assistant"
+
+to:
+
+# LEO
+
+LEO will remain accessible throughout the website and all portals.
+
+Future settings, prompts, personality, greetings, and responses must be editable through the Operations Portal.
+
+---
+
+# PHASE 2 — SERVICES SECTION EXPANSION
+
+Under Services create five dedicated CTA sections.
+
+Each CTA must open a separate editable page.
+
+## Construction
+
+URL:
+/services/construction
+
+Content Sections:
+
+* Hero Banner
+* Overview
+* Residential Construction
+* Commercial Construction
+* Industrial Construction
+* Turnkey Projects
+* Project Process
+* FAQs
+* Contact CTA
+
+---
+
+## Interiors
+
+URL:
+/services/interiors
+
+Content Sections:
+
+* Hero Banner
+* Interior Design
+* Modular Solutions
+* Furniture Design
+* Renovation Services
+* Design Process
+* Gallery
+* Contact CTA
+
+---
+
+## HVAC
+
+URL:
+/services/hvac
+
+Content Sections:
+
+* HVAC Solutions
+* Commercial HVAC
+* Industrial HVAC
+* Maintenance Contracts
+* Energy Efficiency
+* Service Process
+* FAQs
+* Contact CTA
+
+---
+
+## Solar
+
+URL:
+/services/solar
+
+Content Sections:
+
+* Solar Installations
+* Residential Solar
+* Commercial Solar
+* Maintenance
+* Energy Savings Calculator
+* FAQs
+* Contact CTA
+
+---
+
+## Real Estate
+
+URL:
+/services/real-estate
+
+Content Sections:
+
+* Property Consulting
+* Property Management
+* Investment Advisory
+* Buying Assistance
+* Selling Assistance
+* FAQs
+* Contact CTA
+
+---
+
+All content must be editable exclusively through the Operations Portal.
+
+No hardcoded content.
+
+---
+
+# PHASE 3 — CAREERS MANAGEMENT SYSTEM
+
+Transform the Careers section into a dynamic job management platform.
+
+Operations Portal must be able to:
+
+* Create jobs
+* Edit jobs
+* Delete jobs
+* Archive jobs
+* Publish jobs
+* Unpublish jobs
+* Create internship opportunities
+* Create apprenticeship programs
+* Upload documents
+* Upload job descriptions
+* Set application deadlines
+
+Each job listing should support:
+
+* Job Title
+* Department
+* Location
+* Salary
+* Employment Type
+* Description
+* Requirements
+* Benefits
+* Status
+
+Applications must be stored in database.
+
+Applicants must appear in Careers Dashboard.
+
+---
+
+# PHASE 4 — INSIGHTS SECTION
+
+Existing 4 Insight blocks must become functional.
+
+Each block must redirect to its own dedicated page.
+
+Each page requires:
+
+* Featured Banner
+* Rich Content
+* Images
+* Related Articles
+* CTA Section
+
+All content must be editable through Operations Portal.
+
+No static text.
+
+---
+
+# PHASE 5 — OPERATIONS PORTAL
+
+Create a complete Operations Control Center.
+
+URL:
+/operations
+
+The Operations Portal acts as the central management hub.
+
+Operations Portal controls:
+
+* Website Content
+* Careers
+* Staff
+* Clients
+* Permissions
+* Roles
+* Insights
+* Services
+* Theme Settings
+* AI Assistant
+* User Requests
+
+Everything visible on the public website must be manageable from Operations Portal.
+
+---
+
+## Operations Dashboard
+
+Dashboard must display:
+
+* Total Users
+* Total Staff
+* Total Clients
+* Pending Requests
+* Active Projects
+* Open Jobs
+* System Activity
+* Recent Logins
+* Escalations
+* Notifications
+
+---
+
+## Content Management
+
+Operations can:
+
+* Add text
+* Edit text
+* Delete text
+* Create pages
+* Disable sections
+* Enable sections
+* Manage media
+* Upload documents
+
+---
+
+## Theme Management
+
+Operations can:
+
+* Change Colors
+* Change Fonts
+* Change Layouts
+* Change Hero Sections
+* Enable/Disable Features
+
+Entire website must be configurable without code.
+
+---
+
+# PHASE 6 — OWNER / AUTHORIZER PORTAL
+
+Rename existing Aditya Operations Portal to:
+
+# Owner / Authorizer Portal
+
+This portal holds highest authority.
+
+Capabilities:
+
+* Approve Operations Managers
+* Create Roles
+* Revoke Access
+* Promote Users
+* Demote Users
+* View Audit Logs
+* View Financial Data
+* View Staff Records
+* View Escalations
+* Override Permissions
+
+Owner can access every portal.
+
+Operations Portal can access Owner Portal functions only if explicitly granted permission.
+
+---
+
+# PHASE 7 — ROLE MANAGEMENT SYSTEM
+
+Create four user categories.
+
+## Owner / Authorizer
+
+Highest authority.
+
+---
+
+## Operations
+
+Administrative control.
+
+---
+
+## Staff
+
+Execution and support.
+
+---
+
+## Clientele
+
+Customer-facing users.
+
+---
+
+Role-based access control must be enforced throughout the platform.
+
+---
+
+# PHASE 8 — SIGN IN & SIGN UP SYSTEM
+
+Clicking "Sign In" must display a popup.
+
+Options:
+
+1. Owner / Authorizer Portal
+2. Operations Portal
+3. Staff Portal
+4. Clientele Portal
+
+Each redirects to its respective login page.
+
+---
+
+## Sign Up Workflow
+
+Sign-up form must collect:
+
+* Full Name
+* Email
+* Phone Number
+* Gender
+* Purpose of Registration
+* Introduction
+
+After submission display:
+
+"Thank you for registering. Your request has been received and is awaiting approval."
+
+No portal access granted immediately.
+
+Approval request must be sent to:
+
+* Owner
+* Authorizer
+* Operations
+
+Any authorized person can approve or reject.
+
+---
+
+# PHASE 9 — STAFF PORTAL
+
+Create dedicated Staff Portal.
+
+Tabs:
+
+## Dashboard
+
+Assigned tasks.
+
+## Attendance
+
+Clock In
+Clock Out
+Attendance History
+
+## Salary Records
+
+Salary Details
+Payslips
+History
+
+## Performance
+
+KPIs
+Reviews
+Ratings
+
+## To-Do List
+
+Editable by Operations and Owner.
+
+## Personal Information
+
+Profile
+Documents
+Emergency Contacts
+
+## Activity Logs
+
+Every action stored with timestamps.
+
+---
+
+# PHASE 10 — CLIENTELE PORTAL
+
+Create dedicated Client Portal.
+
+Features:
+
+## Quotations
+
+Request Quote
+Track Quote
+
+## Queries
+
+Submit Query
+Track Status
+
+## Complaints
+
+Raise Complaint
+
+## Escalations
+
+Mark Urgent
+
+## Messaging System
+
+Direct communication with assigned staff.
+
+## Status Tracking
+
+Pending
+In Progress
+Resolved
+Escalated
+
+Every interaction logged.
+
+Escalations visible to:
+
+* Operations
+* Owner
+* Assigned Staff
+
+---
+
+# PHASE 11 — AUDIT & SECURITY
+
+Create comprehensive activity tracking.
+
+Store:
+
+* User Login
+* Logout
+* Record Creation
+* Record Editing
+* Record Deletion
+* Permission Changes
+
+Each record must contain:
+
+* User Name
+* Role
+* IP
+* Timestamp
+* Action
+
+---
+
+# PHASE 12 — DEMO DATA GENERATION
+
+Populate database with realistic demo records.
+
+Generate:
+
+## Owner Account
+
+Email:
+[owner@adityaconstruction.com](mailto:owner@adityaconstruction.com)
+
+Password:
+Owner@123
+
+---
+
+## Operations Account
+
+Email:
+[operations@adityaconstruction.com](mailto:operations@adityaconstruction.com)
+
+Password:
+Ops@123
+
+---
+
+## Demo Staff Accounts
+
+At least 15 staff users.
+
+Include:
+
+* HR
+* Project Manager
+* Site Engineer
+* Interior Designer
+* HVAC Specialist
+* Solar Consultant
+* Real Estate Consultant
+
+Generate complete profiles.
+
+---
+
+## Demo Client Accounts
+
+At least 25 clients.
+
+Include:
+
+* Contact Information
+* Requests
+* Quotations
+* Escalations
+* Projects
+
+Populate all modules with realistic sample data.
+
+---
+
+# TECHNICAL REQUIREMENTS
+
+* Responsive Design
+* Mobile Optimized
+* Database Driven
+* Secure Authentication
+* Role Based Authorization
+* Audit Logging
+* Search & Filtering
+* Export to PDF
+* Export to Excel
+* Notification System
+* Future Ready Architecture
+
+IMPORTANT:
+
+Audit existing repository first.
+
+Reuse existing functionality whenever possible.
+
+Repair before rebuilding.
+
+Extend before replacing.
+
+Do not create duplicate systems.
+
+Ensure every public-facing page, portal page, content section, career listing, insight article, service page, and user record is fully connected to the database and manageable through the Operations Portal.
