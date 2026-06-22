@@ -5,7 +5,7 @@ import { Logo } from "@/components/site/Logo";
 export function SiteFooter() {
   return (
     <footer className="bg-navy text-navy-foreground">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 lg:grid-cols-4 lg:px-8 pt-[42px] pb-[42px] pl-[5px] pr-[5px] ml-[312.333px] mr-[312.333px] mt-[10px] mb-[10px]">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <Logo className="h-12 w-auto" />

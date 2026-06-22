@@ -99,7 +99,7 @@ function About() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-navy py-24 text-navy-foreground">
+      <section className="relative overflow-hidden bg-navy py-24 text-navy-foreground border-t-[1px] border-r-[1px] border-b-[1px] border-l-[1px] border-t-[color:var(--gold)] border-r-[color:var(--gold)] border-b-[color:var(--gold)] border-l-[color:var(--gold)] pt-[80px] pb-[80px]">
         <div className="mx-auto max-w-4xl px-4 text-center lg:px-8">
           <p className="text-xs uppercase tracking-widest text-gold">Work with us</p>
           <h2 className="mt-3 font-display text-4xl md:text-5xl">Ready to start your project?</h2>

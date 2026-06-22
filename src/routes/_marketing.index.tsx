@@ -103,7 +103,7 @@ function Home_() {
                 <img src={s.img} alt={s.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/30 to-transparent" />
               </div>
-              <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground">
+              <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground pt-[20px] pb-[20px]">
                 <div className="flex items-center gap-2 text-gold">
                   <s.icon className="h-5 w-5" />
                   <span className="text-xs uppercase tracking-widest">Service</span>
@@ -157,7 +157,7 @@ function Home_() {
       </section>
 
       {/* CTA */}
-      <section className="relative overflow-hidden bg-navy py-24 text-navy-foreground">
+      <section className="relative overflow-hidden bg-navy py-24 text-navy-foreground border-t-[1px] border-r-[1px] border-b-[1px] border-l-[1px] border-t-[color:var(--gold)] border-r-[color:var(--gold)] border-b-[color:var(--gold)] border-l-[color:var(--gold)] pt-[80px] pb-[80px]">
         <div className="mx-auto max-w-4xl px-4 text-center lg:px-8">
           <h2 className="font-display text-4xl md:text-5xl">Have a project in mind?</h2>
           <p className="mx-auto mt-4 max-w-xl text-navy-foreground/75">
