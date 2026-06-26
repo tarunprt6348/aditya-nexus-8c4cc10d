@@ -17,34 +17,49 @@ export type Module =
   | "tasks"
   | "leaves"
   | "reports"
-  | "finance";
+  | "finance"
+  | "clients"
+  | "employees"
+  | "vendors"
+  | "materials"
+  | "equipment"
+  | "procurement"
+  | "documents"
+  | "site_monitoring"
+  | "quality"
+  | "safety"
+  | "scheduling"
+  | "system";
 
-// Default permission matrix — can be overridden by role_permissions table
 const DEFAULT_PERMISSIONS: Record<AppRole, Module[]> = {
   owner: [
     "dashboard","leads","quotes","projects","tickets","hr","blog","team",
     "testimonials","messages","users","audit","permissions","tasks","leaves",
-    "reports","finance",
+    "reports","finance","clients","employees","vendors","materials","equipment",
+    "procurement","documents","site_monitoring","quality","safety","scheduling","system",
   ],
   admin: [
     "dashboard","leads","quotes","projects","tickets","hr","blog","team",
     "testimonials","messages","users","audit","permissions","tasks","leaves",
-    "reports","finance",
+    "reports","finance","clients","employees","vendors","materials","equipment",
+    "procurement","documents","site_monitoring","quality","safety","scheduling","system",
   ],
   managing_director: [
     "dashboard","projects","quotes","leads","hr","reports","finance","tickets","team",
+    "clients","employees","vendors","procurement","documents","scheduling",
   ],
   operations_manager: [
     "dashboard","projects","quotes","tickets","tasks","messages","leads","team",
+    "clients","materials","equipment","site_monitoring","scheduling","documents","vendors",
   ],
-  hr_manager: ["dashboard","hr","leaves","tasks","team"],
-  sales_manager: ["dashboard","leads","quotes","tasks","messages","reports"],
-  marketing_manager: ["dashboard","blog","testimonials","leads","messages"],
-  accountant: ["dashboard","finance","reports","quotes"],
-  sales_executive: ["dashboard","leads","tasks"],
-  project_manager: ["dashboard","projects","tasks","quotes"],
-  site_engineer: ["dashboard","projects","tasks"],
-  customer_support: ["dashboard","tickets","messages","tasks"],
+  hr_manager: ["dashboard","hr","leaves","tasks","team","employees","scheduling"],
+  sales_manager: ["dashboard","leads","quotes","tasks","messages","reports","clients"],
+  marketing_manager: ["dashboard","blog","testimonials","leads","messages","clients"],
+  accountant: ["dashboard","finance","reports","quotes","procurement"],
+  sales_executive: ["dashboard","leads","tasks","clients"],
+  project_manager: ["dashboard","projects","tasks","quotes","site_monitoring","scheduling","documents","materials","equipment","quality","safety"],
+  site_engineer: ["dashboard","projects","tasks","site_monitoring","quality","safety","materials"],
+  customer_support: ["dashboard","tickets","messages","tasks","clients"],
   general_staff: ["dashboard","tasks","leaves"],
   staff: ["dashboard","tasks","leaves"],
   customer: ["dashboard"],
@@ -63,13 +78,11 @@ export function hasModuleAccess(
   return DEFAULT_PERMISSIONS[role]?.includes(module) ?? false;
 }
 
-// Roles that use the admin (/admin) layout
 export const ADMIN_AREA_ROLES: AppRole[] = [
   "owner","admin","managing_director","operations_manager",
   "hr_manager","sales_manager","marketing_manager","accountant",
 ];
 
-// Roles that use the staff (/staff) layout
 export const STAFF_AREA_ROLES: AppRole[] = [
   "staff","sales_executive","project_manager","site_engineer",
   "customer_support","general_staff",

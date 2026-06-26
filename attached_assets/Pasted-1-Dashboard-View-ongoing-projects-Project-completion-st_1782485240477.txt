@@ -1,0 +1,303 @@
+1. Dashboard
+View ongoing projects
+Project completion status
+Revenue and expenses
+Pending tasks
+Employee attendance
+Equipment availability
+Notifications and alerts
+Weather updates (optional)
+2. Project Management
+Create new projects
+Edit project details
+Assign project managers
+Track project progress
+View project timeline
+Set milestones
+Upload project documents
+Close completed projects
+Archive old projects
+3. Client Management
+Add new clients
+Edit client information
+View project history
+Manage contracts
+Store client documents
+Track payments
+Client communication logs
+4. Employee Management
+Employee registration
+Attendance tracking
+Leave management
+Salary records
+Role assignment
+Performance tracking
+Skill database
+Identity document storage
+5. Contractor & Vendor Management
+Register contractors
+Register suppliers
+Vendor ratings
+Contract management
+Payment tracking
+Material supply history
+Vendor performance reports
+6. Material Management
+Material inventory
+Purchase requests
+Stock availability
+Material issue records
+Material returns
+Warehouse management
+Low-stock alerts
+Material consumption reports
+7. Equipment Management
+Equipment inventory
+Equipment allocation
+Maintenance schedule
+Service history
+Fuel consumption
+Availability status
+Rental management
+Breakdown reporting
+8. Financial Management
+Budget planning
+Expense tracking
+Income records
+Invoice generation
+Payment management
+Payroll
+Tax reports
+Profit/Loss analysis
+9. Procurement Management
+Purchase orders
+Request for quotation (RFQ)
+Supplier comparison
+Approval workflow
+Delivery tracking
+Invoice verification
+10. Document Management
+Blueprints
+CAD drawings
+Contracts
+Bills
+Permits
+Inspection reports
+Insurance documents
+Safety manuals
+11. Site Monitoring
+Daily site reports
+Work progress updates
+Site photographs
+Drone images (optional)
+Incident reports
+Weather conditions
+Resource utilization
+12. Quality Control
+Inspection checklist
+Defect tracking
+Compliance reports
+Testing reports
+Material quality verification
+13. Safety Management
+Safety inspections
+Incident reporting
+PPE tracking
+Safety training records
+Hazard identification
+Emergency contacts
+14. Scheduling
+Project schedules
+Employee schedules
+Equipment booking
+Material delivery schedules
+Meeting calendar
+15. Communication
+Internal messaging
+Announcements
+Email notifications
+Task assignments
+Discussion boards
+16. Reporting & Analytics
+Project reports
+Financial reports
+Employee reports
+Equipment reports
+Material reports
+Productivity reports
+Custom reports
+Export to PDF/Excel
+17. Customer Support
+Raise support tickets
+Complaint management
+Feedback collection
+Resolution tracking
+18. User Management
+User registration
+Login
+Password reset
+Two-factor authentication
+Account activation
+Role management
+19. Audit Logs
+User activities
+Login history
+Changes made
+Approval history
+Security logs
+20. System Administration
+Backup management
+Restore database
+System settings
+Email configuration
+Notification settings
+Access permissions
+Authorities (Role-Based Access Control)
+1. Super Admin
+
+Authority
+
+Full system control
+Manage all users
+Create/delete projects
+Access all financial records
+Configure system settings
+Backup and restore data
+View all reports
+Assign permissions
+2. Managing Director / Owner
+
+Authority
+
+View all projects
+Financial overview
+Approve budgets
+Approve contracts
+View company reports
+Monitor company performance
+3. Project Manager
+
+Authority
+
+Create projects
+Update progress
+Assign employees
+Approve site activities
+Upload documents
+Generate project reports
+Monitor budget usage
+4. Site Engineer
+
+Authority
+
+Daily progress updates
+Upload site photos
+Report issues
+Request materials
+Update inspections
+5. Site Supervisor
+
+Authority
+
+Record attendance
+Allocate labor
+Monitor daily work
+Report delays
+Verify completed work
+6. HR Manager
+
+Authority
+
+Employee management
+Attendance
+Leave approval
+Payroll records
+Recruitment
+Performance records
+7. Accountant
+
+Authority
+
+Manage invoices
+Salary processing
+Budget tracking
+Payment records
+Financial reports
+Tax reports
+8. Procurement Officer
+
+Authority
+
+Create purchase orders
+Manage vendors
+Compare quotations
+Track deliveries
+Material purchasing
+9. Store Manager
+
+Authority
+
+Inventory management
+Material issue
+Stock updates
+Warehouse records
+Equipment storage
+10. Safety Officer
+
+Authority
+
+Safety inspections
+Incident reports
+Safety compliance
+PPE tracking
+Training records
+11. Quality Inspector
+
+Authority
+
+Inspection reports
+Quality verification
+Defect management
+Compliance reports
+12. Client
+
+Authority
+
+View assigned project
+View progress
+Download documents
+View invoices
+Send messages
+Raise support tickets
+13. Contractor
+
+Authority
+
+View assigned tasks
+Submit work reports
+Upload documents
+Update work status
+View payment status
+14. Vendor
+
+Authority
+
+View purchase orders
+Upload invoices
+Delivery updates
+Payment status
+Optional Advanced Features
+AI-powered project scheduling
+AI cost estimation
+BIM (Building Information Modeling) integration
+GIS/Map integration
+Drone-based site monitoring
+IoT sensor integration
+Predictive maintenance
+OCR for document scanning
+Digital signatures
+GPS tracking for vehicles
+Mobile app synchronization
+Offline field reporting
+Real-time notifications
+Business intelligence dashboards

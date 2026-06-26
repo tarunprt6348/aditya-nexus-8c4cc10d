@@ -3,3 +3,4 @@
 - [Supabase untyped tables](supabase-untyped-tables.md) — audit_logs, impersonation_log, role_permissions, user_sessions not in types; cast both table name and object as never.
 - [Deployment fix](deployment-fix.md) — ERESOLVE on npm install caused by @tanstack/react-start peerOptional vite>=7; fix is .npmrc legacy-peer-deps=true. Vite stays at 6.4.3.
 - [Mobile sidebar pattern](mobile-sidebar.md) — AdminSidebar accepts optional onNavigate prop; admin/staff route layouts own the hamburger toggle + dark overlay; sidebar is fixed/z-40 on mobile, static on md+.
+- [20-module portal structure](portal-modules.md) — AdminSidebar uses ADMIN_NAV_GROUPS (grouped navigation, 7 groups); 14 new module pages all use PermissionGuard + createFileRoute pattern; new Module types added to permissions.ts.
