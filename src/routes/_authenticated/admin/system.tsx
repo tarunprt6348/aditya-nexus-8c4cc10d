@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,9 +11,21 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Settings, Database, Mail, Bell, Shield, Download, RefreshCw, Server, CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { PermissionGuard } from "@/components/site/PermissionGuard";
+import { supabase } from "@/integrations/supabase/client";
+import type { AppRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/_authenticated/admin/system")({
   head: () => ({ meta: [{ title: "System Settings — Operations" }] }),
+  // Owner-only: enforce at route level so no admin role can bypass PermissionGuard
+  beforeLoad: async () => {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) throw redirect({ to: "/auth" });
+    const { data: ok } = await supabase.rpc("has_role", {
+      _user_id: u.user.id,
+      _role: "owner" as AppRole,
+    });
+    if (!ok) throw redirect({ to: "/admin" });
+  },
   component: () => <PermissionGuard module="system"><SystemAdmin /></PermissionGuard>,
 });
 
