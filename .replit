@@ -10,12 +10,9 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-SUPABASE_PROJECT_ID = "jzbapqihfmdjjjyqltcq"
-SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6YmFwcWloZm1kampqeXFsdGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDE2MzUsImV4cCI6MjA5NzExNzYzNX0.cUkTncFzfvfIZCfVzBlzNcBfoD8D5Pnrrk-r1oG8A5I"
-SUPABASE_URL = "https://jzbapqihfmdjjjyqltcq.supabase.co"
-VITE_SUPABASE_PROJECT_ID = "jzbapqihfmdjjjyqltcq"
-VITE_SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6YmFwcWloZm1kampqeXFsdGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDE2MzUsImV4cCI6MjA5NzExNzYzNX0.cUkTncFzfvfIZCfVzBlzNcBfoD8D5Pnrrk-r1oG8A5I"
-VITE_SUPABASE_URL = "https://jzbapqihfmdjjjyqltcq.supabase.co"
+SUPABASE_PROJECT_ID = "bscffefeplghbuzhrlzp"
+SUPABASE_PUBLISHABLE_KEY = "sb_publishable_EeDF31uXjJuRqCTnFG5J7g_jo4sk9DJ"
+SUPABASE_URL = "https://bscffefeplghbuzhrlzp.supabase.co"
 
 [workflows]
 runButton = "Project"
