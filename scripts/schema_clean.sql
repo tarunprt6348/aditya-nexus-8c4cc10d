@@ -1126,21 +1126,26 @@ ON CONFLICT (role, module) DO NOTHING;
 
 -- ============================================================
 -- SECTION 13: DEMO USER PROFILES & ROLES
--- These are the 10 accounts created in auth.users.
--- Update the UUIDs here if you recreated the auth users.
+-- These are the 10 accounts already created in auth.users.
+-- Both INSERTs are guarded with EXISTS so this section is a
+-- no-op on a fresh database where these UUIDs don't yet exist,
+-- and idempotent on any database where they do.
 -- ============================================================
 INSERT INTO public.profiles (id, full_name, phone, email, status, created_at, updated_at)
-VALUES
-  ('25bab248-2845-4c67-8c65-d674120b67c7', 'Aditya Owner',       '+91-9000000001', 'owner@adityaconstruction.com',       'active', now(), now()),
-  ('6ed29f27-f975-456a-a87a-d4a619fa7493', 'Operations Manager', '+91-9000000002', 'operations@adityaconstruction.com',  'active', now(), now()),
-  ('b05836e8-f1e4-45c5-b59c-4e8f3db3b53c', 'Rahul Sharma',       '+91-9811001001', 'rahul.sharma@adityaconstruction.com','active', now(), now()),
-  ('95ec572b-c804-488e-977d-6f21cd9bf349', 'Priya Gupta',        '+91-9811001002', 'priya.gupta@adityaconstruction.com', 'active', now(), now()),
-  ('a55461da-4780-4624-8854-6ad7eb8fbc3b', 'Amit Singh',         '+91-9811001003', 'amit.singh@adityaconstruction.com',  'active', now(), now()),
-  ('85fabe48-ab0c-4a3f-9fc6-9e5ef4ad5b01', 'Neha Verma',         '+91-9811001004', 'neha.verma@adityaconstruction.com',  'active', now(), now()),
-  ('fbbe86ee-0d2b-4de8-ab31-8d1daa807685', 'Deepak Joshi',       '+91-9811001008', 'deepak.joshi@adityaconstruction.com','active', now(), now()),
-  ('85610fb3-06ae-43b7-93c4-1e98bb98dae3', 'Kavya Nair',         '+91-9811001009', 'kavya.nair@adityaconstruction.com',  'active', now(), now()),
-  ('742b15de-6ed8-46e5-86b4-577c91c8136d', 'Arjun Mehta',        '+91-9811001010', 'arjun.mehta@adityaconstruction.com', 'active', now(), now()),
-  ('774c222a-c67b-494c-8738-a9c5fa17dd1f', 'Kiran Reddy',        '+91-9811001015', 'kiran.reddy@adityaconstruction.com', 'active', now(), now())
+SELECT v.id::uuid, v.full_name, v.phone, v.email, 'active'::public.user_status, now(), now()
+FROM (VALUES
+  ('25bab248-2845-4c67-8c65-d674120b67c7', 'Aditya Owner',       '+91-9000000001', 'owner@adityaconstruction.com'),
+  ('6ed29f27-f975-456a-a87a-d4a619fa7493', 'Operations Manager', '+91-9000000002', 'operations@adityaconstruction.com'),
+  ('b05836e8-f1e4-45c5-b59c-4e8f3db3b53c', 'Rahul Sharma',       '+91-9811001001', 'rahul.sharma@adityaconstruction.com'),
+  ('95ec572b-c804-488e-977d-6f21cd9bf349', 'Priya Gupta',        '+91-9811001002', 'priya.gupta@adityaconstruction.com'),
+  ('a55461da-4780-4624-8854-6ad7eb8fbc3b', 'Amit Singh',         '+91-9811001003', 'amit.singh@adityaconstruction.com'),
+  ('85fabe48-ab0c-4a3f-9fc6-9e5ef4ad5b01', 'Neha Verma',         '+91-9811001004', 'neha.verma@adityaconstruction.com'),
+  ('fbbe86ee-0d2b-4de8-ab31-8d1daa807685', 'Deepak Joshi',       '+91-9811001008', 'deepak.joshi@adityaconstruction.com'),
+  ('85610fb3-06ae-43b7-93c4-1e98bb98dae3', 'Kavya Nair',         '+91-9811001009', 'kavya.nair@adityaconstruction.com'),
+  ('742b15de-6ed8-46e5-86b4-577c91c8136d', 'Arjun Mehta',        '+91-9811001010', 'arjun.mehta@adityaconstruction.com'),
+  ('774c222a-c67b-494c-8738-a9c5fa17dd1f', 'Kiran Reddy',        '+91-9811001015', 'kiran.reddy@adityaconstruction.com')
+) AS v(id, full_name, phone, email)
+WHERE EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = v.id::uuid)
 ON CONFLICT (id) DO UPDATE SET
   full_name  = EXCLUDED.full_name,
   phone      = EXCLUDED.phone,
@@ -1148,17 +1153,21 @@ ON CONFLICT (id) DO UPDATE SET
   status     = EXCLUDED.status,
   updated_at = now();
 
-INSERT INTO public.user_roles (user_id, role, created_at) VALUES
-  ('25bab248-2845-4c67-8c65-d674120b67c7', 'owner',             now()),
-  ('6ed29f27-f975-456a-a87a-d4a619fa7493', 'operations_manager',now()),
-  ('b05836e8-f1e4-45c5-b59c-4e8f3db3b53c', 'hr_manager',        now()),
-  ('95ec572b-c804-488e-977d-6f21cd9bf349', 'project_manager',   now()),
-  ('a55461da-4780-4624-8854-6ad7eb8fbc3b', 'site_engineer',     now()),
-  ('85fabe48-ab0c-4a3f-9fc6-9e5ef4ad5b01', 'sales_executive',   now()),
-  ('fbbe86ee-0d2b-4de8-ab31-8d1daa807685', 'sales_manager',     now()),
-  ('85610fb3-06ae-43b7-93c4-1e98bb98dae3', 'customer_support',  now()),
-  ('742b15de-6ed8-46e5-86b4-577c91c8136d', 'accountant',        now()),
-  ('774c222a-c67b-494c-8738-a9c5fa17dd1f', 'staff',             now())
+INSERT INTO public.user_roles (user_id, role, created_at)
+SELECT v.user_id::uuid, v.role::public.app_role, now()
+FROM (VALUES
+  ('25bab248-2845-4c67-8c65-d674120b67c7', 'owner'),
+  ('6ed29f27-f975-456a-a87a-d4a619fa7493', 'operations_manager'),
+  ('b05836e8-f1e4-45c5-b59c-4e8f3db3b53c', 'hr_manager'),
+  ('95ec572b-c804-488e-977d-6f21cd9bf349', 'project_manager'),
+  ('a55461da-4780-4624-8854-6ad7eb8fbc3b', 'site_engineer'),
+  ('85fabe48-ab0c-4a3f-9fc6-9e5ef4ad5b01', 'sales_executive'),
+  ('fbbe86ee-0d2b-4de8-ab31-8d1daa807685', 'sales_manager'),
+  ('85610fb3-06ae-43b7-93c4-1e98bb98dae3', 'customer_support'),
+  ('742b15de-6ed8-46e5-86b4-577c91c8136d', 'accountant'),
+  ('774c222a-c67b-494c-8738-a9c5fa17dd1f', 'staff')
+) AS v(user_id, role)
+WHERE EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = v.user_id::uuid)
 ON CONFLICT (user_id, role) DO NOTHING;
 
 
