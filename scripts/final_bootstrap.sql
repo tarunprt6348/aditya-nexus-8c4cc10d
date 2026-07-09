@@ -484,13 +484,14 @@ ON CONFLICT (id) DO UPDATE SET
 -- =================================================================
 -- SECTION 9 — QUOTE REQUESTS
 -- 5 realistic quote requests with varied statuses.
+-- IDs use valid hex-only UUID format (all chars in 0-9, a-f).
 -- =================================================================
 INSERT INTO public.quote_requests
   (id, user_id, name, email, phone, service_type, project_type,
    budget_range, timeline, location, area_sqft, requirements,
    ai_estimate, ai_breakdown, status, quoted_amount, created_at, updated_at)
 VALUES
-  ('g1000001-0000-4000-8000-000000000001',
+  ('ab000001-0000-4000-8000-000000000001',
    '25bab248-2845-4c67-8c65-d674120b67c7',
    'Aditya Kumar','owner@adityaconstruction.com','+91-9000000001',
    'construction','Residential Bungalow',
@@ -501,7 +502,7 @@ VALUES
    'quoted', 9800000.00,
    now()-interval '30 days', now()-interval '20 days'),
 
-  ('g1000002-0000-4000-8000-000000000002',
+  ('ab000002-0000-4000-8000-000000000002',
    NULL,
    'Meenakshi Iyer','m.iyer@techcorp.in','+91-9820345678',
    'interiors','3 BHK Flat Interior',
@@ -512,7 +513,7 @@ VALUES
    'reviewing', NULL,
    now()-interval '15 days', now()-interval '10 days'),
 
-  ('g1000003-0000-4000-8000-000000000003',
+  ('ab000003-0000-4000-8000-000000000003',
    NULL,
    'Raj Singhania','raj.singhania@outlook.com','+91-9990678901',
    'solar','Residential Rooftop Solar',
@@ -523,7 +524,7 @@ VALUES
    'pending', NULL,
    now()-interval '1 day', now()-interval '1 day'),
 
-  ('g1000004-0000-4000-8000-000000000004',
+  ('ab000004-0000-4000-8000-000000000004',
    NULL,
    'Pradeep Malhotra','pmalhotra@yahoo.com','+91-9898789012',
    'hvac','Warehouse HVAC System',
@@ -534,7 +535,7 @@ VALUES
    'quoted', 3200000.00,
    now()-interval '10 days', now()-interval '5 days'),
 
-  ('g1000005-0000-4000-8000-000000000005',
+  ('ab000005-0000-4000-8000-000000000005',
    '6ed29f27-f975-456a-a87a-d4a619fa7493',
    'Vikram Nair','operations@adityaconstruction.com','+91-9000000002',
    'real_estate','Commercial Office Space',
