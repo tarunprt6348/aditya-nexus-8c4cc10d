@@ -1,0 +1,137 @@
+The current SQL generation approach has proven unreliable.
+
+Sections 9–20 contained multiple systemic issues including:
+- invalid UUID literals
+- malformed SQL strings
+- unescaped apostrophes
+- foreign-key inconsistencies
+- syntax errors
+- seed data that could not execute without manual fixes
+
+I do NOT want incremental fixes anymore.
+
+Instead, regenerate the entire database seed from the application's current schema.
+
+Requirements:
+
+1. Read the complete current schema from the project.
+   Do NOT rely on the old migration files if they conflict with the code.
+
+2. Generate TWO files:
+
+scripts/schema_clean.sql
+scripts/seed_demo_data.sql
+
+3. schema_clean.sql
+- Must build a completely empty Supabase project from scratch.
+- Idempotent.
+- Creates every enum.
+- Creates every table.
+- Creates every index.
+- Creates every trigger.
+- Creates every function.
+- Creates every RLS policy.
+- Creates every RPC.
+- Must execute successfully on a fresh database.
+
+4. seed_demo_data.sql
+Populate every table used by the application with realistic business data.
+
+Include:
+- Owner
+- Operations Manager
+- Project Manager
+- Site Engineer
+- Sales Manager
+- Sales Executive
+- Accountant
+- Customer Support
+- Staff
+- Customer
+
+Populate:
+- profiles
+- user_roles
+- projects
+- project_updates
+- milestones
+- attendance
+- salaries
+- leave_requests
+- blog_posts
+- testimonials
+- contact_messages
+- quote_requests
+- leads
+- support tickets
+- ticket replies
+- audit_logs
+- notifications
+- dashboard metrics
+- every other table referenced by the application
+
+5. UUID rules
+
+Never hardcode fake UUIDs like
+
+g100...
+h100...
+i100...
+j100...
+k100...
+
+Either:
+
+- omit id columns if DEFAULT gen_random_uuid() exists
+
+OR
+
+- use gen_random_uuid()
+
+All foreign keys must be resolved automatically.
+
+6. SQL validation
+
+Before returning any SQL:
+
+Perform a full validation.
+
+Verify:
+✓ every INSERT
+✓ every FK
+✓ every enum
+✓ every string literal
+✓ every apostrophe
+✓ every ON CONFLICT
+✓ every trigger
+✓ every function
+✓ every policy
+✓ every UUID
+✓ every RPC
+
+The SQL must execute successfully on a brand-new Supabase database without any manual edits.
+
+7. Demo authentication
+
+Generate a separate file:
+
+scripts/demo_accounts.md
+
+containing:
+
+Email
+Password
+Role
+
+for every demo account.
+
+Do NOT attempt to create auth.users via SQL.
+
+Instead, generate a script or instructions compatible with the Supabase Auth Admin API so the accounts can be created programmatically.
+
+8. Final verification
+
+Before finishing, compare the generated schema against the application's codebase and confirm that every table, column, enum, RPC, policy, and relationship referenced by the application exists in the generated schema.
+
+Do not return partial work.
+Return only fully validated files ready for deployment.

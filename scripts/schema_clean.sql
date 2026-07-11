@@ -1,7 +1,13 @@
 -- ============================================================
 -- ADITYA CONSTRUCTIONS — CLEAN SCHEMA
--- Safe to run on a fresh (empty) Supabase project in one pass.
--- Supabase Dashboard → SQL Editor → New Query → Paste → Run
+-- ============================================================
+-- Run on a brand-new Supabase project:
+--   Dashboard → SQL Editor → New Query → paste → Run
+--
+-- Idempotent: safe to re-run (CREATE … IF NOT EXISTS,
+-- DROP … IF EXISTS, ALTER … ADD COLUMN IF NOT EXISTS).
+-- Does NOT include demo user data — run seed_demo_data.sql
+-- separately after creating auth accounts (see demo_accounts.md).
 -- ============================================================
 
 
@@ -9,14 +15,19 @@
 -- SECTION 1: ENUMS
 -- ============================================================
 
--- app_role: full 17-value set (base + enterprise roles)
+-- app_role — full 15-value enterprise set
 DO $$ BEGIN
   CREATE TYPE public.app_role AS ENUM (
-    'admin', 'staff', 'customer'
+    'owner', 'admin', 'managing_director', 'operations_manager',
+    'hr_manager', 'sales_manager', 'sales_executive', 'marketing_manager',
+    'accountant', 'project_manager', 'site_engineer', 'customer_support',
+    'general_staff', 'staff', 'customer'
   );
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
+-- Ensure every value exists even if enum was created with fewer values
 ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'owner';
+ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'admin';
 ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'managing_director';
 ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'operations_manager';
 ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'hr_manager';
@@ -28,24 +39,56 @@ ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'project_manager';
 ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'site_engineer';
 ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'customer_support';
 ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'general_staff';
+ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'staff';
+ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'customer';
 
-DO $$ BEGIN CREATE TYPE public.user_status    AS ENUM ('active','inactive','suspended','pending_verification'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.lead_status    AS ENUM ('new','contacted','qualified','converted','lost');        EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.quote_status   AS ENUM ('pending','reviewing','quoted','accepted','rejected');    EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.project_status AS ENUM ('planning','in_progress','on_hold','completed','cancelled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.milestone_status AS ENUM ('pending','in_progress','completed','delayed');         EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.ticket_status  AS ENUM ('open','in_progress','resolved','closed');               EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.ticket_priority AS ENUM ('low','medium','high','urgent');                        EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.service_type   AS ENUM ('construction','interiors','real_estate','hvac','solar'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE TYPE public.task_status    AS ENUM ('todo','in_progress','done','blocked');                  EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE public.user_status AS ENUM (
+  'active', 'inactive', 'suspended', 'pending_verification'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.lead_status AS ENUM (
+  'new', 'contacted', 'qualified', 'converted', 'lost'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.quote_status AS ENUM (
+  'pending', 'reviewing', 'quoted', 'accepted', 'rejected'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.project_status AS ENUM (
+  'planning', 'in_progress', 'on_hold', 'completed', 'cancelled'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.milestone_status AS ENUM (
+  'pending', 'in_progress', 'completed', 'delayed'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.ticket_status AS ENUM (
+  'open', 'in_progress', 'resolved', 'closed'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.ticket_priority AS ENUM (
+  'low', 'medium', 'high', 'urgent'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.service_type AS ENUM (
+  'construction', 'interiors', 'real_estate', 'hvac', 'solar'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN CREATE TYPE public.task_status AS ENUM (
+  'todo', 'in_progress', 'done', 'blocked'
+); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 
 -- ============================================================
--- SECTION 2: UTILITY FUNCTIONS (no deps on tables)
+-- SECTION 2: UTILITY FUNCTIONS (no table dependencies)
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
-RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   NEW.updated_at = now();
   RETURN NEW;
@@ -59,21 +102,21 @@ REVOKE EXECUTE ON FUNCTION public.update_updated_at_column() FROM PUBLIC, anon, 
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.profiles (
-  id           UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  full_name    TEXT,
-  phone        TEXT,
-  company      TEXT,
-  avatar_url   TEXT,
-  email        TEXT,
-  status       public.user_status NOT NULL DEFAULT 'active',
-  department   TEXT,
-  employee_id  TEXT,
-  bio          TEXT,
-  last_seen    TIMESTAMPTZ,
-  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+  id          UUID              PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name   TEXT,
+  phone       TEXT,
+  company     TEXT,
+  avatar_url  TEXT,
+  email       TEXT,
+  status      public.user_status NOT NULL DEFAULT 'active',
+  department  TEXT,
+  employee_id TEXT,
+  bio         TEXT,
+  last_seen   TIMESTAMPTZ,
+  created_at  TIMESTAMPTZ       NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ       NOT NULL DEFAULT now()
 );
--- Backfill columns that may be absent in a partial migration
+-- Backfill columns absent in partial-migration databases
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email       TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS status      public.user_status NOT NULL DEFAULT 'active';
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS department  TEXT;
@@ -94,10 +137,10 @@ END $$;
 
 
 CREATE TABLE IF NOT EXISTS public.user_roles (
-  id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  id         UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID            NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   role       public.app_role NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMPTZ     NOT NULL DEFAULT now(),
   UNIQUE (user_id, role)
 );
 GRANT SELECT ON public.user_roles TO authenticated;
@@ -109,15 +152,19 @@ ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 -- SECTION 4: SECURITY FUNCTIONS (depend on user_roles)
 -- ============================================================
 
--- has_role: _user_id defaults to auth.uid() so the app can call
--- supabase.rpc("has_role", { _role: "owner" }) without passing _user_id.
+-- has_role(_role, _user_id): _user_id defaults to auth.uid()
+-- Call as: has_role('owner') or has_role('owner', some_uuid)
 DROP FUNCTION IF EXISTS public.has_role(UUID, public.app_role);
 CREATE OR REPLACE FUNCTION public.has_role(
   _role    public.app_role,
   _user_id UUID DEFAULT auth.uid()
 )
 RETURNS BOOLEAN
-LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public AS $$
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles
     WHERE user_id = _user_id AND role = _role
@@ -126,43 +173,62 @@ $$;
 REVOKE EXECUTE ON FUNCTION public.has_role(public.app_role, UUID) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.has_role(public.app_role, UUID) TO authenticated, service_role;
 
--- is_admin_role: management-tier roles that get admin portal access
+
+-- is_admin_role: management-tier roles that access the admin portal
 CREATE OR REPLACE FUNCTION public.is_admin_role(_user_id UUID DEFAULT auth.uid())
-RETURNS BOOLEAN LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public AS $
+RETURNS BOOLEAN
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles
     WHERE user_id = _user_id
-      AND role IN ('owner','admin','managing_director','operations_manager',
-                   'hr_manager','sales_manager','marketing_manager','accountant')
+      AND role IN (
+        'owner', 'admin', 'managing_director', 'operations_manager',
+        'hr_manager', 'sales_manager', 'marketing_manager', 'accountant'
+      )
   )
-$;
+$$;
 REVOKE EXECUTE ON FUNCTION public.is_admin_role(UUID) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.is_admin_role(UUID) TO authenticated, service_role;
 
--- is_staff_role: all internal roles (admin + field/support staff)
+
+-- is_staff_role: all internal roles (management + field/support staff)
 CREATE OR REPLACE FUNCTION public.is_staff_role(_user_id UUID DEFAULT auth.uid())
-RETURNS BOOLEAN LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public AS $
+RETURNS BOOLEAN
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles
     WHERE user_id = _user_id
-      AND role IN ('owner','admin','managing_director','operations_manager',
-                   'hr_manager','sales_manager','marketing_manager','accountant',
-                   'staff','sales_executive','project_manager','site_engineer',
-                   'customer_support','general_staff')
+      AND role IN (
+        'owner', 'admin', 'managing_director', 'operations_manager',
+        'hr_manager', 'sales_manager', 'marketing_manager', 'accountant',
+        'staff', 'sales_executive', 'project_manager', 'site_engineer',
+        'customer_support', 'general_staff'
+      )
   )
-$;
+$$;
 REVOKE EXECUTE ON FUNCTION public.is_staff_role(UUID) FROM PUBLIC, anon;
 GRANT  EXECUTE ON FUNCTION public.is_staff_role(UUID) TO authenticated, service_role;
 
 
 -- ============================================================
 -- SECTION 5: SIGNUP TRIGGER
+-- Creates a profile row and assigns 'customer' role on every signup.
 -- ============================================================
 
--- handle_new_user: creates profile + assigns 'customer' role on signup.
--- Final version: stores email, idempotent via ON CONFLICT.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   INSERT INTO public.profiles (id, full_name, phone, email)
   VALUES (
@@ -196,18 +262,18 @@ CREATE TRIGGER on_auth_user_created
 
 -- ── Leads ────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.leads (
-  id          UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
-  name        TEXT            NOT NULL,
-  email       TEXT            NOT NULL,
+  id          UUID               PRIMARY KEY DEFAULT gen_random_uuid(),
+  name        TEXT               NOT NULL,
+  email       TEXT               NOT NULL,
   phone       TEXT,
   service     public.service_type,
   message     TEXT,
-  source      TEXT            DEFAULT 'website',
+  source      TEXT               DEFAULT 'website',
   status      public.lead_status NOT NULL DEFAULT 'new',
-  assigned_to UUID            REFERENCES auth.users(id) ON DELETE SET NULL,
+  assigned_to UUID               REFERENCES auth.users(id) ON DELETE SET NULL,
   notes       TEXT,
-  created_at  TIMESTAMPTZ     NOT NULL DEFAULT now(),
-  updated_at  TIMESTAMPTZ     NOT NULL DEFAULT now()
+  created_at  TIMESTAMPTZ        NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ        NOT NULL DEFAULT now()
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.leads TO authenticated;
 GRANT INSERT ON public.leads TO anon;
@@ -219,6 +285,7 @@ DO $$ BEGIN
     FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
+
 
 -- ── Contact Messages ─────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.contact_messages (
@@ -236,26 +303,27 @@ GRANT INSERT ON public.contact_messages TO anon, authenticated;
 GRANT ALL ON public.contact_messages TO service_role;
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 
+
 -- ── Quote Requests ───────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.quote_requests (
-  id             UUID              PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id        UUID              REFERENCES auth.users(id) ON DELETE SET NULL,
-  name           TEXT              NOT NULL,
-  email          TEXT              NOT NULL,
-  phone          TEXT              NOT NULL,
-  service_type   public.service_type NOT NULL,
-  project_type   TEXT,
-  budget_range   TEXT,
-  timeline       TEXT,
-  location       TEXT,
-  area_sqft      INTEGER,
-  requirements   TEXT              NOT NULL,
-  ai_estimate    TEXT,
-  ai_breakdown   JSONB,
-  status         public.quote_status NOT NULL DEFAULT 'pending',
-  quoted_amount  NUMERIC,
-  created_at     TIMESTAMPTZ       NOT NULL DEFAULT now(),
-  updated_at     TIMESTAMPTZ       NOT NULL DEFAULT now()
+  id            UUID               PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id       UUID               REFERENCES auth.users(id) ON DELETE SET NULL,
+  name          TEXT               NOT NULL,
+  email         TEXT               NOT NULL,
+  phone         TEXT               NOT NULL,
+  service_type  public.service_type NOT NULL,
+  project_type  TEXT,
+  budget_range  TEXT,
+  timeline      TEXT,
+  location      TEXT,
+  area_sqft     INTEGER,
+  requirements  TEXT               NOT NULL,
+  ai_estimate   TEXT,
+  ai_breakdown  JSONB,
+  status        public.quote_status NOT NULL DEFAULT 'pending',
+  quoted_amount NUMERIC,
+  created_at    TIMESTAMPTZ        NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ        NOT NULL DEFAULT now()
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.quote_requests TO authenticated;
 GRANT INSERT ON public.quote_requests TO anon;
@@ -268,24 +336,25 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+
 -- ── Projects ─────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.projects (
-  id                 UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
-  customer_id        UUID                REFERENCES auth.users(id) ON DELETE SET NULL,
-  project_manager_id UUID                REFERENCES auth.users(id) ON DELETE SET NULL,
-  title              TEXT                NOT NULL,
+  id                 UUID                  PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id        UUID                  REFERENCES auth.users(id) ON DELETE SET NULL,
+  project_manager_id UUID                  REFERENCES auth.users(id) ON DELETE SET NULL,
+  title              TEXT                  NOT NULL,
   description        TEXT,
-  service_type       public.service_type NOT NULL,
+  service_type       public.service_type   NOT NULL,
   status             public.project_status NOT NULL DEFAULT 'planning',
-  progress           INTEGER             NOT NULL DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
+  progress           INTEGER               NOT NULL DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
   budget             NUMERIC,
-  spent              NUMERIC             NOT NULL DEFAULT 0,
+  spent              NUMERIC               NOT NULL DEFAULT 0,
   start_date         DATE,
   end_date           DATE,
   location           TEXT,
   cover_image        TEXT,
-  created_at         TIMESTAMPTZ         NOT NULL DEFAULT now(),
-  updated_at         TIMESTAMPTZ         NOT NULL DEFAULT now()
+  created_at         TIMESTAMPTZ           NOT NULL DEFAULT now(),
+  updated_at         TIMESTAMPTZ           NOT NULL DEFAULT now()
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.projects TO authenticated;
 GRANT ALL ON public.projects TO service_role;
@@ -297,21 +366,23 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+
 -- ── Project Milestones ───────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.project_milestones (
-  id          UUID                   PRIMARY KEY DEFAULT gen_random_uuid(),
-  project_id  UUID                   NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
-  title       TEXT                   NOT NULL,
-  description TEXT,
-  due_date    DATE,
+  id           UUID                    PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id   UUID                    NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
+  title        TEXT                    NOT NULL,
+  description  TEXT,
+  due_date     DATE,
   completed_at TIMESTAMPTZ,
-  status      public.milestone_status NOT NULL DEFAULT 'pending',
-  order_index INTEGER                NOT NULL DEFAULT 0,
-  created_at  TIMESTAMPTZ            NOT NULL DEFAULT now()
+  status       public.milestone_status NOT NULL DEFAULT 'pending',
+  order_index  INTEGER                 NOT NULL DEFAULT 0,
+  created_at   TIMESTAMPTZ             NOT NULL DEFAULT now()
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.project_milestones TO authenticated;
 GRANT ALL ON public.project_milestones TO service_role;
 ALTER TABLE public.project_milestones ENABLE ROW LEVEL SECURITY;
+
 
 -- ── Project Updates ──────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.project_updates (
@@ -326,6 +397,7 @@ CREATE TABLE IF NOT EXISTS public.project_updates (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.project_updates TO authenticated;
 GRANT ALL ON public.project_updates TO service_role;
 ALTER TABLE public.project_updates ENABLE ROW LEVEL SECURITY;
+
 
 -- ── Tickets ──────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.tickets (
@@ -350,17 +422,19 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+
 -- ── Ticket Messages ──────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.ticket_messages (
-  id        UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  ticket_id UUID        NOT NULL REFERENCES public.tickets(id) ON DELETE CASCADE,
-  author_id UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  message   TEXT        NOT NULL,
+  id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  ticket_id  UUID        NOT NULL REFERENCES public.tickets(id) ON DELETE CASCADE,
+  author_id  UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  message    TEXT        NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.ticket_messages TO authenticated;
 GRANT ALL ON public.ticket_messages TO service_role;
 ALTER TABLE public.ticket_messages ENABLE ROW LEVEL SECURITY;
+
 
 -- ── Testimonials ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.testimonials (
@@ -378,6 +452,7 @@ GRANT SELECT ON public.testimonials TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.testimonials TO authenticated;
 GRANT ALL ON public.testimonials TO service_role;
 ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
+
 
 -- ── Blog Posts ───────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.blog_posts (
@@ -405,6 +480,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+
 -- ── Staff Tasks ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.staff_tasks (
   id          UUID                   PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -429,6 +505,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+
 -- ── Attendance ───────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.attendance (
   id        UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -443,16 +520,17 @@ GRANT SELECT, INSERT, UPDATE ON public.attendance TO authenticated;
 GRANT ALL ON public.attendance TO service_role;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
 
+
 -- ── Staff Salaries ───────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.staff_salaries (
-  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  staff_user_id UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  period_month  DATE        NOT NULL,
+  id            UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
+  staff_user_id UUID          NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  period_month  DATE          NOT NULL,
   amount        NUMERIC(12,2) NOT NULL,
-  status        TEXT        NOT NULL DEFAULT 'pending',
+  status        TEXT          NOT NULL DEFAULT 'pending',
   notes         TEXT,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at    TIMESTAMPTZ   NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ   NOT NULL DEFAULT now()
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.staff_salaries TO authenticated;
 GRANT ALL ON public.staff_salaries TO service_role;
@@ -463,6 +541,7 @@ DO $$ BEGIN
     FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
+
 
 -- ── Staff Leaves ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.staff_leaves (
@@ -511,6 +590,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+
 -- ── Audit Logs ───────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.audit_logs (
   id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -528,6 +608,7 @@ GRANT SELECT, INSERT ON public.audit_logs TO authenticated;
 GRANT ALL ON public.audit_logs TO service_role;
 ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 
+
 -- ── User Sessions ────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.user_sessions (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -543,6 +624,7 @@ CREATE TABLE IF NOT EXISTS public.user_sessions (
 GRANT SELECT, INSERT, UPDATE ON public.user_sessions TO authenticated;
 GRANT ALL ON public.user_sessions TO service_role;
 ALTER TABLE public.user_sessions ENABLE ROW LEVEL SECURITY;
+
 
 -- ── Impersonation Log ────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.impersonation_log (
@@ -567,7 +649,11 @@ CREATE OR REPLACE FUNCTION public.owner_set_user_role(
   _target UUID,
   _role   public.app_role
 )
-RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   IF NOT public.has_role('owner') THEN
     RAISE EXCEPTION 'Permission denied: owner role required';
@@ -577,13 +663,19 @@ BEGIN
     ON CONFLICT (user_id, role) DO NOTHING;
 END;
 $$;
+REVOKE EXECUTE ON FUNCTION public.owner_set_user_role(UUID, public.app_role) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.owner_set_user_role(UUID, public.app_role) TO authenticated;
 
 -- Revoke a specific role from a user
 CREATE OR REPLACE FUNCTION public.owner_revoke_user_role(
   _target UUID,
   _role   public.app_role
 )
-RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   IF NOT public.has_role('owner') THEN
     RAISE EXCEPTION 'Permission denied: owner role required';
@@ -591,13 +683,19 @@ BEGIN
   DELETE FROM public.user_roles WHERE user_id = _target AND role = _role;
 END;
 $$;
+REVOKE EXECUTE ON FUNCTION public.owner_revoke_user_role(UUID, public.app_role) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.owner_revoke_user_role(UUID, public.app_role) TO authenticated;
 
--- Update a user's account status
+-- Update a user account status
 CREATE OR REPLACE FUNCTION public.owner_update_user_status(
   _target UUID,
   _status public.user_status
 )
-RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   IF NOT public.has_role('owner') THEN
     RAISE EXCEPTION 'Permission denied: owner role required';
@@ -605,18 +703,48 @@ BEGIN
   UPDATE public.profiles SET status = _status WHERE id = _target;
 END;
 $$;
+REVOKE EXECUTE ON FUNCTION public.owner_update_user_status(UUID, public.user_status) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.owner_update_user_status(UUID, public.user_status) TO authenticated;
+
+-- Legacy RPCs kept for backward compatibility but restricted
+CREATE OR REPLACE FUNCTION public.set_user_role(_target UUID, _role public.app_role)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NOT (public.has_role('owner') OR public.has_role('admin')) THEN
+    RAISE EXCEPTION 'forbidden';
+  END IF;
+  INSERT INTO public.user_roles (user_id, role) VALUES (_target, _role)
+    ON CONFLICT (user_id, role) DO NOTHING;
+END;
+$$;
+REVOKE EXECUTE ON FUNCTION public.set_user_role(UUID, public.app_role) FROM PUBLIC, anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.revoke_user_role(_target UUID, _role public.app_role)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NOT (public.has_role('owner') OR public.has_role('admin')) THEN
+    RAISE EXCEPTION 'forbidden';
+  END IF;
+  DELETE FROM public.user_roles WHERE user_id = _target AND role = _role;
+END;
+$$;
+REVOKE EXECUTE ON FUNCTION public.revoke_user_role(UUID, public.app_role) FROM PUBLIC, anon, authenticated;
 
 
 -- ============================================================
 -- SECTION 9: SESSION RPCs
 -- ============================================================
 
--- Record a new browser session; updates last_seen on the profile
+-- Record a new browser session; bumps last_seen on the profile
 CREATE OR REPLACE FUNCTION public.record_user_session(
   _user_agent  TEXT DEFAULT NULL,
   _device_type TEXT DEFAULT NULL
 )
-RETURNS UUID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
   _session_id UUID;
 BEGIN
@@ -628,10 +756,16 @@ BEGIN
   RETURN _session_id;
 END;
 $$;
+REVOKE EXECUTE ON FUNCTION public.record_user_session(TEXT, TEXT) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.record_user_session(TEXT, TEXT) TO authenticated;
 
 -- Keep a session's last_seen timestamp fresh
 CREATE OR REPLACE FUNCTION public.touch_session(_session_id UUID)
-RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   UPDATE public.user_sessions
      SET last_seen = now()
@@ -639,26 +773,36 @@ BEGIN
   UPDATE public.profiles SET last_seen = now() WHERE id = auth.uid();
 END;
 $$;
+REVOKE EXECUTE ON FUNCTION public.touch_session(UUID) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.touch_session(UUID) TO authenticated;
 
 
 -- ============================================================
 -- SECTION 10: ROW LEVEL SECURITY POLICIES
--- All existing variant names are dropped first; clean names created.
+-- All old variant names dropped first; clean canonical names created.
 -- ============================================================
 
 -- ── profiles ─────────────────────────────────────────────────
-DROP POLICY IF EXISTS "Users can view their own profile"         ON public.profiles;
-DROP POLICY IF EXISTS "Staff and admins can view all profiles"   ON public.profiles;
-DROP POLICY IF EXISTS "Owner and admin can view all profiles"    ON public.profiles;
-DROP POLICY IF EXISTS "profiles_select_own_or_manager"          ON public.profiles;
-DROP POLICY IF EXISTS "Users can update their own profile"       ON public.profiles;
-DROP POLICY IF EXISTS "Owner can update any profile"             ON public.profiles;
-DROP POLICY IF EXISTS "profiles_update_own_or_owner_only"       ON public.profiles;
-DROP POLICY IF EXISTS "Users can insert their own profile"       ON public.profiles;
+DROP POLICY IF EXISTS "Users can view their own profile"        ON public.profiles;
+DROP POLICY IF EXISTS "Staff and admins can view all profiles"  ON public.profiles;
+DROP POLICY IF EXISTS "Owner and admin can view all profiles"   ON public.profiles;
+DROP POLICY IF EXISTS "profiles_select_own_or_manager"         ON public.profiles;
+DROP POLICY IF EXISTS "profiles_select"                        ON public.profiles;
+DROP POLICY IF EXISTS "Users can update their own profile"      ON public.profiles;
+DROP POLICY IF EXISTS "Owner can update any profile"            ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update_own_or_owner_only"      ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update"                        ON public.profiles;
+DROP POLICY IF EXISTS "Users can insert their own profile"      ON public.profiles;
+DROP POLICY IF EXISTS "profiles_insert"                        ON public.profiles;
 
 CREATE POLICY "profiles_select" ON public.profiles
   FOR SELECT TO authenticated
-  USING (auth.uid() = id OR public.has_role('owner') OR public.has_role('admin') OR public.is_staff_role());
+  USING (
+    auth.uid() = id
+    OR public.has_role('owner')
+    OR public.has_role('admin')
+    OR public.is_staff_role()
+  );
 
 CREATE POLICY "profiles_insert" ON public.profiles
   FOR INSERT TO authenticated
@@ -666,21 +810,24 @@ CREATE POLICY "profiles_insert" ON public.profiles
 
 CREATE POLICY "profiles_update" ON public.profiles
   FOR UPDATE TO authenticated
-  USING (auth.uid() = id OR public.has_role('owner'))
+  USING   (auth.uid() = id OR public.has_role('owner'))
   WITH CHECK (auth.uid() = id OR public.has_role('owner'));
 
 
 -- ── user_roles ────────────────────────────────────────────────
-DROP POLICY IF EXISTS "Users can view their own roles"       ON public.user_roles;
-DROP POLICY IF EXISTS "Admins can view all roles"            ON public.user_roles;
-DROP POLICY IF EXISTS "Owner or admin can view all roles"    ON public.user_roles;
-DROP POLICY IF EXISTS "user_roles_read_owner_and_admin"      ON public.user_roles;
-DROP POLICY IF EXISTS "Owner can manage all roles"           ON public.user_roles;
-DROP POLICY IF EXISTS "Owner can delete roles"               ON public.user_roles;
-DROP POLICY IF EXISTS "Owner only insert roles"              ON public.user_roles;
-DROP POLICY IF EXISTS "Owner only delete roles"              ON public.user_roles;
-DROP POLICY IF EXISTS "user_roles_insert_owner_only"         ON public.user_roles;
-DROP POLICY IF EXISTS "user_roles_delete_owner_only"         ON public.user_roles;
+DROP POLICY IF EXISTS "Users can view their own roles"      ON public.user_roles;
+DROP POLICY IF EXISTS "Admins can view all roles"           ON public.user_roles;
+DROP POLICY IF EXISTS "Owner or admin can view all roles"   ON public.user_roles;
+DROP POLICY IF EXISTS "user_roles_read_owner_and_admin"     ON public.user_roles;
+DROP POLICY IF EXISTS "user_roles_select"                   ON public.user_roles;
+DROP POLICY IF EXISTS "Owner can manage all roles"          ON public.user_roles;
+DROP POLICY IF EXISTS "Owner can delete roles"              ON public.user_roles;
+DROP POLICY IF EXISTS "Owner only insert roles"             ON public.user_roles;
+DROP POLICY IF EXISTS "Owner only delete roles"             ON public.user_roles;
+DROP POLICY IF EXISTS "user_roles_insert_owner_only"        ON public.user_roles;
+DROP POLICY IF EXISTS "user_roles_delete_owner_only"        ON public.user_roles;
+DROP POLICY IF EXISTS "user_roles_insert"                   ON public.user_roles;
+DROP POLICY IF EXISTS "user_roles_delete"                   ON public.user_roles;
 
 CREATE POLICY "user_roles_select" ON public.user_roles
   FOR SELECT TO authenticated
@@ -696,10 +843,14 @@ CREATE POLICY "user_roles_delete" ON public.user_roles
 
 
 -- ── leads ─────────────────────────────────────────────────────
-DROP POLICY IF EXISTS "Anyone can submit a lead"         ON public.leads;
-DROP POLICY IF EXISTS "Staff and admins can view leads"  ON public.leads;
+DROP POLICY IF EXISTS "Anyone can submit a lead"          ON public.leads;
+DROP POLICY IF EXISTS "Staff and admins can view leads"   ON public.leads;
 DROP POLICY IF EXISTS "Staff and admins can update leads" ON public.leads;
-DROP POLICY IF EXISTS "Admins can delete leads"          ON public.leads;
+DROP POLICY IF EXISTS "Admins can delete leads"           ON public.leads;
+DROP POLICY IF EXISTS "leads_insert"                      ON public.leads;
+DROP POLICY IF EXISTS "leads_select"                      ON public.leads;
+DROP POLICY IF EXISTS "leads_update"                      ON public.leads;
+DROP POLICY IF EXISTS "leads_delete"                      ON public.leads;
 
 CREATE POLICY "leads_insert" ON public.leads
   FOR INSERT TO anon, authenticated
@@ -723,17 +874,20 @@ CREATE POLICY "leads_delete" ON public.leads
 
 
 -- ── contact_messages ──────────────────────────────────────────
-DROP POLICY IF EXISTS "Anyone can submit contact"        ON public.contact_messages;
-DROP POLICY IF EXISTS "Staff and admins read contact"    ON public.contact_messages;
-DROP POLICY IF EXISTS "Staff and admins update contact"  ON public.contact_messages;
+DROP POLICY IF EXISTS "Anyone can submit contact"          ON public.contact_messages;
+DROP POLICY IF EXISTS "Staff and admins read contact"      ON public.contact_messages;
+DROP POLICY IF EXISTS "Staff and admins update contact"    ON public.contact_messages;
+DROP POLICY IF EXISTS "contact_messages_insert"            ON public.contact_messages;
+DROP POLICY IF EXISTS "contact_messages_select"            ON public.contact_messages;
+DROP POLICY IF EXISTS "contact_messages_update"            ON public.contact_messages;
 
 CREATE POLICY "contact_messages_insert" ON public.contact_messages
   FOR INSERT TO anon, authenticated
   WITH CHECK (
-    length(trim(name))    BETWEEN 1 AND 200 AND
-    length(trim(email))   BETWEEN 3 AND 200 AND
+    length(trim(name))  BETWEEN 1 AND 200 AND
+    length(trim(email)) BETWEEN 3 AND 200 AND
     email LIKE '%@%' AND
-    length(message)       BETWEEN 1 AND 5000
+    length(message)     BETWEEN 1 AND 5000
   );
 
 CREATE POLICY "contact_messages_select" ON public.contact_messages
@@ -746,9 +900,12 @@ CREATE POLICY "contact_messages_update" ON public.contact_messages
 
 
 -- ── quote_requests ────────────────────────────────────────────
-DROP POLICY IF EXISTS "Anyone can request a quote"   ON public.quote_requests;
+DROP POLICY IF EXISTS "Anyone can request a quote"      ON public.quote_requests;
 DROP POLICY IF EXISTS "Users can view their own quotes" ON public.quote_requests;
 DROP POLICY IF EXISTS "Staff and admins update quotes"  ON public.quote_requests;
+DROP POLICY IF EXISTS "quote_requests_insert"           ON public.quote_requests;
+DROP POLICY IF EXISTS "quote_requests_select"           ON public.quote_requests;
+DROP POLICY IF EXISTS "quote_requests_update"           ON public.quote_requests;
 
 CREATE POLICY "quote_requests_insert" ON public.quote_requests
   FOR INSERT TO anon, authenticated
@@ -770,10 +927,14 @@ CREATE POLICY "quote_requests_update" ON public.quote_requests
 
 
 -- ── projects ──────────────────────────────────────────────────
-DROP POLICY IF EXISTS "Customers see their projects"     ON public.projects;
-DROP POLICY IF EXISTS "Staff and admins manage projects" ON public.projects;
-DROP POLICY IF EXISTS "Staff and admins update projects" ON public.projects;
-DROP POLICY IF EXISTS "Admins delete projects"           ON public.projects;
+DROP POLICY IF EXISTS "Customers see their projects"      ON public.projects;
+DROP POLICY IF EXISTS "Staff and admins manage projects"  ON public.projects;
+DROP POLICY IF EXISTS "Staff and admins update projects"  ON public.projects;
+DROP POLICY IF EXISTS "Admins delete projects"            ON public.projects;
+DROP POLICY IF EXISTS "projects_select"                   ON public.projects;
+DROP POLICY IF EXISTS "projects_insert"                   ON public.projects;
+DROP POLICY IF EXISTS "projects_update"                   ON public.projects;
+DROP POLICY IF EXISTS "projects_delete"                   ON public.projects;
 
 CREATE POLICY "projects_select" ON public.projects
   FOR SELECT TO authenticated
@@ -798,11 +959,14 @@ CREATE POLICY "projects_delete" ON public.projects
 -- ── project_milestones ────────────────────────────────────────
 DROP POLICY IF EXISTS "View milestones for accessible projects" ON public.project_milestones;
 DROP POLICY IF EXISTS "Staff manage milestones"                 ON public.project_milestones;
+DROP POLICY IF EXISTS "milestones_select"                       ON public.project_milestones;
+DROP POLICY IF EXISTS "milestones_write"                        ON public.project_milestones;
 
 CREATE POLICY "milestones_select" ON public.project_milestones
   FOR SELECT TO authenticated
   USING (EXISTS (
-    SELECT 1 FROM public.projects p WHERE p.id = project_id
+    SELECT 1 FROM public.projects p
+    WHERE p.id = project_id
       AND (p.customer_id = auth.uid() OR p.project_manager_id = auth.uid()
            OR public.is_admin_role() OR public.is_staff_role())
   ));
@@ -817,11 +981,15 @@ CREATE POLICY "milestones_write" ON public.project_milestones
 DROP POLICY IF EXISTS "View updates for accessible projects" ON public.project_updates;
 DROP POLICY IF EXISTS "Staff post updates"                   ON public.project_updates;
 DROP POLICY IF EXISTS "Staff edit updates"                   ON public.project_updates;
+DROP POLICY IF EXISTS "project_updates_select"               ON public.project_updates;
+DROP POLICY IF EXISTS "project_updates_insert"               ON public.project_updates;
+DROP POLICY IF EXISTS "project_updates_update"               ON public.project_updates;
 
 CREATE POLICY "project_updates_select" ON public.project_updates
   FOR SELECT TO authenticated
   USING (EXISTS (
-    SELECT 1 FROM public.projects p WHERE p.id = project_id
+    SELECT 1 FROM public.projects p
+    WHERE p.id = project_id
       AND (p.customer_id = auth.uid() OR p.project_manager_id = auth.uid()
            OR public.is_admin_role() OR public.is_staff_role())
   ));
@@ -837,6 +1005,7 @@ CREATE POLICY "project_updates_update" ON public.project_updates
 
 -- ── tickets ───────────────────────────────────────────────────
 DROP POLICY IF EXISTS "Customer manages own tickets" ON public.tickets;
+DROP POLICY IF EXISTS "tickets_all"                  ON public.tickets;
 
 CREATE POLICY "tickets_all" ON public.tickets
   FOR ALL TO authenticated
@@ -847,19 +1016,24 @@ CREATE POLICY "tickets_all" ON public.tickets
 -- ── ticket_messages ───────────────────────────────────────────
 DROP POLICY IF EXISTS "Ticket messages visible to participants" ON public.ticket_messages;
 DROP POLICY IF EXISTS "Participants post ticket messages"       ON public.ticket_messages;
+DROP POLICY IF EXISTS "ticket_messages_select"                  ON public.ticket_messages;
+DROP POLICY IF EXISTS "ticket_messages_insert"                  ON public.ticket_messages;
 
 CREATE POLICY "ticket_messages_select" ON public.ticket_messages
   FOR SELECT TO authenticated
   USING (EXISTS (
-    SELECT 1 FROM public.tickets t WHERE t.id = ticket_id
+    SELECT 1 FROM public.tickets t
+    WHERE t.id = ticket_id
       AND (t.customer_id = auth.uid() OR public.is_admin_role() OR public.is_staff_role())
   ));
 
 CREATE POLICY "ticket_messages_insert" ON public.ticket_messages
   FOR INSERT TO authenticated
   WITH CHECK (
-    author_id = auth.uid() AND EXISTS (
-      SELECT 1 FROM public.tickets t WHERE t.id = ticket_id
+    author_id = auth.uid() AND
+    EXISTS (
+      SELECT 1 FROM public.tickets t
+      WHERE t.id = ticket_id
         AND (t.customer_id = auth.uid() OR public.is_admin_role() OR public.is_staff_role())
     )
   );
@@ -868,6 +1042,8 @@ CREATE POLICY "ticket_messages_insert" ON public.ticket_messages
 -- ── testimonials ──────────────────────────────────────────────
 DROP POLICY IF EXISTS "Public read published testimonials" ON public.testimonials;
 DROP POLICY IF EXISTS "Admins manage testimonials"         ON public.testimonials;
+DROP POLICY IF EXISTS "testimonials_select"                ON public.testimonials;
+DROP POLICY IF EXISTS "testimonials_write"                 ON public.testimonials;
 
 CREATE POLICY "testimonials_select" ON public.testimonials
   FOR SELECT TO anon, authenticated USING (published = true);
@@ -879,9 +1055,12 @@ CREATE POLICY "testimonials_write" ON public.testimonials
 
 
 -- ── blog_posts ────────────────────────────────────────────────
-DROP POLICY IF EXISTS "Public reads published posts" ON public.blog_posts;
-DROP POLICY IF EXISTS "Admins read all posts"        ON public.blog_posts;
-DROP POLICY IF EXISTS "Admins manage posts"          ON public.blog_posts;
+DROP POLICY IF EXISTS "Public reads published posts"   ON public.blog_posts;
+DROP POLICY IF EXISTS "Admins read all posts"          ON public.blog_posts;
+DROP POLICY IF EXISTS "Admins manage posts"            ON public.blog_posts;
+DROP POLICY IF EXISTS "blog_posts_select_public"       ON public.blog_posts;
+DROP POLICY IF EXISTS "blog_posts_select_admin"        ON public.blog_posts;
+DROP POLICY IF EXISTS "blog_posts_write"               ON public.blog_posts;
 
 CREATE POLICY "blog_posts_select_public" ON public.blog_posts
   FOR SELECT TO anon, authenticated USING (published = true);
@@ -901,6 +1080,10 @@ DROP POLICY IF EXISTS "Staff see own/admins see all tasks" ON public.staff_tasks
 DROP POLICY IF EXISTS "Admins create tasks"                ON public.staff_tasks;
 DROP POLICY IF EXISTS "Assignee or admin update tasks"     ON public.staff_tasks;
 DROP POLICY IF EXISTS "Admins delete tasks"                ON public.staff_tasks;
+DROP POLICY IF EXISTS "staff_tasks_select"                 ON public.staff_tasks;
+DROP POLICY IF EXISTS "staff_tasks_insert"                 ON public.staff_tasks;
+DROP POLICY IF EXISTS "staff_tasks_update"                 ON public.staff_tasks;
+DROP POLICY IF EXISTS "staff_tasks_delete"                 ON public.staff_tasks;
 
 CREATE POLICY "staff_tasks_select" ON public.staff_tasks
   FOR SELECT TO authenticated
@@ -921,6 +1104,7 @@ CREATE POLICY "staff_tasks_delete" ON public.staff_tasks
 
 -- ── attendance ────────────────────────────────────────────────
 DROP POLICY IF EXISTS "User manages own attendance" ON public.attendance;
+DROP POLICY IF EXISTS "attendance_all"              ON public.attendance;
 
 CREATE POLICY "attendance_all" ON public.attendance
   FOR ALL TO authenticated
@@ -929,8 +1113,10 @@ CREATE POLICY "attendance_all" ON public.attendance
 
 
 -- ── staff_salaries ────────────────────────────────────────────
-DROP POLICY IF EXISTS "Staff read own salary"   ON public.staff_salaries;
-DROP POLICY IF EXISTS "Admin manage salaries"   ON public.staff_salaries;
+DROP POLICY IF EXISTS "Staff read own salary"       ON public.staff_salaries;
+DROP POLICY IF EXISTS "Admin manage salaries"       ON public.staff_salaries;
+DROP POLICY IF EXISTS "staff_salaries_select"       ON public.staff_salaries;
+DROP POLICY IF EXISTS "staff_salaries_write"        ON public.staff_salaries;
 
 CREATE POLICY "staff_salaries_select" ON public.staff_salaries
   FOR SELECT TO authenticated
@@ -943,9 +1129,12 @@ CREATE POLICY "staff_salaries_write" ON public.staff_salaries
 
 
 -- ── staff_leaves ──────────────────────────────────────────────
-DROP POLICY IF EXISTS "Staff read own leaves"    ON public.staff_leaves;
-DROP POLICY IF EXISTS "Staff insert own leaves"  ON public.staff_leaves;
-DROP POLICY IF EXISTS "Admin manage leaves"      ON public.staff_leaves;
+DROP POLICY IF EXISTS "Staff read own leaves"      ON public.staff_leaves;
+DROP POLICY IF EXISTS "Staff insert own leaves"    ON public.staff_leaves;
+DROP POLICY IF EXISTS "Admin manage leaves"        ON public.staff_leaves;
+DROP POLICY IF EXISTS "staff_leaves_select"        ON public.staff_leaves;
+DROP POLICY IF EXISTS "staff_leaves_insert"        ON public.staff_leaves;
+DROP POLICY IF EXISTS "staff_leaves_write"         ON public.staff_leaves;
 
 CREATE POLICY "staff_leaves_select" ON public.staff_leaves
   FOR SELECT TO authenticated
@@ -964,10 +1153,8 @@ CREATE POLICY "staff_leaves_write" ON public.staff_leaves
 -- ── role_permissions ──────────────────────────────────────────
 DROP POLICY IF EXISTS "Authenticated can read permissions"  ON public.role_permissions;
 DROP POLICY IF EXISTS "Owners can manage permissions"       ON public.role_permissions;
-DROP POLICY IF EXISTS "Owner can read role_permissions"     ON public.role_permissions;
-DROP POLICY IF EXISTS "Owner can write role_permissions"    ON public.role_permissions;
-DROP POLICY IF EXISTS "Owner can manage role_permissions"   ON public.role_permissions;
 DROP POLICY IF EXISTS "role_permissions_select"             ON public.role_permissions;
+DROP POLICY IF EXISTS "role_permissions_write"              ON public.role_permissions;
 DROP POLICY IF EXISTS "role_permissions_write_owner_only"   ON public.role_permissions;
 
 CREATE POLICY "role_permissions_select" ON public.role_permissions
@@ -982,11 +1169,13 @@ CREATE POLICY "role_permissions_write" ON public.role_permissions
 -- ── audit_logs ────────────────────────────────────────────────
 DROP POLICY IF EXISTS "Owners can view all audit logs"      ON public.audit_logs;
 DROP POLICY IF EXISTS "Authenticated can insert audit logs" ON public.audit_logs;
-DROP POLICY IF EXISTS "Audit log owner read"                ON public.audit_logs;
-DROP POLICY IF EXISTS "Audit log insert authenticated"      ON public.audit_logs;
-DROP POLICY IF EXISTS "Owner can view audit logs"           ON public.audit_logs;
+DROP POLICY IF EXISTS "audit_logs_select"                   ON public.audit_logs;
+DROP POLICY IF EXISTS "audit_logs_insert"                   ON public.audit_logs;
 DROP POLICY IF EXISTS "audit_logs_owner_read"               ON public.audit_logs;
 DROP POLICY IF EXISTS "audit_logs_insert_own"               ON public.audit_logs;
+DROP POLICY IF EXISTS "Owner can view audit logs"           ON public.audit_logs;
+DROP POLICY IF EXISTS "Audit log owner read"                ON public.audit_logs;
+DROP POLICY IF EXISTS "Audit log insert authenticated"      ON public.audit_logs;
 
 CREATE POLICY "audit_logs_select" ON public.audit_logs
   FOR SELECT TO authenticated
@@ -1001,11 +1190,7 @@ CREATE POLICY "audit_logs_insert" ON public.audit_logs
 DROP POLICY IF EXISTS "Users view own sessions; owners view all" ON public.user_sessions;
 DROP POLICY IF EXISTS "Users insert own sessions"                ON public.user_sessions;
 DROP POLICY IF EXISTS "Users update own sessions"                ON public.user_sessions;
-DROP POLICY IF EXISTS "User sessions owner read"                 ON public.user_sessions;
-DROP POLICY IF EXISTS "User sessions insert own"                 ON public.user_sessions;
-DROP POLICY IF EXISTS "User sessions update own"                 ON public.user_sessions;
-DROP POLICY IF EXISTS "Owner can view all sessions"              ON public.user_sessions;
-DROP POLICY IF EXISTS "user_sessions_read"                       ON public.user_sessions;
+DROP POLICY IF EXISTS "user_sessions_select"                     ON public.user_sessions;
 DROP POLICY IF EXISTS "user_sessions_insert"                     ON public.user_sessions;
 DROP POLICY IF EXISTS "user_sessions_update"                     ON public.user_sessions;
 
@@ -1024,11 +1209,10 @@ CREATE POLICY "user_sessions_update" ON public.user_sessions
 
 -- ── impersonation_log ─────────────────────────────────────────
 DROP POLICY IF EXISTS "Owners can manage impersonation log"      ON public.impersonation_log;
-DROP POLICY IF EXISTS "Impersonation log owner only"             ON public.impersonation_log;
 DROP POLICY IF EXISTS "Owner can manage impersonation log"       ON public.impersonation_log;
-DROP POLICY IF EXISTS "impersonation_log_owner_read"             ON public.impersonation_log;
-DROP POLICY IF EXISTS "impersonation_log_impersonator_write"     ON public.impersonation_log;
-DROP POLICY IF EXISTS "impersonation_log_impersonator_update"    ON public.impersonation_log;
+DROP POLICY IF EXISTS "impersonation_log_select"                 ON public.impersonation_log;
+DROP POLICY IF EXISTS "impersonation_log_insert"                 ON public.impersonation_log;
+DROP POLICY IF EXISTS "impersonation_log_update"                 ON public.impersonation_log;
 
 CREATE POLICY "impersonation_log_select" ON public.impersonation_log
   FOR SELECT TO authenticated
@@ -1049,12 +1233,21 @@ CREATE POLICY "impersonation_log_update" ON public.impersonation_log
 CREATE INDEX IF NOT EXISTS idx_leads_status        ON public.leads(status);
 CREATE INDEX IF NOT EXISTS idx_leads_created       ON public.leads(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_quotes_status       ON public.quote_requests(status);
+CREATE INDEX IF NOT EXISTS idx_quotes_user         ON public.quote_requests(user_id);
 CREATE INDEX IF NOT EXISTS idx_projects_customer   ON public.projects(customer_id);
+CREATE INDEX IF NOT EXISTS idx_projects_pm         ON public.projects(project_manager_id);
+CREATE INDEX IF NOT EXISTS idx_projects_status     ON public.projects(status);
 CREATE INDEX IF NOT EXISTS idx_milestones_project  ON public.project_milestones(project_id);
 CREATE INDEX IF NOT EXISTS idx_updates_project     ON public.project_updates(project_id);
 CREATE INDEX IF NOT EXISTS idx_tickets_customer    ON public.tickets(customer_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_status      ON public.tickets(status);
 CREATE INDEX IF NOT EXISTS idx_blog_published      ON public.blog_posts(published, published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_blog_slug           ON public.blog_posts(slug);
 CREATE INDEX IF NOT EXISTS idx_tasks_assignee      ON public.staff_tasks(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_tasks_status        ON public.staff_tasks(status);
+CREATE INDEX IF NOT EXISTS idx_attendance_user     ON public.attendance(user_id);
+CREATE INDEX IF NOT EXISTS idx_salaries_staff      ON public.staff_salaries(staff_user_id);
+CREATE INDEX IF NOT EXISTS idx_leaves_staff        ON public.staff_leaves(staff_user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_actor         ON public.audit_logs(actor_id);
 CREATE INDEX IF NOT EXISTS idx_audit_created       ON public.audit_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_action        ON public.audit_logs(action);
@@ -1064,7 +1257,7 @@ CREATE INDEX IF NOT EXISTS idx_impersonation_actor ON public.impersonation_log(i
 
 
 -- ============================================================
--- SECTION 12: SEED — role_permissions matrix
+-- SECTION 12: SEED — role_permissions matrix (config, not demo data)
 -- ============================================================
 INSERT INTO public.role_permissions (role, module, allowed) VALUES
   -- Owner: all modules
@@ -1125,63 +1318,9 @@ ON CONFLICT (role, module) DO NOTHING;
 
 
 -- ============================================================
--- SECTION 13: DEMO USER PROFILES & ROLES
--- These are the 10 accounts already created in auth.users.
--- Both INSERTs are guarded with EXISTS so this section is a
--- no-op on a fresh database where these UUIDs don't yet exist,
--- and idempotent on any database where they do.
+-- SCHEMA COMPLETE
+-- Next steps:
+--   1. Create auth accounts using the Supabase Admin API script
+--      in scripts/demo_accounts.md
+--   2. Run scripts/seed_demo_data.sql to populate business data
 -- ============================================================
-INSERT INTO public.profiles (id, full_name, phone, email, status, created_at, updated_at)
-SELECT v.id::uuid, v.full_name, v.phone, v.email, 'active'::public.user_status, now(), now()
-FROM (VALUES
-  ('25bab248-2845-4c67-8c65-d674120b67c7', 'Aditya Owner',       '+91-9000000001', 'owner@adityaconstruction.com'),
-  ('6ed29f27-f975-456a-a87a-d4a619fa7493', 'Operations Manager', '+91-9000000002', 'operations@adityaconstruction.com'),
-  ('b05836e8-f1e4-45c5-b59c-4e8f3db3b53c', 'Rahul Sharma',       '+91-9811001001', 'rahul.sharma@adityaconstruction.com'),
-  ('95ec572b-c804-488e-977d-6f21cd9bf349', 'Priya Gupta',        '+91-9811001002', 'priya.gupta@adityaconstruction.com'),
-  ('a55461da-4780-4624-8854-6ad7eb8fbc3b', 'Amit Singh',         '+91-9811001003', 'amit.singh@adityaconstruction.com'),
-  ('85fabe48-ab0c-4a3f-9fc6-9e5ef4ad5b01', 'Neha Verma',         '+91-9811001004', 'neha.verma@adityaconstruction.com'),
-  ('fbbe86ee-0d2b-4de8-ab31-8d1daa807685', 'Deepak Joshi',       '+91-9811001008', 'deepak.joshi@adityaconstruction.com'),
-  ('85610fb3-06ae-43b7-93c4-1e98bb98dae3', 'Kavya Nair',         '+91-9811001009', 'kavya.nair@adityaconstruction.com'),
-  ('742b15de-6ed8-46e5-86b4-577c91c8136d', 'Arjun Mehta',        '+91-9811001010', 'arjun.mehta@adityaconstruction.com'),
-  ('774c222a-c67b-494c-8738-a9c5fa17dd1f', 'Kiran Reddy',        '+91-9811001015', 'kiran.reddy@adityaconstruction.com')
-) AS v(id, full_name, phone, email)
-WHERE EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = v.id::uuid)
-ON CONFLICT (id) DO UPDATE SET
-  full_name  = EXCLUDED.full_name,
-  phone      = EXCLUDED.phone,
-  email      = EXCLUDED.email,
-  status     = EXCLUDED.status,
-  updated_at = now();
-
-INSERT INTO public.user_roles (user_id, role, created_at)
-SELECT v.user_id::uuid, v.role::public.app_role, now()
-FROM (VALUES
-  ('25bab248-2845-4c67-8c65-d674120b67c7', 'owner'),
-  ('6ed29f27-f975-456a-a87a-d4a619fa7493', 'operations_manager'),
-  ('b05836e8-f1e4-45c5-b59c-4e8f3db3b53c', 'hr_manager'),
-  ('95ec572b-c804-488e-977d-6f21cd9bf349', 'project_manager'),
-  ('a55461da-4780-4624-8854-6ad7eb8fbc3b', 'site_engineer'),
-  ('85fabe48-ab0c-4a3f-9fc6-9e5ef4ad5b01', 'sales_executive'),
-  ('fbbe86ee-0d2b-4de8-ab31-8d1daa807685', 'sales_manager'),
-  ('85610fb3-06ae-43b7-93c4-1e98bb98dae3', 'customer_support'),
-  ('742b15de-6ed8-46e5-86b4-577c91c8136d', 'accountant'),
-  ('774c222a-c67b-494c-8738-a9c5fa17dd1f', 'staff')
-) AS v(user_id, role)
-WHERE EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = v.user_id::uuid)
-ON CONFLICT (user_id, role) DO NOTHING;
-
-
--- ============================================================
--- SECTION 14: VERIFICATION
--- Run this after applying — expect 10 rows, all with a role.
--- ============================================================
-SELECT
-  au.email,
-  p.full_name,
-  p.status,
-  ur.role
-FROM auth.users au
-LEFT JOIN public.profiles   p  ON p.id       = au.id
-LEFT JOIN public.user_roles ur ON ur.user_id = au.id
-WHERE au.email LIKE '%adityaconstruction.com'
-ORDER BY ur.role;
