@@ -1,0 +1,429 @@
+You are performing the FINAL production verification of this application.
+
+This project has already been migrated from Supabase to Replit PostgreSQL. Your task is NOT to partially inspect or partially fix it. Continue working until the application is completely functional.
+
+==============================
+OBJECTIVE
+==============================
+
+Ensure there are ZERO remaining runtime, build, authentication, database, permission, or migration issues.
+
+Do NOT stop after listing problems.
+Do NOT ask for confirmation.
+Fix every issue you discover before continuing.
+
+==============================
+PHASE 1 — COMPLETE CODEBASE AUDIT
+==============================
+
+Search the ENTIRE repository for every remaining reference to:
+
+- supabase
+- @supabase/*
+- SUPABASE_URL
+- SUPABASE_PROJECT_ID
+- SUPABASE_SERVICE_ROLE
+- SUPABASE_PUBLISHABLE_KEY
+- supabase.auth
+- supabase.rpc
+- supabase.storage
+- Row Level Security
+- PostgreSQL triggers
+- SQL migrations
+- schema_clean.sql
+- seed_demo_data.sql
+- combined_migrations.sql
+- migrations
+- policies
+- auth.users
+- storage buckets
+- postgres functions
+- CREATE FUNCTION
+- CREATE POLICY
+- CREATE TRIGGER
+- SECURITY DEFINER
+
+Replace or remove every remaining dependency.
+
+Delete dead code only AFTER confirming nothing references it.
+
+==============================
+PHASE 2 — DATABASE AUDIT
+==============================
+
+Inspect every table currently in Replit PostgreSQL.
+
+Verify:
+
+tables
+
+columns
+
+foreign keys
+
+indexes
+
+constraints
+
+relationships
+
+default values
+
+enums
+
+application validations
+
+Ensure every model used by the application exists.
+
+Verify all joins and relations work correctly.
+
+==============================
+PHASE 3 — DEMO DATA
+==============================
+
+Populate every table with realistic enterprise data.
+
+Do NOT leave any operational table empty.
+
+Specifically verify and populate:
+
+profiles
+
+users
+
+user_roles
+
+role_permissions
+
+projects
+
+project_updates
+
+project_milestones
+
+attendance
+
+staff_tasks
+
+staff_leaves
+
+staff_salaries
+
+tickets
+
+ticket_messages
+
+quote_requests
+
+leads
+
+audit_logs
+
+user_sessions
+
+impersonation_log
+
+blog_posts
+
+testimonials
+
+contact_messages
+
+Populate enough data that:
+
+all dashboards
+
+charts
+
+graphs
+
+analytics
+
+reports
+
+KPIs
+
+timelines
+
+notifications
+
+tables
+
+cards
+
+activity feeds
+
+management pages
+
+have meaningful content.
+
+Create historical data spanning several months.
+
+==============================
+PHASE 4 — AUTHENTICATION
+==============================
+
+Verify authentication.
+
+Verify:
+
+password hashing
+
+bcrypt/argon2
+
+JWT/session handling
+
+cookies
+
+logout
+
+remember session
+
+protected routes
+
+authorization middleware
+
+session expiry
+
+Verify every login works.
+
+Demo accounts must be:
+
+Owner
+owner@adityaconstruction.com
+
+Operations Manager
+operations@adityaconstruction.com
+
+HR Manager
+rahul.sharma@adityaconstruction.com
+
+Project Manager
+priya.gupta@adityaconstruction.com
+
+Site Engineer
+amit.singh@adityaconstruction.com
+
+Sales Executive
+neha.verma@adityaconstruction.com
+
+Sales Manager
+deepak.joshi@adityaconstruction.com
+
+Customer Support
+kavya.nair@adityaconstruction.com
+
+Accountant
+arjun.mehta@adityaconstruction.com
+
+General Staff
+kiran.reddy@adityaconstruction.com
+
+Customer
+customer1@example.com
+
+Customer
+customer2@example.com
+
+Password for EVERY account:
+
+Demo_Lost.experts.reassigned
+
+If any account differs,
+rename or recreate it.
+
+==============================
+PHASE 5 — PERMISSIONS
+==============================
+
+Verify every permission.
+
+Owner
+
+Admin
+
+Managing Director
+
+Operations Manager
+
+HR
+
+Sales Manager
+
+Sales Executive
+
+Marketing
+
+Project Manager
+
+Site Engineer
+
+Accountant
+
+Support
+
+General Staff
+
+Customer
+
+Ensure each role can only access the pages intended for it.
+
+Populate role_permissions if empty.
+
+==============================
+PHASE 6 — COMPLETE APPLICATION TESTING
+==============================
+
+Run the application.
+
+Run every page.
+
+Run every route.
+
+Run every API endpoint.
+
+Run every CRUD operation.
+
+Verify:
+
+Create
+
+Read
+
+Update
+
+Delete
+
+search
+
+filter
+
+sorting
+
+pagination
+
+dashboard statistics
+
+notifications
+
+timeline
+
+analytics
+
+forms
+
+validation
+
+uploads
+
+reports
+
+role switching
+
+navigation
+
+Fix every runtime error automatically.
+
+==============================
+PHASE 7 — BUILD VERIFICATION
+==============================
+
+Run:
+
+development server
+
+production build
+
+Resolve every warning and error.
+
+Application must compile cleanly.
+
+==============================
+PHASE 8 — DATABASE CLEANUP
+==============================
+
+Remove obsolete migration files only if they are no longer required.
+
+Remove obsolete SQL files.
+
+Remove obsolete Supabase configuration.
+
+Remove unused packages.
+
+Ensure package.json only contains dependencies actually used.
+
+==============================
+PHASE 9 — CODE QUALITY
+==============================
+
+Remove:
+
+dead code
+
+duplicate functions
+
+unused imports
+
+unused utilities
+
+unused services
+
+unused environment variables
+
+Ensure there is only ONE database implementation.
+
+==============================
+PHASE 10 — FINAL REPORT
+==============================
+
+When EVERYTHING is complete, generate:
+
+1. Files modified
+
+2. Files deleted
+
+3. Remaining issues (if any)
+
+4. Remaining TODOs
+
+5. Database schema summary
+
+6. Row count for every table
+
+7. Demo accounts
+
+8. Password
+
+9. Environment variables required
+
+10. Packages added
+
+11. Packages removed
+
+12. Routes verified
+
+13. API endpoints verified
+
+14. Pages verified
+
+15. CRUD modules verified
+
+16. Authentication verification
+
+17. Permission verification
+
+18. Build verification
+
+19. Runtime verification
+
+20. Overall production readiness score out of 10.
+
+Only stop after the application is fully functional.
+
+If you encounter an error, fix it and continue automatically.
+
+Do not pause for confirmation.
+
+Do not stop after analysis.
+
+Continue until the entire application is production-ready.

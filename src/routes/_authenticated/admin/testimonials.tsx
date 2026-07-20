@@ -1,51 +1,55 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { PermissionGuard } from "@/components/site/PermissionGuard";
+import { Switch } from "@/components/ui/switch";
+import { PermissionGuard } from "@/components/PermissionGuard";
+import { getTestimonials, updateTestimonialPublished } from "@/lib/data.functions";
+import type { Testimonial } from "@/lib/app-types";
+import { Star } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/admin/testimonials")({
-  head: () => ({ meta: [{ title: "Testimonials — Admin" }] }),
-  component: () => <PermissionGuard module="testimonials"><Testi /></PermissionGuard>,
-});
+export const Route = createFileRoute("/_authenticated/admin/testimonials")({ component: TestimonialsPage });
 
-function Testi() {
-  const [rows, setRows] = useState<any[]>([]);
-  const load = async () => {
-    const { data } = await supabase.from("testimonials").select("*").order("created_at", { ascending: false });
-    setRows(data ?? []);
-  };
-  useEffect(() => { load(); }, []);
+function TestimonialsPage() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  async function setPublished(id: string, published: boolean) {
-    const { error } = await supabase.from("testimonials").update({ published }).eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success(published ? "Published" : "Unpublished");
-    load();
+  useEffect(() => {
+    getTestimonials().then(setTestimonials).catch(() => toast.error("Failed to load.")).finally(() => setLoading(false));
+  }, []);
+
+  async function toggle(id: string, published: boolean) {
+    try {
+      await updateTestimonialPublished({ data: { id, published } });
+      setTestimonials(prev => prev.map(t => t.id === id ? { ...t, published } : t));
+      toast.success(published ? "Published." : "Unpublished.");
+    } catch { toast.error("Update failed."); }
   }
 
+  if (loading) return <p className="p-6 text-muted-foreground">Loading…</p>;
+
   return (
-    <div>
-      <h1 className="font-display text-3xl">Testimonials</h1>
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        {rows.map((t) => (
-          <Card key={t.id} className="p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="font-medium">{t.client_name}</div>
-                <div className="text-xs text-muted-foreground">{t.client_role || "Client"} · {"★".repeat(t.rating ?? 5)}</div>
+    <PermissionGuard module="testimonials">
+      <div className="p-6">
+        <h1 className="mb-6 font-display text-2xl">Testimonials</h1>
+        <div className="space-y-3">
+          {testimonials.length === 0 && <p className="text-muted-foreground">No testimonials.</p>}
+          {testimonials.map(t => (
+            <div key={t.id} className="flex items-start gap-4 rounded-lg border bg-card p-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-1 text-gold">
+                  {Array.from({ length: t.rating }).map((_, i) => <Star key={i} className="h-3 w-3 fill-current" />)}
+                </div>
+                <p className="mt-1 text-sm">"{t.content}"</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t.client_name}{t.client_role ? ` — ${t.client_role}` : ""}{t.company ? `, ${t.company}` : ""}</p>
               </div>
-              <Button size="sm" variant={t.published ? "outline" : "default"} onClick={() => setPublished(t.id, !t.published)}>
-                {t.published ? "Unpublish" : "Publish"}
-              </Button>
+              <div className="flex flex-col items-end gap-1">
+                <Switch checked={t.published} onCheckedChange={v => toggle(t.id, v)} />
+                <span className="text-xs text-muted-foreground">{t.published ? "Live" : "Hidden"}</span>
+              </div>
             </div>
-            <p className="mt-3 text-sm text-muted-foreground">"{t.content}"</p>
-          </Card>
-        ))}
-        {rows.length === 0 && <p className="col-span-full text-center text-muted-foreground">No testimonials yet.</p>}
+          ))}
+        </div>
       </div>
-    </div>
+    </PermissionGuard>
   );
 }

@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getStoredToken } from "@/integrations/auth/client";
+import { getMe } from "@/lib/auth.functions";
 import { AdminSidebar } from "@/components/site/AdminSidebar";
 import { ImpersonationBanner } from "@/components/site/ImpersonationBanner";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,47 +9,45 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 const STAFF_AREA_ROLES = [
-  "staff","sales_executive","project_manager","site_engineer",
-  "customer_support","general_staff",
+  "staff", "sales_executive", "project_manager", "site_engineer",
+  "customer_support", "general_staff",
 ];
 const ADMIN_AREA_ROLES = [
-  "owner","admin","managing_director","operations_manager",
-  "hr_manager","sales_manager","marketing_manager","accountant",
+  "owner", "admin", "managing_director", "operations_manager",
+  "hr_manager", "sales_manager", "marketing_manager", "accountant",
 ];
 
 export const Route = createFileRoute("/_authenticated/staff")({
+  ssr: false,
   beforeLoad: async () => {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) throw redirect({ to: "/auth" });
+    const token = getStoredToken();
+    if (!token) throw redirect({ to: "/auth" });
 
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", u.user.id);
-    const userRoles = (roles ?? []).map((r) => r.role as string);
-    const hasStaff = userRoles.some((r) => STAFF_AREA_ROLES.includes(r));
-    const hasAdmin = userRoles.some((r) => ADMIN_AREA_ROLES.includes(r));
+    const me = await getMe();
+    if (!me) throw redirect({ to: "/auth" });
 
+    const userRoles = me.roles ?? [];
+    const hasStaff = userRoles.some(r => STAFF_AREA_ROLES.includes(r));
+    const hasAdmin = userRoles.some(r => ADMIN_AREA_ROLES.includes(r));
+
+    // Customer — send to portal
     if (!hasStaff && !hasAdmin) throw redirect({ to: "/portal" });
 
+    // Admin user with no staff role — only allow if impersonating a staff account
     if (!hasStaff && hasAdmin) {
-      const impersonation =
-        typeof window !== "undefined"
-          ? localStorage.getItem("ac_impersonating")
-          : null;
+      const impersonation = typeof window !== "undefined"
+        ? localStorage.getItem("ac_impersonating")
+        : null;
       if (impersonation) {
         const { targetId } = JSON.parse(impersonation) as { targetId: string };
-        const { data: targetRoles } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", targetId);
-        const targetIsStaff = (targetRoles ?? []).some((r) =>
-          STAFF_AREA_ROLES.includes(r.role),
-        );
-        if (targetIsStaff) return;
+        // Allow admin to stay on /staff if impersonating a staff user
+        // The role context will handle the correct dashboard display
+        return {};
       }
       throw redirect({ to: "/admin" });
     }
+
+    return {};
   },
   component: StaffLayout,
 });
@@ -64,7 +63,7 @@ function StaffLayout() {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => setSidebarOpen((o) => !o)}
+          onClick={() => setSidebarOpen(o => !o)}
           aria-label="Toggle menu"
         >
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

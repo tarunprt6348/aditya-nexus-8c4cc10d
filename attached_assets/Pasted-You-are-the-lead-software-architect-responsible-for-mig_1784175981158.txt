@@ -1,0 +1,481 @@
+You are the lead software architect responsible for migrating this entire project away from Supabase.
+
+Your objective is NOT simply to make the project run.
+
+Your objective is to deliver a production-ready application that uses Replit PostgreSQL as its only database while preserving every existing feature.
+
+DO NOT ask for confirmation.
+DO NOT stop midway.
+Continue until the migration is complete.
+
+====================================================
+PRIMARY OBJECTIVE
+====================================================
+
+Completely remove Supabase from the application and replace it with Replit PostgreSQL.
+
+IMPORTANT:
+
+Use Replit PostgreSQL ONLY.
+
+DO NOT use Replit KV Database.
+
+The database must remain fully relational and PostgreSQL-compatible so it can later be migrated back to Supabase or any PostgreSQL provider with minimal effort.
+
+====================================================
+PHASE 1 — PROJECT AUDIT
+====================================================
+
+Inspect the complete codebase.
+
+Identify:
+
+• every database table
+• every enum
+• every foreign key
+• every relationship
+• every index
+• every unique constraint
+• every check constraint
+• every trigger
+• every authentication dependency
+• every authorization dependency
+• every RPC/function
+• every storage dependency
+• every SQL migration
+• every API route
+• every frontend component using Supabase
+• every environment variable
+• every service calling Supabase
+
+Generate an internal migration plan before changing code.
+
+====================================================
+PHASE 2 — DATABASE DESIGN
+====================================================
+
+Create a normalized PostgreSQL schema.
+
+Use proper:
+
+Primary Keys
+
+Foreign Keys
+
+Unique Constraints
+
+Indexes
+
+Cascade Rules
+
+Transactions
+
+NOT NULL constraints
+
+CHECK constraints
+
+Generated UUIDs
+
+Timestamps
+
+Soft delete where appropriate.
+
+Preserve every relationship from the existing system.
+
+Tables should include (and any others discovered):
+
+profiles
+
+user_roles
+
+role_permissions
+
+projects
+
+project_updates
+
+project_milestones
+
+leads
+
+quote_requests
+
+tickets
+
+ticket_messages
+
+attendance
+
+staff_tasks
+
+staff_leaves
+
+staff_salaries
+
+audit_logs
+
+user_sessions
+
+impersonation_log
+
+blog_posts
+
+testimonials
+
+contact_messages
+
+notifications
+
+settings
+
+and every remaining table found.
+
+====================================================
+PHASE 3 — AUTHENTICATION
+====================================================
+
+Completely replace Supabase Auth.
+
+Implement secure authentication using:
+
+bcrypt (or Argon2)
+
+JWT
+
+HTTP-only secure cookies
+
+Refresh tokens if needed
+
+Session expiration
+
+Role-based authorization
+
+Permission middleware
+
+Owner/Admin/Manager hierarchy
+
+Password reset capability
+
+Protected routes
+
+====================================================
+PHASE 4 — REMOVE SUPABASE
+====================================================
+
+Replace ALL:
+
+supabase-js
+
+Supabase SQL
+
+Supabase RPC
+
+Supabase Auth
+
+Supabase Storage
+
+Supabase Policies
+
+Supabase Triggers
+
+Supabase Migrations
+
+Supabase Functions
+
+Realtime subscriptions
+
+Environment variables
+
+with local PostgreSQL implementations.
+
+Delete unused Supabase code ONLY after confirming replacements work.
+
+====================================================
+PHASE 5 — DATA ACCESS LAYER
+====================================================
+
+Create a clean database abstraction layer.
+
+Every query should use parameterized SQL.
+
+Avoid duplicate queries.
+
+Avoid N+1 queries.
+
+Optimize joins.
+
+Use transactions where required.
+
+====================================================
+PHASE 6 — DEMO DATA
+====================================================
+
+Populate the database with realistic production-quality demo data.
+
+Create complete datasets.
+
+Minimum:
+
+12 users
+
+10 staff
+
+2 customers
+
+25+ projects
+
+100+ project updates
+
+50+ milestones
+
+75+ leads
+
+50+ quote requests
+
+40+ support tickets
+
+100+ ticket messages
+
+180+ attendance entries
+
+24 salary records
+
+20 leave requests
+
+30 audit logs
+
+15 blog posts
+
+20 testimonials
+
+20 contact messages
+
+20 user sessions
+
+Meaningful analytics.
+
+Meaningful dashboards.
+
+Meaningful timelines.
+
+Meaningful reports.
+
+====================================================
+DEMO ACCOUNTS
+====================================================
+
+Owner
+owner@adityaconstruction.com
+
+Operations Manager
+operations@adityaconstruction.com
+
+HR Manager
+rahul.sharma@adityaconstruction.com
+
+Project Manager
+priya.gupta@adityaconstruction.com
+
+Site Engineer
+amit.singh@adityaconstruction.com
+
+Sales Executive
+neha.verma@adityaconstruction.com
+
+Sales Manager
+deepak.joshi@adityaconstruction.com
+
+Customer Support
+kavya.nair@adityaconstruction.com
+
+Accountant
+arjun.mehta@adityaconstruction.com
+
+General Staff
+kiran.reddy@adityaconstruction.com
+
+Customer
+customer1@example.com
+
+Customer
+customer2@example.com
+
+Use secure password hashing.
+
+Generate a markdown file containing:
+
+Email
+
+Role
+
+Temporary password
+
+Department
+
+====================================================
+PHASE 7 — APPLICATION VALIDATION
+====================================================
+
+After migration:
+
+Run the application.
+
+Verify:
+
+Landing page
+
+Authentication
+
+Dashboard
+
+Admin
+
+Operations
+
+Projects
+
+CRM
+
+Quotes
+
+Tickets
+
+Blog
+
+Testimonials
+
+Reports
+
+Attendance
+
+Payroll
+
+Leaves
+
+User Management
+
+Settings
+
+Search
+
+Filters
+
+Pagination
+
+Analytics
+
+Notifications
+
+Every CRUD operation.
+
+Fix every runtime error automatically.
+
+Repeat until no errors remain.
+
+====================================================
+PHASE 8 — PERFORMANCE
+====================================================
+
+Optimize:
+
+Indexes
+
+Query speed
+
+Database connections
+
+Caching where appropriate
+
+Pagination
+
+Lazy loading
+
+Bundle size
+
+====================================================
+PHASE 9 — SECURITY
+====================================================
+
+Verify:
+
+Authentication
+
+Authorization
+
+SQL injection protection
+
+XSS protection
+
+CSRF protection
+
+Input validation
+
+Output encoding
+
+Password hashing
+
+JWT validation
+
+Secure cookies
+
+Permission checks
+
+====================================================
+PHASE 10 — DOCUMENTATION
+====================================================
+
+Generate:
+
+database_schema.md
+
+migration_report.md
+
+demo_accounts.md
+
+database_setup.md
+
+deployment.md
+
+environment_variables.md
+
+developer_notes.md
+
+====================================================
+SUCCESS CRITERIA
+====================================================
+
+Migration is considered complete ONLY when:
+
+✓ No Supabase dependency remains.
+
+✓ No Supabase environment variables remain.
+
+✓ No Supabase imports remain.
+
+✓ All frontend pages work.
+
+✓ All backend APIs work.
+
+✓ Database is fully populated.
+
+✓ Demo accounts work.
+
+✓ Authentication works.
+
+✓ Authorization works.
+
+✓ CRUD works.
+
+✓ Dashboards display meaningful information.
+
+✓ No runtime errors remain.
+
+✓ No TypeScript errors remain.
+
+✓ Build succeeds.
+
+✓ Application runs successfully.
+
+Do not stop after creating the database.
+
+Continue automatically until every issue encountered during migration has been resolved.

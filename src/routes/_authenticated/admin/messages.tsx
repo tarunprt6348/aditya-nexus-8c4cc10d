@@ -1,52 +1,66 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { PermissionGuard } from "@/components/site/PermissionGuard";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { PermissionGuard } from "@/components/PermissionGuard";
+import { getContactMessages, updateContactMessageHandled } from "@/lib/data.functions";
+import type { ContactMessage } from "@/lib/app-types";
+import { Check } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/admin/messages")({
-  head: () => ({ meta: [{ title: "Messages — Owner" }] }),
-  component: () => <PermissionGuard module="messages"><Messages /></PermissionGuard>,
-});
+export const Route = createFileRoute("/_authenticated/admin/messages")({ component: MessagesPage });
 
-function Messages() {
-  const [rows, setRows] = useState<any[]>([]);
-  const load = async () => {
-    const { data } = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false });
-    setRows(data ?? []);
-  };
-  useEffect(() => { load(); }, []);
+function MessagesPage() {
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getContactMessages().then(setMessages).catch(() => toast.error("Failed to load messages.")).finally(() => setLoading(false));
+  }, []);
 
   async function markHandled(id: string, handled: boolean) {
-    const { error } = await supabase.from("contact_messages").update({ handled }).eq("id", id);
-    if (error) return toast.error(error.message);
-    load();
+    try {
+      await updateContactMessageHandled({ data: { id, handled } });
+      setMessages(prev => prev.map(m => m.id === id ? { ...m, handled } : m));
+      toast.success(handled ? "Marked handled." : "Reopened.");
+    } catch { toast.error("Update failed."); }
   }
 
+  if (loading) return <p className="p-6 text-muted-foreground">Loading…</p>;
+
   return (
-    <div>
-      <h1 className="font-display text-3xl">Contact Messages</h1>
-      <p className="mt-1 text-muted-foreground">{rows.length} total</p>
-      <div className="mt-6 grid gap-3">
-        {rows.map((m) => (
-          <Card key={m.id} className="p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="font-medium">{m.name} <span className="ml-2 text-xs text-muted-foreground">{m.email}{m.phone ? ` · ${m.phone}` : ""}</span></h3>
-                {m.subject && <p className="mt-1 text-sm font-medium">{m.subject}</p>}
-                <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">{m.message}</p>
+    <PermissionGuard module="messages">
+      <div className="p-6">
+        <h1 className="mb-6 font-display text-2xl">Contact Messages</h1>
+        <div className="space-y-3">
+          {messages.length === 0 && <p className="text-muted-foreground">No messages.</p>}
+          {messages.map(m => (
+            <div key={m.id} className={`rounded-lg border bg-card p-4 ${m.handled ? "opacity-60" : ""}`}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium">{m.name}</p>
+                    <span className="text-xs text-muted-foreground">{m.email}</span>
+                    {m.phone && <span className="text-xs text-muted-foreground">{m.phone}</span>}
+                  </div>
+                  {m.subject && <p className="mt-0.5 text-sm font-medium text-muted-foreground">{m.subject}</p>}
+                  <p className="mt-2 text-sm">{m.message}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</p>
+                </div>
+                <Button
+                  size="sm"
+                  variant={m.handled ? "outline" : "default"}
+                  onClick={() => markHandled(m.id, !m.handled)}
+                  className="shrink-0 gap-1"
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  {m.handled ? "Reopen" : "Mark handled"}
+                </Button>
               </div>
-              <Button size="sm" variant={m.handled ? "outline" : "default"} onClick={() => markHandled(m.id, !m.handled)}>
-                {m.handled ? "Reopen" : "Mark handled"}
-              </Button>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</p>
-          </Card>
-        ))}
-        {rows.length === 0 && <p className="text-center text-muted-foreground">No messages yet.</p>}
+          ))}
+        </div>
       </div>
-    </div>
+    </PermissionGuard>
   );
 }

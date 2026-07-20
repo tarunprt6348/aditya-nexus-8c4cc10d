@@ -1,117 +1,147 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Toaster } from "@/components/ui/sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
-import { Building2, FileText, MessageSquare, LogOut } from "lucide-react";
+import { toast } from "sonner";
+import { useRole } from "@/contexts/RoleContext";
+import {
+  getMyProfile, getMyProjects, getMyTickets, getMyQuoteRequests,
+} from "@/lib/data.functions";
+import type { Profile, Project, Ticket, QuoteRequest } from "@/lib/app-types";
+import { FolderOpen, LifeBuoy, FileText, User } from "lucide-react";
 
-type Role = Database["public"]["Enums"]["app_role"];
-
-export const Route = createFileRoute("/_authenticated/portal")({
-  head: () => ({ meta: [{ title: "Client Portal — Aditya Constructions" }] }),
-  component: Portal,
-});
+export const Route = createFileRoute("/_authenticated/portal")({ ssr: false, component: Portal });
 
 function Portal() {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [role, setRole] = useState<Role>("customer");
-  const [projects, setProjects] = useState<any[]>([]);
-  const [tickets, setTickets] = useState<any[]>([]);
-  const [quotes, setQuotes] = useState<any[]>([]);
+  const { email } = useRole();
+  const [profile, setProfile] = useState<(Profile & { email: string | null }) | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [quotes, setQuotes] = useState<QuoteRequest[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return;
-      const [{ data: profile }, { data: roles }, { data: proj }, { data: tix }, { data: q }] = await Promise.all([
-        supabase.from("profiles").select("full_name").eq("id", u.user.id).maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", u.user.id),
-        supabase.from("projects").select("*").eq("customer_id", u.user.id).order("created_at", { ascending: false }).limit(5),
-        supabase.from("tickets").select("*").eq("customer_id", u.user.id).order("created_at", { ascending: false }).limit(5),
-        supabase.from("quote_requests").select("*").eq("user_id", u.user.id).order("created_at", { ascending: false }).limit(5),
-      ]);
-      setName(profile?.full_name ?? u.user.email ?? "");
-      const primary = (roles?.[0]?.role ?? "customer") as Role;
-      setRole(primary);
-      setProjects(proj ?? []);
-      setTickets(tix ?? []);
-      setQuotes(q ?? []);
-    })();
+    Promise.all([getMyProfile(), getMyProjects(), getMyTickets(), getMyQuoteRequests()])
+      .then(([p, pr, t, q]) => {
+        setProfile(p);
+        setProjects(pr);
+        setTickets(t);
+        setQuotes(q);
+      })
+      .catch(() => toast.error("Failed to load portal data."))
+      .finally(() => setLoading(false));
   }, []);
 
-  async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/" });
+  if (loading) {
+    return <div className="flex min-h-dvh items-center justify-center"><p className="text-muted-foreground">Loading your portal…</p></div>;
   }
 
   return (
-    <div className="min-h-dvh bg-muted/30">
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-sm bg-navy text-gold font-display">A</span>
-            <span className="font-display">Aditya · Portal</span>
-          </Link>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-muted-foreground">{name}</span>
-            <span className="rounded-full bg-gold/15 px-2 py-0.5 text-xs uppercase tracking-widest text-gold">{role}</span>
-            <Button size="sm" variant="ghost" onClick={signOut}><LogOut className="mr-1 h-4 w-4" /> Sign out</Button>
+    <div className="mx-auto max-w-5xl p-6">
+      {/* Header */}
+      <div className="mb-8 flex items-center gap-4">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-navy font-display text-2xl font-bold text-white">
+          {(profile?.full_name ?? email ?? "U")[0].toUpperCase()}
+        </div>
+        <div>
+          <h1 className="font-display text-2xl">Welcome, {profile?.full_name?.split(" ")[0] ?? "there"}</h1>
+          <p className="text-sm text-muted-foreground">{profile?.email ?? email}</p>
+        </div>
+      </div>
+
+      {/* Summary cards */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-3">
+        <SummaryCard icon={FolderOpen} label="Active projects" value={projects.filter(p => p.status === "in_progress").length} />
+        <SummaryCard icon={LifeBuoy} label="Open tickets" value={tickets.filter(t => t.status !== "closed").length} />
+        <SummaryCard icon={FileText} label="Quote requests" value={quotes.length} />
+      </div>
+
+      {/* Projects */}
+      <Section title="Your Projects">
+        {projects.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No projects linked to your account yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {projects.map(p => (
+              <div key={p.id} className="flex items-center justify-between rounded-lg border bg-card px-4 py-3">
+                <div>
+                  <p className="font-medium">{p.title}</p>
+                  <p className="text-xs capitalize text-muted-foreground">{p.service_type} · {p.location ?? "—"}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-1.5 w-24 rounded-full bg-muted">
+                    <div className="h-full rounded-full bg-gold" style={{ width: `${p.progress}%` }} />
+                  </div>
+                  <span className="text-xs">{p.progress}%</span>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      </header>
-      <main className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <h1 className="font-display text-3xl">Welcome back, {name.split(" ")[0] || "there"}.</h1>
-        <p className="mt-1 text-muted-foreground">Here's an overview of your projects, quotes and tickets.</p>
+        )}
+      </Section>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-base"><Building2 className="h-4 w-4 text-gold" /> Projects</CardTitle></CardHeader>
-            <CardContent>
-              <div className="font-display text-3xl">{projects.length}</div>
-              <p className="text-xs text-muted-foreground">Active or completed</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-base"><FileText className="h-4 w-4 text-gold" /> Quotes</CardTitle></CardHeader>
-            <CardContent>
-              <div className="font-display text-3xl">{quotes.length}</div>
-              <p className="text-xs text-muted-foreground">Requests on file</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-base"><MessageSquare className="h-4 w-4 text-gold" /> Tickets</CardTitle></CardHeader>
-            <CardContent>
-              <div className="font-display text-3xl">{tickets.length}</div>
-              <p className="text-xs text-muted-foreground">Open conversations</p>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Tickets */}
+      <Section title="Support Tickets">
+        {tickets.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No support tickets.</p>
+        ) : (
+          <div className="space-y-2">
+            {tickets.map(t => (
+              <div key={t.id} className="flex items-center justify-between rounded-lg border bg-card px-4 py-3">
+                <div>
+                  <p className="font-medium">{t.subject}</p>
+                  <p className="text-xs capitalize text-muted-foreground">{t.priority} priority</p>
+                </div>
+                <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${t.status === "open" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-600"}`}>
+                  {t.status.replace("_", " ")}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Section>
 
-        <section className="mt-10">
-          <h2 className="font-display text-xl">Your projects</h2>
-          {projects.length === 0 ? (
-            <div className="mt-4 rounded-lg border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
-              You don't have any projects yet. <Link to="/quote" className="text-gold underline">Request a quote</Link> to begin.
-            </div>
-          ) : (
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              {projects.map((p) => (
-                <Card key={p.id}>
-                  <CardHeader><CardTitle className="text-base">{p.title}</CardTitle></CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">
-                    <div>Status: <span className="capitalize text-foreground">{p.status}</span></div>
-                    <div>Progress: {p.progress ?? 0}%</div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </section>
-      </main>
-      <Toaster richColors position="top-center" />
+      {/* Quotes */}
+      <Section title="Quote Requests">
+        {quotes.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No quote requests.</p>
+        ) : (
+          <div className="space-y-2">
+            {quotes.map(q => (
+              <div key={q.id} className="flex items-center justify-between rounded-lg border bg-card px-4 py-3">
+                <div>
+                  <p className="font-medium capitalize">{q.service_type?.replace("_", " ") ?? "Service"} quote</p>
+                  <p className="text-xs text-muted-foreground">{new Date(q.created_at).toLocaleDateString()}</p>
+                </div>
+                <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${q.status === "pending" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}>
+                  {q.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Section>
+    </div>
+  );
+}
+
+function SummaryCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: number }) {
+  return (
+    <div className="flex items-center gap-4 rounded-lg border bg-card p-4">
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy/10">
+        <Icon className="h-5 w-5 text-navy" />
+      </div>
+      <div>
+        <p className="text-2xl font-bold">{value}</p>
+        <p className="text-xs text-muted-foreground">{label}</p>
+      </div>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-8">
+      <h2 className="mb-3 font-semibold">{title}</h2>
+      {children}
     </div>
   );
 }

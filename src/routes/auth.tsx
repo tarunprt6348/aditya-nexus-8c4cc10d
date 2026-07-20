@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { Link } from "@tanstack/react-router";
-import { fetchPrimaryRole, homeForRole } from "@/lib/roles";
 import { Logo } from "@/components/site/Logo";
+import { login, register } from "@/lib/auth.functions";
+import { storeSession, getStoredToken } from "@/integrations/auth/client";
+import { getPrimaryRole, homeForRole, type AppRole } from "@/lib/roles";
+import { getUserRoles } from "@/lib/data.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -24,17 +26,17 @@ export const Route = createFileRoute("/auth")({
 
 const signInSchema = z.object({
   email: z.string().trim().email().max(255),
-  password: z.string().min(6).max(128),
+  password: z.string().min(1).max(128),
 });
+
 const signUpSchema = signInSchema.extend({
   full_name: z.string().trim().min(2).max(100),
 });
 
-async function routeByRole(navigate: ReturnType<typeof useNavigate>) {
-  const { data: u } = await supabase.auth.getUser();
-  if (!u.user) return;
-  const role = await fetchPrimaryRole(u.user.id);
-  navigate({ to: homeForRole(role) });
+async function routeAfterLogin(userId: string, navigate: ReturnType<typeof useNavigate>) {
+  const roles = await getUserRoles({ data: { userId } });
+  const primary = getPrimaryRole(roles as AppRole[]);
+  navigate({ to: homeForRole(primary) });
 }
 
 function Auth() {
@@ -42,9 +44,10 @@ function Auth() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) routeByRole(navigate);
-    });
+    if (getStoredToken()) {
+      // Already logged in — redirect (will re-fetch roles)
+      navigate({ to: "/admin" });
+    }
   }, [navigate]);
 
   async function handleSignIn(e: React.FormEvent<HTMLFormElement>) {
@@ -53,11 +56,21 @@ function Auth() {
     const parsed = signInSchema.safeParse(fd);
     if (!parsed.success) return toast.error("Enter a valid email and password.");
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Welcome back.");
-    await routeByRole(navigate);
+    try {
+      const result = await login({ data: parsed.data });
+      storeSession({
+        token: result.token,
+        userId: result.userId,
+        email: result.email,
+        fullName: result.fullName,
+      });
+      toast.success("Welcome back.");
+      await routeAfterLogin(result.userId, navigate);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Sign in failed.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
@@ -66,25 +79,21 @@ function Auth() {
     const parsed = signUpSchema.safeParse(fd);
     if (!parsed.success) return toast.error(parsed.error.issues[0]?.message ?? "Please complete the form.");
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: parsed.data.email,
-      password: parsed.data.password,
-      options: {
-        emailRedirectTo: window.location.origin + "/auth",
-        data: { full_name: parsed.data.full_name },
-      },
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created. Please check your email to confirm, then sign in.");
-  }
-
-  async function handleGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin + "/auth" },
-    });
-    if (error) toast.error("Google sign-in failed.");
+    try {
+      const result = await register({ data: parsed.data });
+      storeSession({
+        token: result.token,
+        userId: result.userId,
+        email: result.email,
+        fullName: result.fullName,
+      });
+      toast.success("Account created. Welcome!");
+      await routeAfterLogin(result.userId, navigate);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Registration failed.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -150,12 +159,6 @@ function Auth() {
               </form>
             </TabsContent>
           </Tabs>
-          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
-            <div className="h-px flex-1 bg-border" /> or <div className="h-px flex-1 bg-border" />
-          </div>
-          <Button variant="outline" className="w-full" onClick={handleGoogle}>
-            Continue with Google
-          </Button>
           <Toaster richColors position="top-center" />
         </div>
       </div>

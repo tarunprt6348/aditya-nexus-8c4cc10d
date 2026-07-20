@@ -6,18 +6,22 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { fetchPrimaryRole, logAudit, type AppRole } from "@/lib/roles";
+import { getStoredToken } from "@/integrations/auth/client";
+import { getPrimaryRole, logAudit, type AppRole } from "@/lib/roles";
+import { hasModuleAccess, getDefaultModules, type Module } from "@/lib/permissions";
 import {
-  hasModuleAccess,
-  getDefaultModules,
-  type Module,
-} from "@/lib/permissions";
+  getUserRoles,
+  getRolePermissions,
+  recordSession,
+  touchSession,
+  startImpersonationLog,
+  endImpersonationLog,
+} from "@/lib/data.functions";
+import { getMe } from "@/lib/auth.functions";
 
 const IMPERSONATION_KEY = "ac_impersonating";
 const IMPERSONATION_SESSION_KEY = "ac_impersonation_session";
 
-// DB permission override: role → module → allowed
 type PermissionOverrides = Partial<Record<Module, boolean>>;
 
 interface RoleContextValue {
@@ -30,11 +34,7 @@ interface RoleContextValue {
   impersonationName: string;
   permissionOverrides: PermissionOverrides;
   can: (module: Module) => boolean;
-  startImpersonation: (
-    targetId: string,
-    targetEmail: string,
-    targetName: string,
-  ) => Promise<void>;
+  startImpersonation: (targetId: string, targetEmail: string, targetName: string) => Promise<void>;
   stopImpersonation: () => Promise<void>;
   loading: boolean;
 }
@@ -56,17 +56,18 @@ const RoleContext = createContext<RoleContextValue>({
 
 async function loadDbPermissions(role: AppRole): Promise<PermissionOverrides> {
   if (role === "owner" || role === "admin") return {};
-  const { data } = await supabase
-    .from("role_permissions" as never)
-    .select("module, allowed")
-    .eq("role", role) as {
-    data: Array<{ module: string; allowed: boolean }> | null;
-  };
-  const overrides: PermissionOverrides = {};
-  (data ?? []).forEach(({ module, allowed }) => {
-    overrides[module as Module] = allowed;
-  });
-  return overrides;
+  try {
+    const all = await getRolePermissions();
+    const overrides: PermissionOverrides = {};
+    (all ?? [])
+      .filter(p => p.role === role)
+      .forEach(({ module, allowed }) => {
+        overrides[module as Module] = allowed;
+      });
+    return overrides;
+  } catch {
+    return {};
+  }
 }
 
 export function RoleProvider({ children }: { children: ReactNode }) {
@@ -77,8 +78,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   const [email, setEmail] = useState("");
   const [isImpersonating, setIsImpersonating] = useState(false);
   const [impersonationName, setImpersonationName] = useState("");
-  const [permissionOverrides, setPermissionOverrides] =
-    useState<PermissionOverrides>({});
+  const [permissionOverrides, setPermissionOverrides] = useState<PermissionOverrides>({});
   const [loading, setLoading] = useState(true);
   const sessionIdRef = useRef<string | null>(null);
   const touchTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -91,112 +91,102 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function init() {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) {
+    if (!getStoredToken()) {
       setLoading(false);
       return;
     }
 
-    const rid = u.user.id;
-    const remail = u.user.email ?? "";
-    setRealUserId(rid);
-    setEmail(remail);
+    try {
+      const me = await getMe();
+      if (!me) {
+        setLoading(false);
+        return;
+      }
 
-    const rr = await fetchPrimaryRole(rid);
-    setRealRole(rr);
+      const rid = me.id;
+      const remail = me.email ?? "";
+      setRealUserId(rid);
+      setEmail(remail);
 
-    // Record login session (non-blocking)
-    recordSession();
+      const roles = me.roles as AppRole[];
+      const rr = getPrimaryRole(roles);
+      setRealRole(rr);
 
-    // Load DB permissions for this role
-    const overrides = await loadDbPermissions(rr);
+      // Record login session (non-blocking)
+      doRecordSession();
 
-    // Check impersonation — only the owner role may impersonate
-    const stored =
-      typeof window !== "undefined"
+      // Load DB permissions for this role
+      const overrides = await loadDbPermissions(rr);
+
+      // Check impersonation — only owner may impersonate
+      const stored = typeof window !== "undefined"
         ? localStorage.getItem(IMPERSONATION_KEY)
         : null;
-    if (stored && rr === "owner") {
-      const parsed = JSON.parse(stored) as {
-        targetId: string;
-        targetEmail: string;
-        targetName: string;
-      };
-      const impRole = await fetchPrimaryRole(parsed.targetId);
-      const impOverrides = await loadDbPermissions(impRole);
-      setRole(impRole);
-      setUserId(parsed.targetId);
-      setIsImpersonating(true);
-      setImpersonationName(parsed.targetName);
-      setPermissionOverrides(impOverrides);
-    } else {
-      setRole(rr);
-      setUserId(rid);
-      setPermissionOverrides(overrides);
+
+      if (stored && rr === "owner") {
+        const parsed = JSON.parse(stored) as { targetId: string; targetEmail: string; targetName: string };
+        const targetRoles = await getUserRoles({ data: { userId: parsed.targetId } });
+        const impRole = getPrimaryRole(targetRoles);
+        const impOverrides = await loadDbPermissions(impRole);
+        setRole(impRole);
+        setUserId(parsed.targetId);
+        setIsImpersonating(true);
+        setImpersonationName(parsed.targetName);
+        setPermissionOverrides(impOverrides);
+      } else {
+        setRole(rr);
+        setUserId(rid);
+        setPermissionOverrides(overrides);
+      }
+    } catch {
+      // Token may be invalid — clear it
+      const { clearSession } = await import("@/integrations/auth/client");
+      clearSession();
     }
     setLoading(false);
   }
 
-  async function recordSession() {
-    const ua = navigator.userAgent;
-    const device = /mobile/i.test(ua) ? "mobile" : "desktop";
-    const { data } = await supabase.rpc("record_user_session" as never, {
-      _user_agent: ua,
-      _device_type: device,
-    } as never) as { data: string | null };
-    if (data) {
-      sessionIdRef.current = data;
-      // Touch every 5 minutes to update last_seen
-      touchTimerRef.current = setInterval(async () => {
-        if (sessionIdRef.current) {
-          await supabase.rpc("touch_session" as never, {
-            _session_id: sessionIdRef.current,
-          } as never);
-        }
-      }, 5 * 60 * 1000);
+  async function doRecordSession() {
+    try {
+      const ua = navigator.userAgent;
+      const device = /mobile/i.test(ua) ? "mobile" : "desktop";
+      const sid = await recordSession({ data: { userAgent: ua, deviceType: device } });
+      if (sid) {
+        sessionIdRef.current = sid;
+        touchTimerRef.current = setInterval(async () => {
+          if (sessionIdRef.current) {
+            await touchSession({ data: { sessionId: sessionIdRef.current } });
+          }
+        }, 5 * 60 * 1000);
+      }
+    } catch {
+      // Non-blocking
     }
   }
 
-  // can() uses DB overrides first, then defaults; owner/admin always true
   const can = (module: Module): boolean => {
     const effectiveRole = role;
     if (effectiveRole === "owner" || effectiveRole === "admin") return true;
-    if (module in permissionOverrides)
-      return permissionOverrides[module] as boolean;
+    if (module in permissionOverrides) return permissionOverrides[module] as boolean;
     return hasModuleAccess(effectiveRole, module);
   };
 
-  async function startImpersonation(
-    targetId: string,
-    targetEmail: string,
-    targetName: string,
-  ) {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
+  async function startImpersonation(targetId: string, targetEmail: string, targetName: string) {
+    const me = await getMe();
+    if (!me) return;
 
-    const { data: logRow } = await supabase
-      .from("impersonation_log" as never)
-      .insert({
-        impersonator_id: u.user.id,
-        target_user_id: targetId,
-      } as never)
-      .select("id")
-      .single();
+    const { data: logRow } = await startImpersonationLog({
+      data: { impersonatorId: me.id, targetUserId: targetId },
+    }).then(r => ({ data: r })).catch(() => ({ data: null }));
 
-    localStorage.setItem(
-      IMPERSONATION_KEY,
-      JSON.stringify({ targetId, targetEmail, targetName }),
-    );
-    if (logRow) {
-      localStorage.setItem(
-        IMPERSONATION_SESSION_KEY,
-        (logRow as { id: string }).id,
-      );
+    localStorage.setItem(IMPERSONATION_KEY, JSON.stringify({ targetId, targetEmail, targetName }));
+    if (logRow?.id) {
+      localStorage.setItem(IMPERSONATION_SESSION_KEY, logRow.id);
     }
 
     await logAudit({
-      actorId: u.user.id,
-      actorEmail: u.user.email ?? "",
+      actorId: me.id,
+      actorEmail: me.email ?? "",
       action: "impersonation_start",
       targetType: "user",
       targetId,
@@ -204,7 +194,8 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       metadata: { targetName },
     });
 
-    const impRole = await fetchPrimaryRole(targetId);
+    const targetRoles = await getUserRoles({ data: { userId: targetId } });
+    const impRole = getPrimaryRole(targetRoles);
     const impOverrides = await loadDbPermissions(impRole);
     setRole(impRole);
     setUserId(targetId);
@@ -214,26 +205,18 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }
 
   async function stopImpersonation() {
-    const { data: u } = await supabase.auth.getUser();
     const sessionId = localStorage.getItem(IMPERSONATION_SESSION_KEY);
     if (sessionId) {
-      await supabase
-        .from("impersonation_log" as never)
-        .update({ ended_at: new Date().toISOString() } as never)
-        .eq("id", sessionId);
+      await endImpersonationLog({ data: { id: sessionId } }).catch(() => {});
     }
     localStorage.removeItem(IMPERSONATION_KEY);
     localStorage.removeItem(IMPERSONATION_SESSION_KEY);
 
-    if (u.user) {
-      await logAudit({
-        actorId: u.user.id,
-        actorEmail: u.user.email ?? "",
-        action: "impersonation_stop",
-      });
+    const me = await getMe();
+    if (me) {
+      await logAudit({ actorId: me.id, actorEmail: me.email ?? "", action: "impersonation_stop" });
     }
 
-    // Restore real role + real permissions
     const realOverrides = await loadDbPermissions(realRole);
     setRole(realRole);
     setUserId(realUserId);
@@ -243,22 +226,10 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <RoleContext.Provider
-      value={{
-        role,
-        realRole,
-        userId,
-        realUserId,
-        email,
-        isImpersonating,
-        impersonationName,
-        permissionOverrides,
-        can,
-        startImpersonation,
-        stopImpersonation,
-        loading,
-      }}
-    >
+    <RoleContext.Provider value={{
+      role, realRole, userId, realUserId, email, isImpersonating, impersonationName,
+      permissionOverrides, can, startImpersonation, stopImpersonation, loading,
+    }}>
       {children}
     </RoleContext.Provider>
   );

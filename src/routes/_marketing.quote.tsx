@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
 import { AiQuoteAssistant } from "@/components/site/AiQuoteAssistant";
+import { insertQuoteRequest } from "@/lib/data.functions";
 
 export const Route = createFileRoute("/_marketing/quote")({
   head: () => ({
@@ -34,6 +34,7 @@ const schema = z.object({
 function Quote() {
   const [loading, setLoading] = useState(false);
   const [service, setService] = useState<string>("");
+  const [done, setDone] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,86 +46,88 @@ function Quote() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.from("quote_requests").insert({
-      name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      service_type: parsed.data.service_type,
-      budget_range: parsed.data.budget_range || null,
-      timeline: parsed.data.timeline || null,
-      location: parsed.data.location || null,
-      requirements: parsed.data.requirements,
-    });
-    setLoading(false);
-    if (error) return toast.error("Couldn't submit. Please try again.");
-    toast.success("Thank you. A senior team member will reach out within 48 hours.");
-    e.currentTarget.reset();
-    setService("");
+    try {
+      await insertQuoteRequest({
+        data: {
+          name: parsed.data.name,
+          email: parsed.data.email,
+          phone: parsed.data.phone,
+          service_type: parsed.data.service_type,
+          budget_range: parsed.data.budget_range || null,
+          timeline: parsed.data.timeline || null,
+          location: parsed.data.location || null,
+          requirements: parsed.data.requirements,
+        },
+      });
+      setDone(true);
+      toast.success("Thank you. A senior team member will reach out within 48 hours.");
+    } catch {
+      toast.error("Couldn't submit. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (done) {
+    return (
+      <section className="mx-auto max-w-2xl px-4 py-32 text-center">
+        <h1 className="font-display text-4xl">Quote request received</h1>
+        <p className="mt-4 text-muted-foreground">We'll prepare a detailed proposal and reach out within 48 hours.</p>
+        <Button className="mt-8" variant="outline" onClick={() => { setDone(false); setService(""); }}>Submit another</Button>
+      </section>
+    );
   }
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-20 lg:px-8">
-      <p className="text-xs uppercase tracking-widest text-gold">Request a quote</p>
-      <h1 className="mt-3 font-display text-5xl md:text-6xl">Tell us about your project.</h1>
-      <p className="mt-6 max-w-2xl text-muted-foreground">
-        Share a few details and we'll send a costed, time-bound proposal within 48 hours.
-        Everything you tell us is kept strictly confidential.
+    <section className="mx-auto max-w-3xl px-4 py-20">
+      <p className="text-xs uppercase tracking-widest text-gold">Project enquiry</p>
+      <h1 className="mt-3 font-display text-5xl">Request a quote.</h1>
+      <p className="mt-4 text-muted-foreground">
+        Tell us about your project and we'll prepare a detailed proposal within 48 hours.
+        Use the AI assistant below to help estimate your budget.
       </p>
-      <div className="mt-12"><AiQuoteAssistant /></div>
 
-      <form onSubmit={onSubmit} className="mt-12 rounded-lg border border-border bg-card p-8 shadow-sm">
-        <div className="grid gap-5 md:grid-cols-2">
-          <div>
-            <Label htmlFor="name">Full name</Label>
-            <Input id="name" name="name" required maxLength={100} />
+      <div className="mt-10 rounded-xl border bg-card p-8">
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div><Label htmlFor="name">Name *</Label><Input id="name" name="name" required /></div>
+            <div><Label htmlFor="email">Email *</Label><Input id="email" name="email" type="email" required /></div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div><Label htmlFor="phone">Phone *</Label><Input id="phone" name="phone" type="tel" required /></div>
+            <div>
+              <Label>Service *</Label>
+              <Select value={service} onValueChange={setService}>
+                <SelectTrigger><SelectValue placeholder="Select a service…" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="construction">Construction</SelectItem>
+                  <SelectItem value="interiors">Interiors</SelectItem>
+                  <SelectItem value="hvac">HVAC</SelectItem>
+                  <SelectItem value="solar">Solar</SelectItem>
+                  <SelectItem value="real_estate">Real Estate</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div><Label htmlFor="budget_range">Budget range</Label><Input id="budget_range" name="budget_range" placeholder="e.g. ₹50–80 L" /></div>
+            <div><Label htmlFor="timeline">Timeline</Label><Input id="timeline" name="timeline" placeholder="e.g. 8 months" /></div>
+            <div><Label htmlFor="location">Location</Label><Input id="location" name="location" placeholder="City / area" /></div>
           </div>
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" required maxLength={255} />
+            <Label htmlFor="requirements">Project requirements *</Label>
+            <Textarea id="requirements" name="requirements" rows={5} required minLength={10}
+              placeholder="Describe your project: scope, area, specific requirements…" />
           </div>
-          <div>
-            <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" name="phone" type="tel" required maxLength={20} />
-          </div>
-          <div>
-            <Label htmlFor="location">Location</Label>
-            <Input id="location" name="location" placeholder="Greater Noida" maxLength={100} />
-          </div>
-          <div>
-            <Label>Service</Label>
-            <Select value={service} onValueChange={setService}>
-              <SelectTrigger><SelectValue placeholder="Select service" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="construction">Construction</SelectItem>
-                <SelectItem value="interiors">Interiors</SelectItem>
-                <SelectItem value="hvac">HVAC</SelectItem>
-                <SelectItem value="solar">Solar</SelectItem>
-                <SelectItem value="real_estate">Real Estate</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="budget_range">Budget range</Label>
-            <Input id="budget_range" name="budget_range" placeholder="e.g. ₹50L – ₹1Cr" maxLength={100} />
-          </div>
-          <div className="md:col-span-2">
-            <Label htmlFor="timeline">Preferred timeline</Label>
-            <Input id="timeline" name="timeline" placeholder="e.g. Start in 3 months" maxLength={100} />
-          </div>
-          <div className="md:col-span-2">
-            <Label htmlFor="requirements">Project details</Label>
-            <Textarea id="requirements" name="requirements" required rows={6} maxLength={2000}
-              placeholder="Site, scope, design brief, any constraints…" />
-          </div>
-        </div>
-        <Button type="submit" disabled={loading || !service}
-          className="mt-6 w-full bg-gold text-gold-foreground hover:bg-gold/90">
-          {loading ? "Submitting…" : "Request my quote"}
-        </Button>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
-          We respond within 48 hours. By submitting you agree to our terms.
-        </p>
-      </form>
+          <Button disabled={loading || !service} className="w-full bg-navy text-white hover:bg-navy/90">
+            {loading ? "Submitting…" : "Submit enquiry"}
+          </Button>
+        </form>
+      </div>
+
+      <div className="mt-12">
+        <AiQuoteAssistant />
+      </div>
     </section>
   );
 }

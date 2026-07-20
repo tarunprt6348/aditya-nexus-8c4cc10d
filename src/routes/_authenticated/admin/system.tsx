@@ -10,21 +10,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Settings, Database, Mail, Bell, Shield, Download, RefreshCw, Server, CheckCircle, AlertTriangle, Clock } from "lucide-react";
-import { PermissionGuard } from "@/components/site/PermissionGuard";
-import { supabase } from "@/integrations/supabase/client";
-import type { AppRole } from "@/lib/roles";
+import { PermissionGuard } from "@/components/PermissionGuard";
+import { getStoredToken } from "@/integrations/auth/client";
+import { getMe } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/system")({
   head: () => ({ meta: [{ title: "System Settings — Operations" }] }),
-  // Owner-only: enforce at route level so no admin role can bypass PermissionGuard
   beforeLoad: async () => {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) throw redirect({ to: "/auth" });
-    const { data: ok } = await supabase.rpc("has_role", {
-      _user_id: u.user.id,
-      _role: "owner" as AppRole,
-    });
-    if (!ok) throw redirect({ to: "/admin" });
+    const token = getStoredToken();
+    if (!token) throw redirect({ to: "/auth" });
+    const me = await getMe();
+    if (!me) throw redirect({ to: "/auth" });
+    if (!(me.roles ?? []).includes("owner")) throw redirect({ to: "/admin" });
   },
   component: () => <PermissionGuard module="system"><SystemAdmin /></PermissionGuard>,
 });

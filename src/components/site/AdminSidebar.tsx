@@ -8,7 +8,7 @@ import {
   HardHat, Settings, UserCheck, BarChart2,
 } from "lucide-react";
 import { Logo } from "@/components/site/Logo";
-import { supabase } from "@/integrations/supabase/client";
+import { clearSession } from "@/integrations/auth/client";
 import { Button } from "@/components/ui/button";
 import { useRole } from "@/contexts/RoleContext";
 import { Badge } from "@/components/ui/badge";
@@ -139,7 +139,7 @@ export function AdminSidebar({
         </nav>
         <div className="border-t border-border p-3">
           <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground"
-            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }}>
+            onClick={() => { clearSession(); navigate({ to: "/" }); }}>
             <LogOut className="mr-2 h-4 w-4" />Sign out
           </Button>
         </div>
@@ -196,7 +196,7 @@ export function AdminSidebar({
 
       <div className="border-t border-border p-3">
         <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground"
-          onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }}>
+          onClick={() => { clearSession(); navigate({ to: "/" }); }}>
           <LogOut className="mr-2 h-4 w-4" />Sign out
         </Button>
       </div>

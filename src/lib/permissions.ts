@@ -93,3 +93,10 @@ export function getAreaForRole(role: AppRole): "admin" | "staff" | "portal" {
   if (STAFF_AREA_ROLES.includes(role)) return "staff";
   return "portal";
 }
+
+export const ALL_MODULES: Module[] = [
+  "dashboard", "leads", "quotes", "projects", "tickets", "hr", "blog", "team",
+  "testimonials", "messages", "users", "audit", "permissions", "tasks", "leaves",
+  "reports", "finance", "clients", "employees", "vendors", "materials", "equipment",
+  "procurement", "documents", "site_monitoring", "quality", "safety", "scheduling", "system",
+];

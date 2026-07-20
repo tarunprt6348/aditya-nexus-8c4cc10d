@@ -131,7 +131,7 @@ function Procurement() {
                         po.status === "in_transit" ? "bg-blue-100 text-blue-700 border-blue-200" :
                         po.status === "confirmed" ? "bg-purple-100 text-purple-700 border-purple-200" :
                         "bg-amber-100 text-amber-700 border-amber-200"
-                      } className="text-xs">{po.status.replace("_"," ")}</Badge>
+                      }>{po.status.replace("_"," ")}</Badge>
                     </td>
                     <td className="px-3 py-3">
                       {po.status === "pending_approval" && (

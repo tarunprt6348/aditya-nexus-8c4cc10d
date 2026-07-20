@@ -1,115 +1,153 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import { PermissionGuard } from "@/components/site/PermissionGuard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PermissionGuard } from "@/components/PermissionGuard";
+import { getStaffSalaries, getStaffLeaves, insertSalary, updateLeaveStatus, getStaffProfilesForHR } from "@/lib/data.functions";
+import type { StaffSalary, StaffLeave } from "@/lib/app-types";
+import { Plus } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/admin/hr")({
-  head: () => ({ meta: [{ title: "HR — Owner" }] }),
-  component: () => <PermissionGuard module="hr"><HR /></PermissionGuard>,
-});
+export const Route = createFileRoute("/_authenticated/admin/hr")({ component: HRPage });
 
-function HR() {
-  const [staff, setStaff] = useState<any[]>([]);
-  const [salaries, setSalaries] = useState<any[]>([]);
-  const [leaves, setLeaves] = useState<any[]>([]);
-  const [sel, setSel] = useState<string>("");
-  const [month, setMonth] = useState<string>("");
-  const [amount, setAmount] = useState<string>("");
+function HRPage() {
+  const [salaries, setSalaries] = useState<StaffSalary[]>([]);
+  const [leaves, setLeaves] = useState<StaffLeave[]>([]);
+  const [staff, setStaff] = useState<{ id: string; full_name: string | null }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [staffId, setStaffId] = useState("");
 
-  const load = async () => {
-    const [{ data: roles }, { data: sal }, { data: lv }] = await Promise.all([
-      supabase.from("user_roles").select("user_id, role").eq("role", "staff"),
-      supabase.from("staff_salaries").select("*").order("period_month", { ascending: false }),
-      supabase.from("staff_leaves").select("*").order("from_date", { ascending: false }),
-    ]);
-    const ids = Array.from(new Set((roles ?? []).map((r: any) => r.user_id)));
-    const { data: profs } = await supabase.from("profiles").select("id, full_name").in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
-    setStaff(profs ?? []);
-    setSalaries(sal ?? []);
-    setLeaves(lv ?? []);
-  };
+  async function load() {
+    try {
+      const [s, l, st] = await Promise.all([getStaffSalaries(), getStaffLeaves(), getStaffProfilesForHR()]);
+      setSalaries(s);
+      setLeaves(l);
+      setStaff(st);
+    } catch { toast.error("Failed to load HR data."); }
+    finally { setLoading(false); }
+  }
+
   useEffect(() => { load(); }, []);
 
-  async function addSalary() {
-    if (!sel || !month || !amount) return toast.error("Pick staff, month and amount.");
-    const { error } = await supabase.from("staff_salaries").insert({
-      staff_user_id: sel, period_month: `${month}-01`, amount: Number(amount), status: "paid",
-    });
-    if (error) return toast.error(error.message);
-    toast.success("Salary recorded");
-    setAmount("");
-    load();
+  async function handleAddSalary(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(e.currentTarget));
+    if (!staffId) return toast.error("Select a staff member.");
+    try {
+      await insertSalary({
+        data: {
+          staff_user_id: staffId,
+          period_month: fd.period_month as string,
+          amount: Number(fd.amount),
+          status: "paid",
+        },
+      });
+      toast.success("Salary record added.");
+      setOpen(false);
+      load();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to add salary.");
+    }
   }
 
-  async function setLeaveStatus(id: string, status: string) {
-    const { error } = await supabase.from("staff_leaves").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
-    load();
+  async function handleLeaveStatus(id: string, status: string) {
+    try {
+      await updateLeaveStatus({ data: { id, status } });
+      setLeaves(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+      toast.success("Leave status updated.");
+    } catch { toast.error("Update failed."); }
   }
 
-  const nameOf = (id: string) => staff.find((s) => s.id === id)?.full_name ?? id.slice(0, 8);
+  if (loading) return <p className="p-6 text-muted-foreground">Loading…</p>;
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="font-display text-3xl">HR · Salary & Leaves</h1>
-        <p className="mt-1 text-muted-foreground">Record monthly salaries and approve leave requests.</p>
-      </div>
+    <PermissionGuard module="hr">
+      <div className="p-6">
+        <h1 className="mb-6 font-display text-2xl">HR Management</h1>
+        <Tabs defaultValue="salaries">
+          <TabsList>
+            <TabsTrigger value="salaries">Salaries</TabsTrigger>
+            <TabsTrigger value="leaves">Leave Requests</TabsTrigger>
+          </TabsList>
 
-      <Card className="p-5">
-        <h2 className="font-display text-lg">Record salary</h2>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <div>
-            <Label>Staff</Label>
-            <Select value={sel} onValueChange={setSel}>
-              <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-              <SelectContent>{staff.map((s) => <SelectItem key={s.id} value={s.id}>{s.full_name || s.id.slice(0,8)}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-          <div><Label>Month</Label><Input type="month" value={month} onChange={(e) => setMonth(e.target.value)} /></div>
-          <div><Label>Amount (₹)</Label><Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} /></div>
-          <div className="flex items-end"><Button onClick={addSalary} className="w-full bg-navy text-navy-foreground hover:bg-navy/90">Add</Button></div>
-        </div>
-        <div className="mt-6 grid gap-2">
-          {salaries.map((s) => (
-            <div key={s.id} className="flex items-center justify-between rounded border border-border p-3 text-sm">
-              <span>{nameOf(s.staff_user_id)} · {s.period_month}</span>
-              <span className="font-medium">₹{Number(s.amount).toLocaleString("en-IN")} · {s.status}</span>
+          <TabsContent value="salaries" className="mt-4">
+            <div className="mb-4 flex justify-end">
+              <Button size="sm" onClick={() => setOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" /> Add Record
+              </Button>
             </div>
-          ))}
-          {salaries.length === 0 && <p className="text-sm text-muted-foreground">No salary records yet.</p>}
-        </div>
-      </Card>
+            <div className="rounded-lg border bg-card">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="px-4 py-3 text-left">Staff ID</th>
+                    <th className="px-4 py-3 text-left">Month</th>
+                    <th className="px-4 py-3 text-left">Amount</th>
+                    <th className="px-4 py-3 text-left">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {salaries.length === 0 && <tr><td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">No salary records.</td></tr>}
+                  {salaries.map(s => (
+                    <tr key={s.id} className="border-b last:border-0">
+                      <td className="px-4 py-3 font-mono text-xs">{s.staff_user_id.split("-")[0]}</td>
+                      <td className="px-4 py-3">{s.period_month}</td>
+                      <td className="px-4 py-3">₹{s.amount.toLocaleString()}</td>
+                      <td className="px-4 py-3 capitalize">{s.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </TabsContent>
 
-      <Card className="p-5">
-        <h2 className="font-display text-lg">Leave requests</h2>
-        <div className="mt-4 grid gap-2">
-          {leaves.map((l) => (
-            <div key={l.id} className="flex flex-col gap-2 rounded border border-border p-3 text-sm md:flex-row md:items-center md:justify-between">
+          <TabsContent value="leaves" className="mt-4">
+            <div className="space-y-3">
+              {leaves.length === 0 && <p className="text-muted-foreground">No leave requests.</p>}
+              {leaves.map(l => (
+                <div key={l.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
+                  <div>
+                    <p className="text-sm font-medium">{l.leave_type} — {l.from_date} to {l.to_date}</p>
+                    <p className="text-xs text-muted-foreground">{l.reason ?? "No reason provided"}</p>
+                    <p className="text-xs text-muted-foreground capitalize">Status: {l.status}</p>
+                  </div>
+                  {l.status === "pending" && (
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => handleLeaveStatus(l.id, "approved")}>Approve</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleLeaveStatus(l.id, "rejected")}>Reject</Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent>
+            <DialogHeader><DialogTitle>Add Salary Record</DialogTitle></DialogHeader>
+            <form onSubmit={handleAddSalary} className="space-y-3">
               <div>
-                <div className="font-medium">{nameOf(l.staff_user_id)} · {l.leave_type}</div>
-                <div className="text-xs text-muted-foreground">{l.from_date} → {l.to_date} · {l.reason || "—"}</div>
+                <Label>Staff Member</Label>
+                <Select value={staffId} onValueChange={setStaffId}>
+                  <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                  <SelectContent>
+                    {staff.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name ?? s.id}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs capitalize">{l.status}</span>
-                {l.status === "pending" && (
-                  <>
-                    <Button size="sm" onClick={() => setLeaveStatus(l.id, "approved")}>Approve</Button>
-                    <Button size="sm" variant="outline" onClick={() => setLeaveStatus(l.id, "rejected")}>Reject</Button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
-          {leaves.length === 0 && <p className="text-sm text-muted-foreground">No leave requests.</p>}
-        </div>
-      </Card>
-    </div>
+              <div><Label>Month (YYYY-MM)</Label><Input name="period_month" placeholder="2025-01" required /></div>
+              <div><Label>Amount (₹)</Label><Input name="amount" type="number" min={0} required /></div>
+              <Button type="submit" className="w-full">Add Record</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </PermissionGuard>
   );
 }

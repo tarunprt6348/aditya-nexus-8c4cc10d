@@ -1,153 +1,93 @@
+/**
+ * Owner-only admin user management server functions.
+ * Replaces Supabase admin.auth.* — all operations go directly to the local DB.
+ */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
-import { getRequest } from "@tanstack/react-start/server";
+import { getVerifiedUser } from "./auth.functions";
+import { query, queryOne, transaction } from "./db.server";
+import { hashPassword } from "./auth.server";
 
-/**
- * Returns a Supabase admin client (service role) for server-side use.
- * Throws if the service role key is not configured.
- */
-function getAdminClient() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "SUPABASE_SERVICE_ROLE_KEY is not configured. Add it in Replit Secrets.",
-    );
-  }
-  return createClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-}
+const TEMP_PASSWORD = "Demo_Lost.experts.reassigned";
 
-/**
- * Extracts the caller's JWT from the Authorization header and verifies it
- * server-side. Returns the verified user object.
- * Throws with HTTP-401 semantics if the token is missing or invalid.
- */
-async function getVerifiedCaller() {
-  const req = getRequest();
-  const authHeader = req?.headers.get("authorization") ?? "";
-  const token = authHeader.replace(/^Bearer\s+/i, "").trim();
-  if (!token) throw new Error("Unauthorized: no session token.");
-
-  const admin = getAdminClient();
-  const { data, error } = await admin.auth.getUser(token);
-  if (error || !data.user) throw new Error("Unauthorized: invalid token.");
-  return data.user;
-}
-
-/**
- * Verifies the caller is an owner. Returns { id, email } of the verified owner.
- * Throws if the caller is not authenticated or not an owner.
- */
 async function requireOwner() {
-  const admin = getAdminClient();
-  const caller = await getVerifiedCaller();
-
-  const { data: roles } = await admin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", caller.id);
-
-  const isOwner = (roles ?? []).some((r) => r.role === "owner");
+  const user = await getVerifiedUser();
+  if (!user) throw new Error("Unauthorized: not authenticated.");
+  const isOwner = await queryOne(
+    `SELECT 1 FROM public.user_roles WHERE user_id = $1 AND role = 'owner'`,
+    [user.id],
+  );
   if (!isOwner) throw new Error("Forbidden: owner role required.");
-
-  return { id: caller.id, email: caller.email ?? "" };
+  return user;
 }
 
-// ---------------------------------------------------------------------------
-// Invite schema — actorId/actorEmail removed; derived server-side from token
-// ---------------------------------------------------------------------------
 const InviteSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().max(255).transform(s => s.toLowerCase()),
   name: z.string().min(1).max(100),
   role: z.string().min(1),
 });
 
-/**
- * Owner-only server function: creates a new platform user with the given role.
- * Runs server-side using the Supabase service role key so the caller's
- * browser session is NEVER disrupted. Caller is verified as owner from JWT.
- */
 export const inviteUser = createServerFn({ method: "POST" })
   .validator((d: unknown) => InviteSchema.parse(d))
   .handler(async ({ data }) => {
     const actor = await requireOwner();
-    const admin = getAdminClient();
 
-    // 1. Create the Supabase Auth user (server-side, no session effect)
-    const { data: created, error: createErr } =
-      await admin.auth.admin.createUser({
-        email: data.email,
-        user_metadata: { full_name: data.name },
-        email_confirm: true,
-      });
-    if (createErr) throw new Error(createErr.message);
+    const existing = await queryOne(`SELECT id FROM public.users WHERE email = $1`, [data.email]);
+    if (existing) throw new Error("A user with this email already exists.");
 
-    const uid = created.user.id;
+    const passwordHash = await hashPassword(TEMP_PASSWORD);
+    let uid!: string;
 
-    // 2. Assign role
-    await admin
-      .from("user_roles")
-      .upsert({ user_id: uid, role: data.role }, { onConflict: "user_id" });
-
-    // 3. Audit log — actor derived from verified JWT, not client input
-    await admin.from("audit_logs").insert({
-      actor_id: actor.id,
-      actor_email: actor.email,
-      action: "user_created",
-      target_type: "user",
-      target_id: uid,
-      target_email: data.email,
-      metadata: { role: data.role, name: data.name },
-    });
-
-    // 4. Generate a one-time invite link so the owner can share it
-    const { data: linkData } = await admin.auth.admin.generateLink({
-      type: "magiclink",
-      email: data.email,
+    await transaction(async tx => {
+      const [user] = await tx.unsafe(
+        `INSERT INTO public.users (email, password_hash) VALUES ($1, $2) RETURNING id`,
+        [data.email, passwordHash],
+      );
+      uid = user.id;
+      await tx.unsafe(
+        `INSERT INTO public.profiles (id, full_name, status) VALUES ($1, $2, 'active')`,
+        [uid, data.name],
+      );
+      await tx.unsafe(
+        `INSERT INTO public.user_roles (user_id, role) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET role = EXCLUDED.role`,
+        [uid, data.role],
+      );
+      await tx.unsafe(
+        `INSERT INTO public.audit_logs (actor_id, actor_email, action, target_type, target_id, target_email, metadata)
+         VALUES ($1, $2, 'user_created', 'user', $3, $4, $5)`,
+        [actor.id, actor.email, uid, data.email, JSON.stringify({ role: data.role, name: data.name })],
+      );
     });
 
     return {
-      userId: uid,
-      inviteLink: linkData?.properties?.action_link ?? null,
+      userId: uid!,
+      temporaryPassword: TEMP_PASSWORD,
+      inviteLink: null,
     };
   });
 
-// ---------------------------------------------------------------------------
 const ResetSchema = z.object({
   targetEmail: z.string().email(),
   targetId: z.string().uuid(),
+  newPassword: z.string().min(6).max(128).optional(),
 });
 
-/**
- * Owner-only server function: generates a password-reset link and records
- * an audit event. Caller is verified as owner from JWT (not trusted input).
- */
 export const sendPasswordReset = createServerFn({ method: "POST" })
   .validator((d: unknown) => ResetSchema.parse(d))
   .handler(async ({ data }) => {
     const actor = await requireOwner();
-    const admin = getAdminClient();
+    const newPw = data.newPassword ?? TEMP_PASSWORD;
+    const hash = await hashPassword(newPw);
 
-    const { data: linkData, error } = await admin.auth.admin.generateLink({
-      type: "recovery",
-      email: data.targetEmail,
-    });
-    if (error) throw new Error(error.message);
+    await query(
+      `UPDATE public.users SET password_hash = $1, updated_at = now() WHERE email = $2`,
+      [hash, data.targetEmail],
+    );
+    await query(
+      `INSERT INTO public.audit_logs (actor_id, actor_email, action, target_type, target_id, target_email, metadata)
+       VALUES ($1, $2, 'password_reset_sent', 'user', $3, $4, '{}')`,
+      [actor.id, actor.email, data.targetId, data.targetEmail],
+    );
 
-    await admin.from("audit_logs").insert({
-      actor_id: actor.id,
-      actor_email: actor.email,
-      action: "password_reset_sent",
-      target_type: "user",
-      target_id: data.targetId,
-      target_email: data.targetEmail,
-      metadata: {},
-    });
-
-    return {
-      resetLink: linkData?.properties?.action_link ?? null,
-    };
+    return { resetLink: null, temporaryPassword: newPw };
   });
