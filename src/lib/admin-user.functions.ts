@@ -1,6 +1,5 @@
 /**
- * Owner-only admin user management server functions.
- * Replaces Supabase admin.auth.* — all operations go directly to the local DB.
+ * Owner-only admin user management server functions — all operations go directly to the local DB.
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";

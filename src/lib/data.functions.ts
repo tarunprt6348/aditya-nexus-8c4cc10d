@@ -1,6 +1,5 @@
 /**
- * Data access server functions — replaces all supabase.from() client calls.
- * All queries run server-side with parameterized SQL.
+ * Data access server functions — all queries run server-side with parameterized SQL.
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
@@ -555,7 +554,7 @@ export const endImpersonationLog = createServerFn({ method: "POST" })
   });
 
 // ──────────────────────────────────────────────────────────────────────────────
-// OWNER ADMIN OPS (replaces Supabase RPCs)
+// OWNER ADMIN OPS
 // ──────────────────────────────────────────────────────────────────────────────
 
 export const hasRole = createServerFn({ method: "GET" })

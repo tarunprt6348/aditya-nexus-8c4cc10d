@@ -1,6 +1,5 @@
 /**
- * Role utilities — no Supabase dependency.
- * DB operations are now done via data.functions.ts server functions.
+ * Role utilities. DB operations go through data.functions.ts server functions.
  */
 import { insertAuditLog } from "./data.functions";
 

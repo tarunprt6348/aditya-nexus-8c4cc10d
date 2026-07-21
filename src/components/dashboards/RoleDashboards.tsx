@@ -1,6 +1,6 @@
 /**
  * Dedicated dashboard components for each of the 15 enterprise roles.
- * All data fetching via server functions — no direct Supabase calls.
+ * All data fetching via server functions.
  */
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";

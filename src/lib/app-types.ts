@@ -1,6 +1,5 @@
 /**
  * Application-wide TypeScript types.
- * Replaces Database["public"]["Tables"] / Database["public"]["Enums"] from Supabase.
  */
 
 export type AppRole =

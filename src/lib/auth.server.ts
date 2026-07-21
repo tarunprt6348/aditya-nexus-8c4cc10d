@@ -9,7 +9,11 @@ import { getRequest } from "@tanstack/react-start/server";
 import { queryOne } from "./db.server";
 import type { AuthUser } from "./app-types";
 
-const JWT_SECRET = process.env.SESSION_SECRET ?? "aditya-constructions-secret-key-2025";
+const _rawSecret = process.env.SESSION_SECRET;
+if (!_rawSecret && process.env.NODE_ENV === "production") {
+  throw new Error("SESSION_SECRET must be set in production. Add it as a Replit Secret.");
+}
+const JWT_SECRET = _rawSecret ?? "aditya-constructions-dev-only-secret";
 const JWT_EXPIRES = "7d";
 
 export interface JWTPayload {

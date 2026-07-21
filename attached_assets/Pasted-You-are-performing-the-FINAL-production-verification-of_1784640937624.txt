@@ -1,0 +1,513 @@
+You are performing the FINAL production verification of this application before public release.
+
+This project has already been migrated from Supabase to Replit PostgreSQL.
+
+Your objective is to make the application production-ready.
+
+Do NOT stop after analysis.
+Do NOT ask for confirmation.
+Automatically fix every issue you discover before continuing.
+
+==========================================================
+PHASE 1 — COMPLETE CODEBASE AUDIT
+==========================================================
+
+Search the ENTIRE repository for any remaining reference to:
+
+- supabase
+- @supabase/*
+- SUPABASE_
+- SUPABASE_URL
+- SUPABASE_PROJECT_ID
+- SUPABASE_PUBLISHABLE_KEY
+- SUPABASE_SERVICE_ROLE
+- supabase.auth
+- supabase.rpc
+- supabase.storage
+- Row Level Security
+- RLS
+- auth.users
+- SQL migrations
+- schema_clean.sql
+- combined_migrations.sql
+- seed_demo_data.sql
+- CREATE FUNCTION
+- CREATE POLICY
+- CREATE TRIGGER
+- SECURITY DEFINER
+
+Also search for:
+
+- TODO
+- FIXME
+- XXX
+- HACK
+- console.log
+- debugger
+- mock
+- temporary
+- test-only
+- unused imports
+- dead code
+- duplicate utilities
+- obsolete comments
+- stale documentation
+
+Remove or replace anything no longer required.
+
+Delete obsolete Supabase files only after verifying nothing references them.
+
+==========================================================
+PHASE 2 — DATABASE AUDIT
+==========================================================
+
+Inspect the Replit PostgreSQL database.
+
+Verify:
+
+- every table exists
+- every required column exists
+- indexes
+- constraints
+- foreign keys
+- relations
+- enum usage
+- application validations
+
+Verify every relationship.
+
+Check for:
+
+- orphan foreign keys
+- duplicate records
+- inconsistent data
+- missing required records
+- invalid references
+
+Automatically repair anything found.
+
+==========================================================
+PHASE 3 — DEMO DATA VERIFICATION
+==========================================================
+
+Verify every operational table contains meaningful realistic data.
+
+Populate or repair if required.
+
+Specifically verify:
+
+users
+profiles
+user_roles
+role_permissions
+projects
+project_updates
+project_milestones
+attendance
+staff_tasks
+staff_leaves
+staff_salaries
+tickets
+ticket_messages
+quote_requests
+leads
+audit_logs
+user_sessions
+impersonation_log
+blog_posts
+testimonials
+contact_messages
+
+Ensure dashboards never appear empty.
+
+Generate realistic historical data spanning multiple months where appropriate.
+
+==========================================================
+PHASE 4 — AUTHENTICATION
+==========================================================
+
+Verify:
+
+- bcrypt password hashing
+- JWT/session creation
+- cookies
+- logout
+- session expiry
+- remember login
+- protected routes
+- authorization middleware
+
+Verify every login.
+
+Required demo accounts:
+
+Owner
+owner@adityaconstruction.com
+
+Operations Manager
+operations@adityaconstruction.com
+
+HR Manager
+rahul.sharma@adityaconstruction.com
+
+Project Manager
+priya.gupta@adityaconstruction.com
+
+Site Engineer
+amit.singh@adityaconstruction.com
+
+Sales Executive
+neha.verma@adityaconstruction.com
+
+Sales Manager
+deepak.joshi@adityaconstruction.com
+
+Customer Support
+kavya.nair@adityaconstruction.com
+
+Accountant
+arjun.mehta@adityaconstruction.com
+
+General Staff
+kiran.reddy@adityaconstruction.com
+
+Customer
+customer1@example.com
+
+Customer
+customer2@example.com
+
+Password for ALL accounts:
+
+Demo_Lost.experts.reassigned
+
+If any account differs, recreate or rename it.
+
+==========================================================
+PHASE 5 — ROLE & PERMISSION VERIFICATION
+==========================================================
+
+Verify permissions for:
+
+Owner
+Admin
+Managing Director
+Operations Manager
+HR Manager
+Sales Manager
+Sales Executive
+Marketing
+Project Manager
+Site Engineer
+Accountant
+Customer Support
+General Staff
+Customer
+
+Ensure every role can access ONLY its intended modules.
+
+Populate role_permissions if needed.
+
+==========================================================
+PHASE 6 — AUTOMATED APPLICATION TESTS
+==========================================================
+
+Run and verify:
+
+npm install
+
+npm run dev
+
+npm run typecheck
+
+npm run build
+
+Fix every warning or error automatically.
+
+==========================================================
+PHASE 7 — COMPLETE FUNCTIONAL TESTS
+==========================================================
+
+Automatically perform an end-to-end functional test.
+
+Login as OWNER.
+
+Verify:
+
+✓ Dashboard loads
+✓ Analytics load
+✓ Reports load
+
+Create a Project.
+
+Edit the Project.
+
+Delete the Project.
+
+Confirm CRUD works.
+
+----------------------------------------------------------
+
+Login as CUSTOMER.
+
+Verify:
+
+Customer portal loads.
+
+Attempt to access /admin.
+
+Confirm access is denied.
+
+----------------------------------------------------------
+
+Login as HR.
+
+Verify:
+
+Attendance
+
+Staff Salaries
+
+Leave Requests
+
+Employee Management
+
+All load correctly.
+
+----------------------------------------------------------
+
+Login as OPERATIONS MANAGER.
+
+Verify:
+
+Projects
+
+Milestones
+
+Tickets
+
+Project Updates
+
+All load correctly.
+
+----------------------------------------------------------
+
+Login as CUSTOMER SUPPORT.
+
+Reply to an existing support ticket.
+
+Confirm:
+
+ticket_messages updates correctly.
+
+----------------------------------------------------------
+
+Run a complete business workflow.
+
+Create:
+
+Lead
+
+↓
+
+Convert to Quote
+
+↓
+
+Create Project
+
+↓
+
+Create Milestone
+
+↓
+
+Create Project Update
+
+↓
+
+Create Support Ticket
+
+↓
+
+Reply to Ticket
+
+↓
+
+Close Ticket
+
+Verify every stage succeeds.
+
+==========================================================
+PHASE 8 — ROUTE VERIFICATION
+==========================================================
+
+Verify every page.
+
+Verify every route.
+
+Verify every API endpoint.
+
+Verify:
+
+Create
+
+Read
+
+Update
+
+Delete
+
+Search
+
+Filters
+
+Sorting
+
+Pagination
+
+Charts
+
+KPIs
+
+Notifications
+
+Timeline
+
+Reports
+
+Exports
+
+Navigation
+
+Forms
+
+Validation
+
+Error handling
+
+Role guards
+
+Protected routes
+
+Automatically repair failures.
+
+==========================================================
+PHASE 9 — SECURITY AUDIT
+==========================================================
+
+Verify:
+
+DATABASE_URL comes ONLY from environment variables.
+
+SESSION_SECRET comes ONLY from environment variables.
+
+No credentials are hardcoded.
+
+No SQL injection vulnerabilities.
+
+Parameterized queries everywhere.
+
+No unused secrets remain.
+
+If OpenAI functionality is disabled, confirm OPENAI_API_KEY is optional.
+
+Verify the only required runtime secrets are:
+
+DATABASE_URL
+
+SESSION_SECRET
+
+==========================================================
+PHASE 10 — PACKAGE AUDIT
+==========================================================
+
+Inspect package.json.
+
+Remove unused packages.
+
+Verify:
+
+No Supabase packages remain.
+
+No duplicate database libraries remain.
+
+Only one PostgreSQL implementation exists.
+
+==========================================================
+PHASE 11 — FINAL CLEANUP
+==========================================================
+
+Remove:
+
+unused SQL scripts
+
+unused migration files
+
+obsolete documentation
+
+dead code
+
+unused utilities
+
+duplicate functions
+
+stale comments
+
+unused environment variables
+
+unused assets
+
+==========================================================
+PHASE 12 — FINAL REPORT
+==========================================================
+
+Generate a report containing:
+
+1. Files modified
+
+2. Files deleted
+
+3. Database schema summary
+
+4. Row count for every table
+
+5. Demo accounts
+
+6. Password
+
+7. Required environment variables
+
+8. Packages added
+
+9. Packages removed
+
+10. Pages verified
+
+11. Routes verified
+
+12. API endpoints verified
+
+13. CRUD modules verified
+
+14. Authentication verification
+
+15. Authorization verification
+
+16. Workflow verification
+
+17. Build verification
+
+18. Runtime verification
+
+19. Security verification
+
+20. Remaining issues (if any)
+
+21. Production readiness score (/10)
+
+22. Whether the application is safe to publish
+
+Do not stop after finding issues.
+
+Continue fixing until the application is fully functional and production-ready.

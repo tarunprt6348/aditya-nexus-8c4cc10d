@@ -70,15 +70,15 @@ function Contact() {
           <div className="mt-10 space-y-5 text-sm">
             <div className="flex items-center gap-3 text-muted-foreground">
               <MapPin className="h-5 w-5 shrink-0 text-gold" />
-              Plot 47, Hi-Tech City, Hyderabad, Telangana 500 084
+              T-22 &amp; 23, Beta Plaza, Beta-1, Greater Noida, U.P. 201310
             </div>
             <div className="flex items-center gap-3 text-muted-foreground">
               <Phone className="h-5 w-5 shrink-0 text-gold" />
-              +91 40 2345 6789
+              +91 96509 98403
             </div>
             <div className="flex items-center gap-3 text-muted-foreground">
               <Mail className="h-5 w-5 shrink-0 text-gold" />
-              hello@adityaconstructions.in
+              adityaconstructionsfirm@gmail.com
             </div>
           </div>
         </div>
