@@ -4,7 +4,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { getVerifiedUser } from "./auth.functions";
+import { getVerifiedUser } from "./auth.server";
 import { query, queryOne, transaction } from "./db.server";
 import { hashPassword } from "./auth.server";
 

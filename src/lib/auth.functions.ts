@@ -1,37 +1,16 @@
 /**
- * Authentication server functions.
- * login / logout / register / getMe / changePassword
+ * Authentication server functions — login / logout / register / getMe / changePassword.
+ * Re-exports getVerifiedUser from auth.server for convenience.
+ *
+ * IMPORTANT: This file must NOT statically import any *.server.* local modules because
+ * it is imported by client-side route files. Server-only imports are done dynamically
+ * inside handler() callbacks where TanStack Start guarantees server-only execution.
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { getRequest } from "@tanstack/react-start/server";
-import { hashPassword, verifyPassword, signToken, verifyToken, extractBearerToken } from "./auth.server";
-import { query, queryOne, transaction } from "./db.server";
 import type { AuthUser } from "./app-types";
 
-// ─── helpers ────────────────────────────────────────────────────────────────
-
-function getToken(): string | null {
-  const req = getRequest();
-  const authHeader = req?.headers?.get("authorization") ?? null;
-  return extractBearerToken(authHeader);
-}
-
-export async function getVerifiedUser(): Promise<AuthUser | null> {
-  const token = getToken();
-  if (!token) return null;
-  const payload = verifyToken(token);
-  if (!payload?.sub) return null;
-  const row = await queryOne<{ id: string; email: string; full_name: string | null; status: string }>(
-    `SELECT p.id, u.email, p.full_name, p.status
-     FROM public.profiles p
-     JOIN public.users u ON u.id = p.id
-     WHERE p.id = $1`,
-    [payload.sub],
-  );
-  if (!row || row.status === "suspended") return null;
-  return { id: row.id, email: row.email, full_name: row.full_name };
-}
+export type { AuthUser };
 
 // ─── server functions ────────────────────────────────────────────────────────
 
@@ -43,6 +22,9 @@ const LoginSchema = z.object({
 export const login = createServerFn({ method: "POST" })
   .validator((d: unknown) => LoginSchema.parse(d))
   .handler(async ({ data }) => {
+    const { verifyPassword, signToken } = await import("./auth.server");
+    const { queryOne } = await import("./db.server");
+
     const row = await queryOne<{ id: string; email: string; password_hash: string }>(
       `SELECT id, email, password_hash FROM public.users WHERE email = $1`,
       [data.email],
@@ -71,6 +53,9 @@ const RegisterSchema = z.object({
 export const register = createServerFn({ method: "POST" })
   .validator((d: unknown) => RegisterSchema.parse(d))
   .handler(async ({ data }) => {
+    const { hashPassword, signToken } = await import("./auth.server");
+    const { queryOne, transaction } = await import("./db.server");
+
     const existing = await queryOne(`SELECT id FROM public.users WHERE email = $1`, [data.email]);
     if (existing) throw new Error("An account with this email already exists.");
 
@@ -99,6 +84,9 @@ export const register = createServerFn({ method: "POST" })
 
 export const getMe = createServerFn({ method: "GET" })
   .handler(async () => {
+    const { getVerifiedUser } = await import("./auth.server");
+    const { query } = await import("./db.server");
+
     const user = await getVerifiedUser();
     if (!user) return null;
 
@@ -127,6 +115,10 @@ const ChangePasswordSchema = z.object({
 export const changePassword = createServerFn({ method: "POST" })
   .validator((d: unknown) => ChangePasswordSchema.parse(d))
   .handler(async ({ data }) => {
+    const { hashPassword, verifyPassword } = await import("./auth.server");
+    const { getVerifiedUser } = await import("./auth.server");
+    const { queryOne, query } = await import("./db.server");
+
     const user = await getVerifiedUser();
     if (!user) throw new Error("Not authenticated.");
 

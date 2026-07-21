@@ -5,7 +5,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { query, queryOne, queryCount } from "./db.server";
-import { getVerifiedUser } from "./auth.functions";
+import { getVerifiedUser } from "./auth.server";
 import type {
   Lead, LeadStatus, QuoteRequest, Project, ProjectStatus, Ticket,
   BlogPost, Testimonial, ContactMessage, StaffSalary, StaffLeave,

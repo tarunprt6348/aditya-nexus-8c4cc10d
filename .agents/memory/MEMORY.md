@@ -1,4 +1,5 @@
 - [pg ESM incompatibility](pg-esm-incompatibility.md) — use `postgres` pkg not `pg`; pg's ESM shim calls require() which crashes Vite/Vinxi module runner.
+- [TanStack Start server imports](tanstack-start-server-imports.md) — files imported by client routes must not statically import *.server.* files; use dynamic imports inside createServerFn handlers instead.
 - [Supabase schema quirks](supabase-schema-quirks.md) — profiles has no email/department; projects uses title not name; leads uses service not service_interest; blog_posts uses published bool not status; testimonials uses client_name.
 - [TanStack Start API](tanstack-start-api.md) — use .validator() not .inputValidator(); import getRequest not getWebRequest from @tanstack/react-start/server.
 - [Supabase untyped tables](supabase-untyped-tables.md) — audit_logs, impersonation_log, role_permissions, user_sessions not in types; cast both table name and object as never.

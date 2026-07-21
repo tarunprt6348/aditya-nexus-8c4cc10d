@@ -1,0 +1,462 @@
+I have imported this application from an existing GitHub repository into a new Replit account/project.
+
+IMPORTANT CONTEXT:
+
+This application was previously migrated from Supabase to Replit PostgreSQL.
+
+The previous Replit Agent had already performed substantial migration and verification work, but its quota was exhausted before final verification completed.
+
+Your task is to inspect the CURRENT repository state and CURRENT Replit PostgreSQL database, understand exactly what has already been completed, and then finish the migration and production verification.
+
+DO NOT restart the project from scratch.
+DO NOT rewrite working functionality unnecessarily.
+DO NOT reintroduce Supabase.
+DO NOT assume that the PostgreSQL database from the previous Replit project exists in this new Replit project.
+DO NOT delete working code before verifying that it is unused.
+DO NOT ask me to manually perform technical fixes that you can perform yourself.
+Do not stop after identifying errors. Fix them and continue.
+
+==================================================
+CRITICAL DATABASE CONTEXT
+==================================================
+
+This is a NEW Replit account/project.
+
+The GitHub repository contains the migrated application CODE, but the previous Replit PostgreSQL database and its data may NOT have migrated with the repository.
+
+First determine:
+
+1. Whether DATABASE_URL is automatically available in this Replit environment.
+2. Whether a Replit PostgreSQL database is attached.
+3. Whether the database already contains the required schema and data.
+4. Whether this is a new/empty PostgreSQL database.
+5. Whether the application successfully connects to the current database.
+
+Never hardcode DATABASE_URL.
+
+Use the Replit-provided DATABASE_URL environment variable.
+
+If the current database is empty, reconstruct the complete application database schema by inspecting the CURRENT application code, database queries, TypeScript types, existing database utilities, Git history/current repository files, and all application modules.
+
+Do not depend on Supabase SQL files that were intentionally removed during migration.
+
+Create all required PostgreSQL tables, columns, foreign keys, constraints, indexes, enums/types or equivalent validation, and relationships required by the CURRENT application.
+
+Then seed the database with complete realistic demo data.
+
+==================================================
+PHASE 1 — PRESERVE AND AUDIT EXISTING WORK
+==================================================
+
+Before changing anything:
+
+Inspect the complete repository.
+
+Identify:
+
+- current architecture
+- database client
+- db.server.ts
+- authentication implementation
+- session implementation
+- authorization implementation
+- permission model
+- all database tables referenced by application code
+- all API endpoints
+- all routes
+- all dashboards
+- all CRUD operations
+- all environment variables
+- all dependencies
+
+Determine what is already working.
+
+Preserve working implementations.
+
+The previous migration reportedly included:
+
+- migration from Supabase to Replit PostgreSQL
+- postgres npm package as database client
+- db.server.ts using postgres
+- transaction helper
+- rewritten auth functions
+- rewritten admin user functions
+- RoleDashboards using PostgreSQL-backed functions
+- AdminLayout
+- PermissionGuard
+- staff route authentication migrated away from Supabase
+- admin/system role checking migrated away from Supabase
+- AdminSidebar logout migrated away from Supabase
+- deletion of src/integrations/supabase/
+- removal of @supabase/supabase-js
+- removal of pg package
+- demo database seeding
+
+Verify these claims against the CURRENT repository rather than assuming they are correct.
+
+==================================================
+PHASE 2 — REMOVE REMAINING SUPABASE DEPENDENCIES
+==================================================
+
+Search the entire active codebase for:
+
+supabase
+@supabase
+SUPABASE_
+supabase.auth
+supabase.rpc
+supabase.storage
+auth.users
+RLS
+Row Level Security
+CREATE POLICY
+CREATE TRIGGER
+SECURITY DEFINER
+
+There must be no ACTIVE runtime dependency on Supabase.
+
+Remove or replace remaining active dependencies.
+
+Historical documentation may mention Supabase, but no production application functionality should depend on it.
+
+Do NOT add a Supabase service-role key.
+
+Ignore any stale Replit Suggested Task telling you to add a Supabase service-role key.
+
+The final application must use Replit PostgreSQL as its only active database.
+
+==================================================
+PHASE 3 — DATABASE SCHEMA
+==================================================
+
+Ensure the current Replit PostgreSQL database contains every table required by the application, including at minimum:
+
+users
+profiles
+user_roles
+role_permissions
+projects
+project_updates
+project_milestones
+leads
+quote_requests
+tickets
+ticket_messages
+attendance
+staff_tasks
+staff_leaves
+staff_salaries
+audit_logs
+user_sessions
+impersonation_log
+blog_posts
+testimonials
+contact_messages
+
+Also create any additional tables required by the CURRENT codebase.
+
+Verify:
+
+- primary keys
+- foreign keys
+- unique constraints
+- NOT NULL constraints
+- indexes
+- defaults
+- timestamps
+- cascading behavior where appropriate
+- relationships
+- data types
+
+Make database initialization and demo seeding reproducible so that a fresh Replit PostgreSQL database can be initialized again in the future without relying on the old database.
+
+The initialization/seeding mechanism must be idempotent and safe to rerun.
+
+==================================================
+PHASE 4 — DEMO ACCOUNTS
+==================================================
+
+Create or verify exactly these demo accounts:
+
+Owner
+owner@adityaconstruction.com
+
+Operations Manager
+operations@adityaconstruction.com
+
+HR Manager
+rahul.sharma@adityaconstruction.com
+
+Project Manager
+priya.gupta@adityaconstruction.com
+
+Site Engineer
+amit.singh@adityaconstruction.com
+
+Sales Executive
+neha.verma@adityaconstruction.com
+
+Sales Manager
+deepak.joshi@adityaconstruction.com
+
+Customer Support
+kavya.nair@adityaconstruction.com
+
+Accountant
+arjun.mehta@adityaconstruction.com
+
+General Staff
+kiran.reddy@adityaconstruction.com
+
+Customer
+customer1@example.com
+
+Customer
+customer2@example.com
+
+Password for ALL demo accounts:
+
+Demo_Lost.experts.reassigned
+
+Passwords MUST be securely hashed in the database using the application's secure password hashing implementation.
+
+Never store plaintext passwords in the database.
+
+Create a DEMO_ACCOUNTS.md file containing the demo login credentials for development/demo purposes.
+
+Ensure email addresses in:
+
+users
+profiles
+user_roles
+and all foreign-key-related demo data
+
+are correctly associated with the appropriate user IDs.
+
+==================================================
+PHASE 5 — COMPLETE DEMO DATA
+==================================================
+
+Seed sufficient realistic historical data for EVERY operational module.
+
+No operational dashboard should be empty.
+
+Specifically populate:
+
+role_permissions
+projects
+project_updates
+project_milestones
+leads
+quote_requests
+tickets
+ticket_messages
+attendance
+staff_tasks
+staff_leaves
+staff_salaries
+audit_logs
+user_sessions
+impersonation_log
+blog_posts
+testimonials
+contact_messages
+
+Ensure all foreign keys reference valid records.
+
+Seed several months of data where useful.
+
+Every:
+
+dashboard
+chart
+graph
+KPI
+analytics widget
+timeline
+activity feed
+report
+management table
+
+should display meaningful information immediately.
+
+==================================================
+PHASE 6 — AUTHENTICATION AND AUTHORIZATION
+==================================================
+
+Verify:
+
+login
+logout
+password verification
+password hashing
+sessions
+session cookies
+session expiration
+protected routes
+authorization
+role checks
+permission checks
+
+Populate role_permissions appropriately.
+
+Verify that users cannot access unauthorized routes by manually entering URLs.
+
+Authorization must be enforced server-side, not merely by hiding frontend navigation.
+
+==================================================
+PHASE 7 — TYPESCRIPT AND CODE QUALITY
+==================================================
+
+The previous verification process reportedly stopped while fixing remaining TypeScript errors.
+
+Run the complete TypeScript/type-check process.
+
+Fix ALL actual TypeScript errors.
+
+Do not hide errors using unsafe broad `any` types unless technically necessary.
+
+Then check:
+
+unused imports
+broken imports
+missing components
+duplicate database clients
+dead Supabase code
+obsolete environment variables
+unused dependencies
+
+Ensure there is ONE active database implementation.
+
+==================================================
+PHASE 8 — COMPLETE APPLICATION VERIFICATION
+==================================================
+
+Run the application.
+
+Test all major pages and routes.
+
+Test representative authentication for every role.
+
+Test all API endpoints.
+
+Test CRUD operations for all modules that support CRUD.
+
+Test:
+
+create
+read
+update
+delete
+search
+filter
+sorting
+pagination
+forms
+validation
+dashboards
+statistics
+charts
+reports
+timelines
+notifications
+navigation
+uploads if implemented
+
+Fix every error encountered and continue automatically.
+
+==================================================
+PHASE 9 — PRODUCTION BUILD
+==================================================
+
+Run the full production build.
+
+Run type checking.
+
+Fix all build-blocking errors.
+
+Verify the application starts successfully after the build.
+
+Do not claim production readiness merely because the development server starts.
+
+==================================================
+PHASE 10 — FINAL DATABASE VERIFICATION
+==================================================
+
+Query every database table and report its row count.
+
+Explicitly verify that these previously observed empty tables now contain appropriate data:
+
+role_permissions
+attendance
+project_milestones
+project_updates
+staff_tasks
+ticket_messages
+user_sessions
+impersonation_log
+
+Verify database relationships do not contain orphaned foreign keys.
+
+==================================================
+PHASE 11 — SECURITY
+==================================================
+
+Verify:
+
+DATABASE_URL is not hardcoded
+SESSION_SECRET is not hardcoded
+no secrets are committed to Git
+passwords are hashed
+authentication cookies use appropriate security settings
+server-side authorization exists
+SQL queries are parameterized
+no SQL injection vulnerabilities were introduced
+sensitive server credentials are not exposed to frontend code
+
+Do not print secret values in the final report.
+
+==================================================
+PHASE 12 — FINAL REPORT
+==================================================
+
+Only after completing the work, provide a final report containing:
+
+1. Existing work discovered
+2. New work completed
+3. Files modified
+4. Files created
+5. Files deleted
+6. Database tables
+7. Row count for every table
+8. Database relationships verified
+9. Demo accounts verified
+10. Authentication status
+11. Authorization status
+12. Role permission status
+13. Routes tested
+14. APIs tested
+15. CRUD modules tested
+16. TypeScript check result
+17. Production build result
+18. Runtime result
+19. Supabase dependency audit result
+20. Required environment variable NAMES only — never secret values
+21. Remaining issues, if any
+22. Production readiness score out of 10
+
+IMPORTANT:
+
+Continue fixing problems automatically.
+
+Do not stop merely because one command fails.
+
+Do not stop after auditing.
+
+Do not reintroduce Supabase.
+
+Do not overwrite working code unnecessarily.
+
+Do not claim a test passed unless you actually ran the relevant available test, build, type-check, query, or verification.
+
+The objective is to leave this imported project fully functional on the NEW Replit account using its CURRENT Replit PostgreSQL database.

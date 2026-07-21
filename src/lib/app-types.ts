@@ -211,7 +211,7 @@ export interface AuditLog {
   target_type: string | null;
   target_id: string | null;
   target_email: string | null;
-  metadata: Record<string, unknown>;
+  metadata: Record<string, string | number | boolean | null>;
   created_at: string;
 }
 

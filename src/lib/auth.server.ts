@@ -1,9 +1,13 @@
 /**
  * Server-side auth utilities: bcrypt password hashing + JWT sign/verify.
+ * Also exports getVerifiedUser — the canonical way to read the caller's identity inside server handlers.
  * Never import this file in client/browser code.
  */
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { getRequest } from "@tanstack/react-start/server";
+import { queryOne } from "./db.server";
+import type { AuthUser } from "./app-types";
 
 const JWT_SECRET = process.env.SESSION_SECRET ?? "aditya-constructions-secret-key-2025";
 const JWT_EXPIRES = "7d";
@@ -40,4 +44,27 @@ export function extractBearerToken(authHeader: string | null): string | null {
   if (!authHeader) return null;
   const match = authHeader.match(/^Bearer\s+(.+)$/i);
   return match?.[1] ?? null;
+}
+
+function getToken(): string | null {
+  const req = getRequest();
+  const authHeader = req?.headers?.get("authorization") ?? null;
+  return extractBearerToken(authHeader);
+}
+
+/** Verify the JWT from the current request and return the caller's identity, or null. */
+export async function getVerifiedUser(): Promise<AuthUser | null> {
+  const token = getToken();
+  if (!token) return null;
+  const payload = verifyToken(token);
+  if (!payload?.sub) return null;
+  const row = await queryOne<{ id: string; email: string; full_name: string | null; status: string }>(
+    `SELECT p.id, u.email, p.full_name, p.status
+     FROM public.profiles p
+     JOIN public.users u ON u.id = p.id
+     WHERE p.id = $1`,
+    [payload.sub],
+  );
+  if (!row || row.status === "suspended") return null;
+  return { id: row.id, email: row.email, full_name: row.full_name };
 }

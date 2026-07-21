@@ -27,16 +27,16 @@ export const Route = createFileRoute("/_authenticated/admin/system")({
 });
 
 const BACKUPS = [
-  { id: "BK001", type: "Full Backup", date: "2024-06-18 02:00", size: "2.4 GB", status: "success", storage: "Cloud (Supabase)" },
-  { id: "BK002", type: "Full Backup", date: "2024-06-17 02:00", size: "2.3 GB", status: "success", storage: "Cloud (Supabase)" },
-  { id: "BK003", type: "Full Backup", date: "2024-06-16 02:00", size: "2.3 GB", status: "success", storage: "Cloud (Supabase)" },
-  { id: "BK004", type: "Full Backup", date: "2024-06-15 02:00", size: "2.2 GB", status: "success", storage: "Cloud (Supabase)" },
-  { id: "BK005", type: "Full Backup", date: "2024-06-14 02:00", size: "2.2 GB", status: "failed", storage: "Cloud (Supabase)" },
+  { id: "BK001", type: "Full Backup", date: "2024-06-18 02:00", size: "2.4 GB", status: "success", storage: "Replit Cloud" },
+  { id: "BK002", type: "Full Backup", date: "2024-06-17 02:00", size: "2.3 GB", status: "success", storage: "Replit Cloud" },
+  { id: "BK003", type: "Full Backup", date: "2024-06-16 02:00", size: "2.3 GB", status: "success", storage: "Replit Cloud" },
+  { id: "BK004", type: "Full Backup", date: "2024-06-15 02:00", size: "2.2 GB", status: "success", storage: "Replit Cloud" },
+  { id: "BK005", type: "Full Backup", date: "2024-06-14 02:00", size: "2.2 GB", status: "failed", storage: "Replit Cloud" },
 ];
 
 const SYSTEM_STATUS = [
   { service: "Web Application", status: "operational", uptime: "99.98%", responseTime: "124ms" },
-  { service: "Database (Supabase)", status: "operational", uptime: "99.99%", responseTime: "45ms" },
+  { service: "Database (PostgreSQL)", status: "operational", uptime: "99.99%", responseTime: "45ms" },
   { service: "Authentication Service", status: "operational", uptime: "100%", responseTime: "89ms" },
   { service: "Email Notifications", status: "operational", uptime: "99.95%", responseTime: "250ms" },
   { service: "File Storage", status: "operational", uptime: "99.97%", responseTime: "180ms" },
@@ -152,7 +152,7 @@ function SystemAdmin() {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-semibold text-sm">Automated Backups</p>
-              <p className="text-xs text-muted-foreground">Daily backups at 02:00 AM IST — stored in Supabase cloud</p>
+              <p className="text-xs text-muted-foreground">Daily backups at 02:00 AM IST — stored in Replit PostgreSQL cloud</p>
             </div>
             <Button onClick={() => toast.success("Manual backup started…")}><RefreshCw className="h-4 w-4 mr-2" />Backup Now</Button>
           </div>

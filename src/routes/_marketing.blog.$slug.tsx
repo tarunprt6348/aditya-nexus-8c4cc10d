@@ -131,7 +131,8 @@ const POSTS: Post[] = [
 ];
 
 function PostPage() {
-  const post = Route.useLoaderData();
+  const post = Route.useLoaderData() as Post | undefined;
+  if (!post) return null;
 
   const related = POSTS.filter((p) => post.relatedSlugs.includes(p.slug));
 
@@ -162,7 +163,7 @@ function PostPage() {
 
       <section className="mx-auto max-w-4xl px-4 py-16 lg:px-8">
         <div className="prose prose-lg max-w-none">
-          {post.content.map((block, i) => {
+          {post.content.map((block: string, i: number) => {
             if (block.startsWith("## ")) {
               return (
                 <h2 key={i} className="mt-10 mb-4 font-display text-2xl text-navy">
@@ -182,7 +183,7 @@ function PostPage() {
         </div>
 
         <div className="mt-10 flex flex-wrap gap-2">
-          {post.tags.map((tag) => (
+          {post.tags.map((tag: string) => (
             <span
               key={tag}
               className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground"
